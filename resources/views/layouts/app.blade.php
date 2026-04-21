@@ -198,7 +198,7 @@
     <div class="footer-inner">
         <div>
             <div class="footer-brand">Soccer Dads</div>
-            <p class="footer-tagline">Friday night futsal • Est 2011</p>
+            <p class="footer-tagline">Established 2011</p>
         </div>
         <div>
             <p class="footer-heading">Quick links</p>
@@ -220,7 +220,7 @@
     </div>
     <div class="footer-bottom">
         <span>© {{ date('Y') }} Soccer Dads</span>
-        <span>Melbourne, Australia</span>
+        <span>Australia</span>
     </div>
 </footer>
 

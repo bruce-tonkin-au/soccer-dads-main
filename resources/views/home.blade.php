@@ -12,7 +12,7 @@
             Soccer Dads
         </h1>
         <p style="font-size:20px; color:rgba(255,255,255,0.7); margin-bottom:2.5rem; line-height:1.6;">
-            Friday night futsal for dads in Adelaide Hills.<br>Every week, rain or shine.
+            Futsal for Dads
         </p>
         <a href="/login" class="btn btn-white" style="font-size:16px; padding:14px 32px;">
             <i class="fa-solid fa-right-to-bracket"></i> Player login
@@ -21,20 +21,24 @@
 </div>
 
 {{-- Stats bar --}}
-<div style="background:#e68a46; padding:2rem;">
+<div style="background:linear-gradient(to right, #7bba56, #458bc8, #e68a46); padding:2rem;">
     <div class="container">
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; text-align:center;">
+        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:2rem; text-align:center;">
             <div>
                 <div style="font-size:36px; font-weight:700; color:#fff;">{{ $stats['seasons'] }}</div>
                 <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Seasons</div>
             </div>
             <div>
+    <div style="font-size:36px; font-weight:700; color:#fff;">{{ $stats['sessions'] }}</div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Sessions</div>
+</div>
+            <div>
                 <div style="font-size:36px; font-weight:700; color:#fff;">{{ $stats['games'] }}</div>
-                <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Games played</div>
+                <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Games</div>
             </div>
             <div>
                 <div style="font-size:36px; font-weight:700; color:#fff;">{{ $stats['goals'] }}</div>
-                <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Goals scored</div>
+                <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Goals</div>
             </div>
             <div>
                 <div style="font-size:36px; font-weight:700; color:#fff;">{{ $stats['players'] }}</div>
@@ -71,25 +75,25 @@
         <h2 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:3rem; text-align:center;">How it works</h2>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;">
             <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#262c39; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
-                    <i class="fa-solid fa-envelope" style="color:#fff; font-size:24px;"></i>
-                </div>
-                <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Get your link</h3>
-                <p style="font-size:14px; color:#888; line-height:1.6;">Each week you'll receive a personalised registration link via SMS. Tap it to register your attendance.</p>
+                <div style="width:64px; height:64px; background:#7bba56; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+    <i class="fa-solid fa-envelope" style="color:#fff; font-size:24px;"></i>
+</div>
+                <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Register your attendance</h3>
+                <p style="font-size:14px; color:#888; line-height:1.6;">Each week you'll use a personalised link to register your attendance. Tap it to register.</p>
             </div>
             <div style="text-align:center; padding:2rem;">
                 <div style="width:64px; height:64px; background:#e68a46; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
                     <i class="fa-solid fa-futbol" style="color:#fff; font-size:24px;"></i>
                 </div>
                 <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Show up and play</h3>
-                <p style="font-size:14px; color:#888; line-height:1.6;">Turn up on Friday night, get assigned to a team and play. Games are 5 minutes each across 7 rounds.</p>
+                <p style="font-size:14px; color:#888; line-height:1.6;">Turn up to the session, get assigned to a team and play. Games are five minutes long, two games in a round, seven rounds in a session.</p>
             </div>
             <div style="text-align:center; padding:2rem;">
                 <div style="width:64px; height:64px; background:#458bc8; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
                     <i class="fa-solid fa-chart-line" style="color:#fff; font-size:24px;"></i>
                 </div>
                 <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Track your stats</h3>
-                <p style="font-size:14px; color:#888; line-height:1.6;">Goals, assists, saves and more — all tracked in real time and available in your player profile.</p>
+                <p style="font-size:14px; color:#888; line-height:1.6;">Goals, assists, saves and more are all tracked in real time and available in your player profile.</p>
             </div>
         </div>
     </div>
