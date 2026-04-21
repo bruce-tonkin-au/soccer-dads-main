@@ -21,7 +21,7 @@
 </div>
 
 {{-- Stats bar --}}
-<div style="background:linear-gradient(to right, #7bba56, #458bc8, #e68a46); padding:2rem;">
+<div style="background:linear-gradient(to right, #458bc8, #7bba56, #e68a46); padding:2rem;">
     <div class="container">
         <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:2rem; text-align:center;">
             <div>
@@ -75,21 +75,21 @@
         <h2 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:3rem; text-align:center;">How it works</h2>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;">
             <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#7bba56; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+                <div style="width:64px; height:64px; background:#458bc8; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
     <i class="fa-solid fa-envelope" style="color:#fff; font-size:24px;"></i>
 </div>
                 <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Register your attendance</h3>
                 <p style="font-size:14px; color:#888; line-height:1.6;">Each week you'll use a personalised link to register your attendance. Tap it to register.</p>
             </div>
             <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#e68a46; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+                <div style="width:64px; height:64px; background:#7bba56; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
                     <i class="fa-solid fa-futbol" style="color:#fff; font-size:24px;"></i>
                 </div>
                 <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Show up and play</h3>
                 <p style="font-size:14px; color:#888; line-height:1.6;">Turn up to the session, get assigned to a team and play. Games are five minutes long, two games in a round, seven rounds in a session.</p>
             </div>
             <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#458bc8; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+                <div style="width:64px; height:64px; background:#e68a46; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
                     <i class="fa-solid fa-chart-line" style="color:#fff; font-size:24px;"></i>
                 </div>
                 <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Track your stats</h3>

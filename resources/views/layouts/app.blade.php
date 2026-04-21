@@ -220,7 +220,7 @@
     </div>
     <div class="footer-bottom">
         <span>© {{ date('Y') }} Soccer Dads</span>
-        <span>Australia</span>
+        <span>Developed by Codesnap</span>
     </div>
 </footer>
 
