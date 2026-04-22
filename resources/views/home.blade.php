@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Soccer Dads — Friday Night Futsal Melbourne')
+@section('title', 'Soccer Dads — What could possibly go wrong?')
 
 @section('content')
 
@@ -12,7 +12,7 @@
             Soccer Dads
         </h1>
         <p style="font-size:20px; color:rgba(255,255,255,0.7); margin-bottom:2.5rem; line-height:1.6;">
-            Futsal for Dads
+            What could possibly go wrong?
         </p>
         <a href="/login" class="btn btn-white" style="font-size:16px; padding:14px 32px;">
             <i class="fa-solid fa-right-to-bracket"></i> Player login

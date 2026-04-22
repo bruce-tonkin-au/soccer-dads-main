@@ -102,62 +102,86 @@
         </div>
 
         {{-- All actions --}}
-        <h2 style="font-size:18px; font-weight:600; color:#262c39; margin-bottom:1rem;">Events</h2>
-        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:12px; overflow:hidden;">
-            @php
-            $teams = [
-                1 => ['name' => 'Orange', 'color' => '#e68a46'],
-                2 => ['name' => 'Green',  'color' => '#7bba56'],
-                3 => ['name' => 'Blue',   'color' => '#458bc8'],
-            ];
-            @endphp
-            @forelse($actions as $action)
-            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid #f0f0f0;">
-                <span style="width:8px; height:8px; border-radius:50%; background:{{ $teams[$action->teamID]['color'] ?? '#aaa' }}; flex-shrink:0;"></span>
-                <div style="flex:1;">
-                    <span style="font-size:14px; color:#262c39; font-weight:500;">
-                        @if($action->typeID == 1)
-                            <i class="fa-solid fa-futbol" style="color:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></i>
-                            Goal — {{ $action->scorerFirst }} {{ $action->scorerLast }}
-                            @if($action->assisterFirst)
-                                <span style="color:#888; font-weight:400;"> / {{ $action->assisterFirst }} {{ $action->assisterLast }}</span>
-                            @endif
-                        @elseif($action->typeID == 2)
-                            <i class="fa-solid fa-bullseye" style="color:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></i>
-                            Shot — {{ $action->scorerFirst }} {{ $action->scorerLast }}
-                        @elseif($action->typeID == 3)
-                            <i class="fa-solid fa-hand" style="color:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></i>
-                            Save — {{ $action->scorerFirst }} {{ $action->scorerLast }}
-                        @elseif($action->typeID == 5)
-                            <i class="fa-solid fa-square" style="color:#f0c040;"></i>
-                            Yellow card — {{ $action->scorerFirst }} {{ $action->scorerLast }}
-                        @elseif($action->typeID == 6)
-                            <i class="fa-solid fa-square" style="color:#e24b4a;"></i>
-                            Red card — {{ $action->scorerFirst }} {{ $action->scorerLast }}
-                        @elseif($action->typeID == 7)
-                            <i class="fa-solid fa-square" style="color:#fff; -webkit-text-stroke:1px #ccc;"></i>
-                            White card — {{ $action->scorerFirst }} {{ $action->scorerLast }}
-                        @endif
-                    </span>
-                    <span style="font-size:12px; color:#aaa; margin-left:8px;">
-                        R{{ $action->scoringRound }} G{{ $action->scoringGame }}
-                    </span>
-                </div>
-                @if($youtubeID && $action->actionTime && $youtubeStart)
-                @php
-                    $offset = \Carbon\Carbon::parse($youtubeStart)->diffInSeconds(\Carbon\Carbon::parse($action->actionTime));
-                @endphp
-                <a href="https://www.youtube.com/watch?v={{ $youtubeID }}&t={{ $offset }}s" target="_blank" style="color:#e24b4a; font-size:12px; text-decoration:none; flex-shrink:0;">
-                    <i class="fa-brands fa-youtube"></i> Watch
-                </a>
+<h2 style="font-size:18px; font-weight:600; color:#262c39; margin-bottom:1rem;">Events</h2>
+<div style="background:#fff; border:1px solid #e8e8e8; border-radius:12px; overflow:hidden;">
+    <table id="events-table" style="width:100%;">
+        <thead>
+            <tr>
+                <th>Round</th>
+                <th>Game</th>
+                <th>Team</th>
+                <th>Type</th>
+                <th>Player</th>
+                <th>Assist</th>
+                @if($youtubeID && $youtubeStart)
+                <th>Video</th>
                 @endif
-            </div>
-            @empty
-            <div style="padding:16px; font-size:14px; color:#aaa; text-align:center;">No events recorded</div>
-            @endforelse
-        </div>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($actions as $action)
+            <tr>
+                <td>{{ $action->scoringRound }}</td>
+                <td>{{ $action->scoringGame }}</td>
+                <td>
+                    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></span>
+                    {{ $teams[$action->teamID]['name'] ?? '' }}
+                </td>
+                <td>
+                    @if($action->typeID == 1)
+                        <i class="fa-solid fa-futbol" style="color:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></i> Goal
+                    @elseif($action->typeID == 2)
+                        <i class="fa-solid fa-bullseye" style="color:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></i> Shot
+                    @elseif($action->typeID == 3)
+                        <i class="fa-solid fa-hand" style="color:{{ $teams[$action->teamID]['color'] ?? '#aaa' }};"></i> Save
+                    @elseif($action->typeID == 5)
+                        <i class="fa-solid fa-square" style="color:#f0c040;"></i> Yellow card
+                    @elseif($action->typeID == 6)
+                        <i class="fa-solid fa-square" style="color:#e24b4a;"></i> Red card
+                    @elseif($action->typeID == 7)
+                        <i class="fa-solid fa-square" style="color:#fff; -webkit-text-stroke:1px #ccc;"></i> White card
+                    @endif
+                </td>
+                <td>{{ $action->scorerFirst }} {{ $action->scorerLast }}</td>
+                <td>{{ $action->assisterFirst }} {{ $action->assisterLast }}</td>
+                @if($youtubeID && $youtubeStart)
+                <td>
+                    @php
+                        $offset = \Carbon\Carbon::parse($youtubeStart)->diffInSeconds(\Carbon\Carbon::parse($action->actionTime));
+                    @endphp
+                    <a href="https://www.youtube.com/watch?v={{ $youtubeID }}&t={{ $offset }}s" target="_blank" style="color:#e24b4a; font-size:12px; text-decoration:none;">
+                        <i class="fa-brands fa-youtube"></i> Watch
+                    </a>
+                </td>
+                @endif
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 
     </div>
 </div>
 
 @endsection
+
+@push('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+@endpush
+
+@push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#events-table').DataTable({
+            pageLength: 25,
+            order: [],
+            language: {
+                search: 'Search events:',
+                lengthMenu: 'Show _MENU_ events',
+            }
+        });
+    });
+</script>
+@endpush
