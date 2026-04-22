@@ -12,7 +12,7 @@ class SeasonsController extends Controller
             ->where('seasonVisible', 1)
             ->orderBy('seasonID', 'desc')
             ->get()
-            ->map(function($season) {
+            ->map(function ($season) {
                 $games = DB::table('games')
                     ->where('gameSeason', $season->seasonKey)
                     ->where('gameVisible', 1)
@@ -77,7 +77,7 @@ class SeasonsController extends Controller
             ->first();
 
         // Build nights with results
-        $nights = $games->map(function($game) {
+        $nights = $games->map(function ($game) {
             $scoringRows = DB::table('scoring')
                 ->where('gameID', $game->gameID)
                 ->where('scoringActive', 1)
@@ -101,10 +101,17 @@ class SeasonsController extends Controller
             foreach ($scoringRows as $row) {
                 $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->count();
                 $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->count();
-                $teamGoals[$row->scoringTeamHome] = ($teamGoals[$row->scoringTeamHome] ?? 0) + $homeGoals;
-                $teamGoals[$row->scoringTeamAway] = ($teamGoals[$row->scoringTeamAway] ?? 0) + $awayGoals;
+                if ($homeGoals > $awayGoals) {
+                    $teamGoals[$row->scoringTeamHome] = ($teamGoals[$row->scoringTeamHome] ?? 0) + 2;
+                } elseif ($awayGoals > $homeGoals) {
+                    $teamGoals[$row->scoringTeamAway] = ($teamGoals[$row->scoringTeamAway] ?? 0) + 2;
+                } else {
+                    $teamGoals[$row->scoringTeamHome] = ($teamGoals[$row->scoringTeamHome] ?? 0) + 1;
+                    $teamGoals[$row->scoringTeamAway] = ($teamGoals[$row->scoringTeamAway] ?? 0) + 1;
+                }
             }
 
+            arsort($teamGoals);
             $hasResults = $actions->count() > 0;
 
             return (object)[
@@ -195,19 +202,62 @@ class SeasonsController extends Controller
             ->groupBy('secondID')
             ->map(fn($g) => $g->count());
 
+        // All time goals
+        $allTimeActions = DB::table('scoring-actions')
+            ->where('actionGoal', 1)
+            ->where('actionActive', 1)
+            ->whereNotNull('memberID')
+            ->get();
+
+        $allTimeGoals = $allTimeActions->groupBy('memberID')
+            ->map(fn($g) => $g->count());
+
+        $allTimeAssists = $allTimeActions->whereNotNull('secondID')
+            ->groupBy('secondID')
+            ->map(fn($g) => $g->count());
+
+        // YTD goals (this calendar year)
+        $currentYear = \Carbon\Carbon::parse($game->gameDate)->year;
+
+        $allGames = DB::table('games')
+            ->where('gameVisible', 1)
+            ->get();
+
+        $ytdGameIDs = $allGames->filter(function ($g) use ($currentYear) {
+            try {
+                $parts = explode('/', $g->gameDate);
+                if (count($parts) === 3) {
+                    return (int)$parts[2] === $currentYear;
+                }
+                return \Carbon\Carbon::parse($g->gameDate)->year === $currentYear;
+            } catch (\Exception $e) {
+                return false;
+            }
+        })->pluck('gameID');
+
+        $ytdActions = DB::table('scoring-actions as a')
+            ->join('scoring as s', 'a.scoringID', '=', 's.scoringID')
+            ->whereIn('s.gameID', $ytdGameIDs)
+            ->where('a.actionGoal', 1)
+            ->where('a.actionActive', 1)
+            ->get();
+
+        $ytdGoals = $ytdActions->groupBy('memberID')->map(fn($g) => $g->count());
+        $ytdAssists = $ytdActions->whereNotNull('secondID')->groupBy('secondID')->map(fn($g) => $g->count());
+
         // Team results for the night
-        $results = $scoringRows->map(function($row) use ($actions, $teams) {
-            $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->where('actionGoal', 1)->count();
-            $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->where('actionGoal', 1)->count();
-            return (object)[
-                'scoringRound'    => $row->scoringRound,
-                'scoringGame'     => $row->scoringGame,
-                'homeTeam'        => $teams[$row->scoringTeamHome],
-                'awayTeam'        => $teams[$row->scoringTeamAway],
-                'homeGoals'       => $homeGoals,
-                'awayGoals'       => $awayGoals,
-            ];
-        });
+$results = $scoringRows->map(function ($row) use ($actions, $teams) {
+    $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->where('actionGoal', 1)->count();
+    $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->where('actionGoal', 1)->count();
+    return (object)[
+        'scoringRound' => $row->scoringRound,
+        'scoringGame'  => $row->scoringGame,
+        'homeTeam'     => array_merge($teams[$row->scoringTeamHome] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamHome]),
+        'awayTeam'     => array_merge($teams[$row->scoringTeamAway] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamAway]),
+        'homeGoals'    => $homeGoals,
+        'awayGoals'    => $awayGoals,
+    ];
+});
 
         // YouTube info
         $youtubeID = null;
@@ -219,9 +269,20 @@ class SeasonsController extends Controller
         $youtubeStart = $game->gameYouTubeStart ?? null;
 
         return view('seasons.night', compact(
-            'season', 'game', 'teams', 'actions', 'results',
-            'nightGoals', 'seasonGoals', 'seasonAssists',
-            'youtubeID', 'youtubeStart'
+            'season',
+            'game',
+            'teams',
+            'actions',
+            'results',
+            'nightGoals',
+            'seasonGoals',
+            'seasonAssists',
+            'ytdGoals',
+            'ytdAssists',
+            'allTimeGoals',
+            'allTimeAssists',
+            'youtubeID',
+            'youtubeStart'
         ));
     }
 }

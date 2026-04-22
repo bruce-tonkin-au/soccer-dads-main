@@ -50,15 +50,15 @@
                     </div>
                     <div style="display:flex; align-items:center; gap:1rem;">
                         @if($night->hasResults)
-                        <div style="display:flex; gap:8px;">
-                            @foreach($night->teamGoals as $teamID => $goals)
-                            @if(isset($night->teams[$teamID]))
-                            <span style="background:{{ $night->teams[$teamID]['color'] }}; color:#fff; padding:4px 10px; border-radius:20px; font-size:13px; font-weight:600;">
-                                {{ $goals }}
-                            </span>
-                            @endif
-                            @endforeach
-                        </div>
+<div style="display:flex; gap:8px;">
+    @foreach($night->teamGoals as $teamID => $goals)
+    @if(isset($night->teams[$teamID]))
+    <span style="background:{{ $night->teams[$teamID]['color'] }}; color:#fff; padding:4px 10px; border-radius:20px; font-size:13px; font-weight:600;">
+        {{ $goals }}
+    </span>
+    @endif
+    @endforeach
+</div>
                         @else
                         <span style="font-size:13px; color:#aaa;">No results yet</span>
                         @endif
