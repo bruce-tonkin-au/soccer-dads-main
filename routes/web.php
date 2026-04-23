@@ -12,6 +12,10 @@ Route::get('/seasons', [SeasonsController::class, 'index']);
 Route::get('/seasons/{seasonKey}', [SeasonsController::class, 'show']);
 Route::get('/seasons/{seasonKey}/{gameRound}', [SeasonsController::class, 'night']);
 
-Route::get('/reg/{memberCode}.html', function($memberCode) {
+Route::get('/r/{memberCode}', function($memberCode) {
+    return redirect('/reg/' . $memberCode, 301);
+});
+
+Route::get('/r/{memberCode}.html', function($memberCode) {
     return redirect('/reg/' . $memberCode, 301);
 });
