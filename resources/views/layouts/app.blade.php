@@ -174,6 +174,40 @@
             margin: 0 auto;
             padding: 0 2rem;
         }
+
+        @media (max-width: 768px) {
+    #burger { display:block !important; }
+    .navbar-nav {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        width: 100%;
+        background: #262c39;
+        padding: 1rem 0;
+        z-index: 99;
+        gap: 0;
+    }
+    .navbar-nav.open {
+        display: flex !important;
+    }
+    .navbar-nav li {
+        width: 100%;
+    }
+    .navbar-nav a {
+        display: block;
+        padding: 12px 2rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        font-size: 15px;
+    }
+    .navbar-nav .btn-nav {
+        margin: 1rem 2rem;
+        display: block;
+        text-align: center;
+        border-radius: 8px;
+    }
+}
     </style>
     @stack('styles')
 </head>
@@ -184,7 +218,10 @@
         <img src="/images/Soccer-Dads-Logo.png" alt="Soccer Dads">
         Soccer Dads
     </a>
-    <ul class="navbar-nav">
+    <button id="burger" onclick="toggleMenu()" style="display:none; background:none; border:none; cursor:pointer; color:#fff; font-size:22px; padding:8px;">
+        <i class="fa-solid fa-bars" id="burger-icon"></i>
+    </button>
+    <ul class="navbar-nav" id="navbar-nav">
         <li><a href="/seasons">Seasons</a></li>
         <li><a href="/players">Players</a></li>
         <li><a href="/about">About</a></li>
@@ -225,6 +262,15 @@
 </footer>
 
 @stack('scripts')
+
+<script>
+    function toggleMenu() {
+        const nav = document.getElementById('navbar-nav');
+        const icon = document.getElementById('burger-icon');
+        nav.classList.toggle('open');
+        icon.className = nav.classList.contains('open') ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+    }
+</script>
 
 </body>
 </html>

@@ -15,7 +15,7 @@
 
        {{-- Award winners (completed seasons only) --}}
 @if(count($awardWinners) > 0)
-<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:1rem; margin-top:1.5rem;">
+<div class="podium-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:1rem; margin-top:1.5rem;">
     @php
         $podium = [
             ['label' => '1st Place', 'bg' => 'linear-gradient(135deg, #f0c040, #d4a012)', 'icon' => 'fa-trophy'],
@@ -34,19 +34,19 @@
 @endif
 
 {{-- Stats --}}
-<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:3rem; margin-top:1.5rem;">
-    <div style="background:#458bc8; border-radius:12px; padding:1.5rem; text-align:center;">
-        <div style="font-size:36px; font-weight:700; color:#fff;">{{ $nights->count() }}</div>
-        <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Nights played</div>
+<div class="stats-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:3rem; margin-top:1.5rem;">
+    <div style="background:#fff; border:1px solid #262c39; border-radius:12px; padding:1rem 1.5rem; text-align:center;">
+        <div style="font-size:24px; font-weight:700; color:#262c39;">{{ $nights->count() }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Nights played</div>
     </div>
-    <div style="background:#7bba56; border-radius:12px; padding:1.5rem; text-align:center;">
-        <div style="font-size:36px; font-weight:700; color:#fff;">{{ $totalGoals }}</div>
-        <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Goals scored</div>
+    <div style="background:#fff; border:1px solid #262c39; border-radius:12px; padding:1rem 1.5rem; text-align:center;">
+        <div style="font-size:24px; font-weight:700; color:#262c39;">{{ $totalGoals }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Goals scored</div>
     </div>
-    <div style="background:#e68a46; border-radius:12px; padding:1.5rem; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-    <div style="font-size:24px; font-weight:700; color:#fff; text-align:center;">{{ $topScorer ? $topScorer->memberNameFirst . ' ' . $topScorer->memberNameLast : 'TBD' }}</div>
-    <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; text-align:center;">Top scorer {{ $topScorer ? '(' . $topScorer->goals . ' goals)' : '' }}</div>
-</div>
+    <div style="background:#fff; border:1px solid #262c39; border-radius:12px; padding:1rem 1.5rem; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div style="font-size:18px; font-weight:700; color:#262c39; text-align:center;">{{ $topScorer ? $topScorer->memberNameFirst . ' ' . $topScorer->memberNameLast : 'TBD' }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; text-align:center;">Top scorer {{ $topScorer ? '(' . $topScorer->goals . ' goals)' : '' }}</div>
+    </div>
 </div>
 
         {{-- Nights list --}}
@@ -92,3 +92,16 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+    @media (max-width: 600px) {
+        .stats-grid {
+            grid-template-columns: 1fr !important;
+        }
+        .podium-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+@endpush
