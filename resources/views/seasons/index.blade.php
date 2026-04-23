@@ -87,7 +87,7 @@
                 </thead>
                 <tbody>
                     @foreach($seasons as $season)
-                    <tr style="cursor:pointer;" onclick="window.location='/seasons/{{ $season->seasonKey }}'">
+                    <tr style="cursor:pointer;" onclick="window.location='/seasons/{{ $season->seasonLink }}'">
                         <td>
                             <span style="font-weight:600; color:#262c39;">{{ $season->seasonName }}</span>
                         </td>

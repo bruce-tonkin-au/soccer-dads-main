@@ -13,27 +13,47 @@
 
         <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#262c39; margin-bottom:0.5rem;">{{ $season->seasonName }}</h1>
 
-        {{-- Stats --}}
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:3rem; margin-top:1.5rem;">
-            <div style="background:#262c39; border-radius:12px; padding:1.5rem; text-align:center;">
-                <div style="font-size:36px; font-weight:700; color:#fff;">{{ $totalGoals }}</div>
-                <div style="font-size:12px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Goals scored</div>
-            </div>
-            <div style="background:#e68a46; border-radius:12px; padding:1.5rem; text-align:center;">
-                <div style="font-size:36px; font-weight:700; color:#fff;">{{ $nights->count() }}</div>
-                <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Nights played</div>
-            </div>
-            <div style="background:#458bc8; border-radius:12px; padding:1.5rem; text-align:center;">
-                <div style="font-size:24px; font-weight:700; color:#fff;">{{ $topScorer ? $topScorer->memberNameFirst . ' ' . $topScorer->memberNameLast : 'TBD' }}</div>
-                <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Top scorer {{ $topScorer ? '(' . $topScorer->goals . ' goals)' : '' }}</div>
-            </div>
-        </div>
+       {{-- Award winners (completed seasons only) --}}
+@if(count($awardWinners) > 0)
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:1rem; margin-top:1.5rem;">
+    @php
+        $podium = [
+            ['label' => '1st Place', 'bg' => 'linear-gradient(135deg, #f0c040, #d4a012)', 'icon' => 'fa-trophy'],
+            ['label' => '2nd Place', 'bg' => 'linear-gradient(135deg, #aaa, #888)', 'icon' => 'fa-medal'],
+            ['label' => '3rd Place', 'bg' => 'linear-gradient(135deg, #cd7f32, #a0522d)', 'icon' => 'fa-medal'],
+        ];
+    @endphp
+    @foreach($awardWinners as $i => $winner)
+    <div style="background:{{ $podium[$i]['bg'] }}; border-radius:12px; padding:1.5rem; text-align:center; color:#fff;">
+        <i class="fa-solid {{ $podium[$i]['icon'] }}" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; opacity:0.8; margin-bottom:4px;">{{ $podium[$i]['label'] }}</div>
+        <div style="font-size:18px; font-weight:700;">{{ $winner }}</div>
+    </div>
+    @endforeach
+</div>
+@endif
+
+{{-- Stats --}}
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:3rem; margin-top:1.5rem;">
+    <div style="background:#458bc8; border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:36px; font-weight:700; color:#fff;">{{ $nights->count() }}</div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Nights played</div>
+    </div>
+    <div style="background:#7bba56; border-radius:12px; padding:1.5rem; text-align:center;">
+        <div style="font-size:36px; font-weight:700; color:#fff;">{{ $totalGoals }}</div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Goals scored</div>
+    </div>
+    <div style="background:#e68a46; border-radius:12px; padding:1.5rem; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="font-size:24px; font-weight:700; color:#fff; text-align:center;">{{ $topScorer ? $topScorer->memberNameFirst . ' ' . $topScorer->memberNameLast : 'TBD' }}</div>
+    <div style="font-size:12px; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; text-align:center;">Top scorer {{ $topScorer ? '(' . $topScorer->goals . ' goals)' : '' }}</div>
+</div>
+</div>
 
         {{-- Nights list --}}
         <h2 style="font-size:18px; font-weight:600; color:#262c39; margin-bottom:1rem;">Game nights</h2>
         <div style="display:flex; flex-direction:column; gap:10px;">
             @foreach($nights as $night)
-            <a href="/seasons/{{ $season->seasonKey }}/{{ $night->gameRound }}" style="text-decoration:none;">
+            <a href="/seasons/{{ $season->seasonLink }}/{{ $night->gameRound }}" style="text-decoration:none;">
                 <div style="background:#fff; border:1px solid #e8e8e8; border-radius:12px; padding:1.25rem 1.5rem; display:flex; align-items:center; justify-content:space-between;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display:flex; align-items:center; gap:1rem;">
                         <div style="width:40px; height:40px; background:#f4f4f4; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#262c39; font-size:14px;">

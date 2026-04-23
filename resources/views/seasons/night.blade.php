@@ -7,7 +7,7 @@
 <div style="padding:4rem 2rem;">
     <div class="container">
 
-        <a href="/seasons/{{ $season->seasonKey }}" style="font-size:13px; color:#888; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:1.5rem;">
+        <a href="/seasons/{{ $season->seasonLink }}" style="font-size:13px; color:#888; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:1.5rem;">
             <i class="fa-solid fa-chevron-left"></i> {{ $season->seasonName }}
         </a>
 

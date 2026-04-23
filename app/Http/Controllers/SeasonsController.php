@@ -78,6 +78,7 @@ class SeasonsController extends Controller
 
         return (object)[
             'seasonKey'  => $season->seasonKey,
+            'seasonLink' => $season->seasonLink,
             'seasonName' => $season->seasonName,
             'sessions'   => $sessions,
             'goals'      => $goals,
@@ -93,12 +94,12 @@ class SeasonsController extends Controller
     public function show($seasonKey)
     {
         $season = DB::table('seasons')
-            ->where('seasonKey', $seasonKey)
-            ->where('seasonVisible', 1)
-            ->firstOrFail();
+    ->where('seasonLink', $seasonKey)
+    ->where('seasonVisible', 1)
+    ->firstOrFail();
 
         $games = DB::table('games')
-            ->where('gameSeason', $seasonKey)
+            ->where('gameSeason', $season->seasonKey)
             ->where('gameVisible', 1)
             ->orderBy('gameRound', 'asc')
             ->get();
@@ -174,18 +175,38 @@ class SeasonsController extends Controller
             ];
         });
 
-        return view('seasons.show', compact('season', 'nights', 'totalGoals', 'topScorer'));
+        // Get season award winners
+$award = DB::table('season-awards')
+    ->where('seasonID', $season->seasonID)
+    ->where('awardActive', 1)
+    ->first();
+
+$awardWinners = [];
+if ($award) {
+    $positions = ['awardPlayer1', 'awardPlayer2', 'awardPlayer3'];
+    foreach ($positions as $pos) {
+        if ($award->$pos) {
+            $member = DB::table('members')->where('memberID', $award->$pos)->first();
+            if ($member) {
+                $awardWinners[] = $member->memberNameFirst . ' ' . $member->memberNameLast;
+            }
+        }
+    }
+}
+
+        return view('seasons.show', compact('season', 'nights', 'totalGoals', 'topScorer', 'awardWinners'));
+
     }
 
     public function night($seasonKey, $gameRound)
     {
         $season = DB::table('seasons')
-            ->where('seasonKey', $seasonKey)
-            ->where('seasonVisible', 1)
-            ->firstOrFail();
+    ->where('seasonLink', $seasonKey)
+    ->where('seasonVisible', 1)
+    ->firstOrFail();
 
         $game = DB::table('games')
-            ->where('gameSeason', $seasonKey)
+            ->where('gameSeason', $season->seasonKey)
             ->where('gameRound', $gameRound)
             ->where('gameVisible', 1)
             ->firstOrFail();
@@ -232,7 +253,7 @@ class SeasonsController extends Controller
 
         // Goals for season YTD (up to and including this night)
         $previousGames = DB::table('games')
-            ->where('gameSeason', $seasonKey)
+            ->where('gameSeason', $season->seasonKey)
             ->where('gameRound', '<=', $gameRound)
             ->where('gameVisible', 1)
             ->pluck('gameID');
