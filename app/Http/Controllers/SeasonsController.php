@@ -7,38 +7,88 @@ use Illuminate\Support\Facades\DB;
 class SeasonsController extends Controller
 {
     public function index()
-    {
-        $seasons = DB::table('seasons')
-            ->where('seasonVisible', 1)
-            ->orderBy('seasonID', 'desc')
-            ->get()
-            ->map(function ($season) {
-                $games = DB::table('games')
-                    ->where('gameSeason', $season->seasonKey)
-                    ->where('gameVisible', 1)
-                    ->get();
+{
+    $seasons = DB::table('seasons')
+        ->where('seasonVisible', 1)
+        ->orderBy('seasonID', 'desc')
+        ->get();
 
-                $gameIDs = $games->pluck('gameID');
+    // Get all games at once
+    $allGames = DB::table('games')
+        ->where('gameVisible', 1)
+        ->get()
+        ->groupBy('gameSeason');
 
-                $goals = DB::table('scoring-actions as a')
-                    ->join('scoring as s', 'a.scoringID', '=', 's.scoringID')
-                    ->whereIn('s.gameID', $gameIDs)
-                    ->where('a.actionGoal', 1)
-                    ->where('a.actionActive', 1)
-                    ->count();
+    // Get all game IDs
+    $allGameIDs = DB::table('games')
+        ->where('gameVisible', 1)
+        ->pluck('gameID');
 
-                $nights = $games->count();
+    // Get all goals at once grouped by gameID
+    $allGoals = DB::table('scoring-actions as a')
+        ->join('scoring as s', 'a.scoringID', '=', 's.scoringID')
+        ->whereIn('s.gameID', $allGameIDs)
+        ->where('a.actionGoal', 1)
+        ->where('a.actionActive', 1)
+        ->select('s.gameID')
+        ->get()
+        ->groupBy('gameID');
 
-                return (object)[
-                    'seasonKey'  => $season->seasonKey,
-                    'seasonName' => $season->seasonName,
-                    'nights'     => $nights,
-                    'goals'      => $goals,
-                ];
-            });
+    // Get all awards at once
+    $allAwards = DB::table('season-awards')
+        ->where('awardActive', 1)
+        ->get()
+        ->keyBy('seasonID');
 
-        return view('seasons.index', compact('seasons'));
-    }
+    // Get all members needed for awards
+    $awardMemberIDs = $allAwards->flatMap(fn($a) => [$a->awardPlayer1, $a->awardPlayer2, $a->awardPlayer3])
+        ->filter()
+        ->unique();
+
+    $awardMembers = DB::table('members')
+        ->whereIn('memberID', $awardMemberIDs)
+        ->get()
+        ->keyBy('memberID');
+
+    $seasons = $seasons->map(function($season) use ($allGames, $allGoals, $allAwards, $awardMembers) {
+        $games = $allGames[$season->seasonKey] ?? collect();
+        $gameIDs = $games->pluck('gameID');
+        $sessions = $games->count();
+
+        $goals = $gameIDs->sum(fn($id) => isset($allGoals[$id]) ? $allGoals[$id]->count() : 0);
+
+        $award = $allAwards[$season->seasonID] ?? null;
+
+        $winner = $second = $third = null;
+
+        if ($award) {
+            if ($award->awardPlayer1 && isset($awardMembers[$award->awardPlayer1])) {
+                $m = $awardMembers[$award->awardPlayer1];
+                $winner = $m->memberNameFirst . ' ' . $m->memberNameLast;
+            }
+            if ($award->awardPlayer2 && isset($awardMembers[$award->awardPlayer2])) {
+                $m = $awardMembers[$award->awardPlayer2];
+                $second = $m->memberNameFirst . ' ' . $m->memberNameLast;
+            }
+            if ($award->awardPlayer3 && isset($awardMembers[$award->awardPlayer3])) {
+                $m = $awardMembers[$award->awardPlayer3];
+                $third = $m->memberNameFirst . ' ' . $m->memberNameLast;
+            }
+        }
+
+        return (object)[
+            'seasonKey'  => $season->seasonKey,
+            'seasonName' => $season->seasonName,
+            'sessions'   => $sessions,
+            'goals'      => $goals,
+            'winner'     => $winner,
+            'second'     => $second,
+            'third'      => $third,
+        ];
+    });
+
+    return view('seasons.index', compact('seasons'));
+}
 
     public function show($seasonKey)
     {
