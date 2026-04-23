@@ -7,16 +7,13 @@
 {{-- Hero --}}
 <div style="background:#262c39; padding:6rem 2rem; text-align:center;">
     <div style="max-width:700px; margin:0 auto;">
-        <img src="/images/Soccer-Dads-Logo.png" style="width:100px; margin-bottom:2rem;">
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:80px; color:#fff; line-height:1; margin-bottom:1.5rem; text-shadow:0 4px 20px rgba(0,0,0,0.3);">
+        <img src="/images/Soccer-Dads-Logo.png" style="width:150px; margin-bottom:2rem;">
+        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:110px; color:#fff; line-height:1; margin-bottom:1.5rem; text-shadow:0 4px 20px rgba(0,0,0,0.3);">
             Soccer Dads
         </h1>
         <p style="font-size:20px; color:rgba(255,255,255,0.7); margin-bottom:2.5rem; line-height:1.6;">
-            What could possibly go wrong?
+            Futsal and blokes – What could possibly go wrong?
         </p>
-        <a href="/login" class="btn btn-white" style="font-size:16px; padding:14px 32px;">
-            <i class="fa-solid fa-right-to-bracket"></i> Player login
-        </a>
     </div>
 </div>
 

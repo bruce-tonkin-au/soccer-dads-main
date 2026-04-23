@@ -188,7 +188,7 @@
         <li><a href="/seasons">Seasons</a></li>
         <li><a href="/players">Players</a></li>
         <li><a href="/about">About</a></li>
-        <li><a href="/login" class="btn-nav">Login</a></li>
+        <li><a href="/login" class="btn-nav"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
     </ul>
 </nav>
 
