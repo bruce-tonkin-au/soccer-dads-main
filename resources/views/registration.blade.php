@@ -31,7 +31,7 @@
     <div style="background:#fff3f3; border:1px solid #e24b4a; border-radius:8px; padding:12px 16px; margin-bottom:1.5rem; font-size:14px; color:#262c39;">
         <i class="fa-solid fa-triangle-exclamation" style="color:#e24b4a;"></i>
         Your balance is <strong>${{ number_format($balance, 2) }}</strong>. Please top up to register for future games.
-        <a href="/p/{{ $member->memberCode }}" style="color:#e24b4a; font-weight:600; margin-left:8px;">Top up →</a>
+        {{-- Top up button hidden until payment system verified --}}
     </div>
     @endif
 
@@ -114,9 +114,7 @@
                 ${{ number_format(abs($balance), 2) }}{{ $balance < 0 ? ' owing' : '' }}
             </div>
         </div>
-        <a href="/p/{{ $member->memberCode }}" class="btn btn-primary">
-            <i class="fa-solid fa-credit-card"></i> Top up
-        </a>
+        {{-- Top up button hidden until payment system verified --}}
     </div>
 
 </div>

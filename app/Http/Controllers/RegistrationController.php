@@ -53,7 +53,10 @@ class RegistrationController extends Controller
                 ->first();
         }
 
-        $balance = $member->memberBalance ?? 0;
+        $balance = DB::table('account')
+            ->where('memberID', $member->memberID)
+            ->where('accountVisible', 1)
+            ->sum('accountValue');
 
         $totalPlayers = DB::table('game-registrations')
             ->where('gameID', $nextGame->gameID)
