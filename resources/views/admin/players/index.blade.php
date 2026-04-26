@@ -16,6 +16,7 @@
                 <th>Code</th>
                 <th>Email</th>
                 <th>Mobile</th>
+                <th>Balance</th>
                 <th>Status</th>
                 <th></th>
             </tr>
@@ -27,6 +28,9 @@
                 <td><code style="background:#f4f4f4; padding:2px 8px; border-radius:4px; font-size:13px;">{{ $player->memberCode }}</code></td>
                 <td style="color:#888; font-size:13px;">{{ $player->memberEmail ?: '—' }}</td>
                 <td style="color:#888; font-size:13px;">{{ $player->memberPhoneMobile ?: '—' }}</td>
+                <td style="font-weight:600; color:{{ $player->balance < 0 ? '#e24b4a' : ($player->balance > 0 ? '#7bba56' : '#888') }};">
+                    ${{ number_format($player->balance, 2) }}
+                </td>
                 <td>
                     @if($player->memberActive)
                     <span style="background:#f0fdf4; color:#7bba56; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600;">Active</span>

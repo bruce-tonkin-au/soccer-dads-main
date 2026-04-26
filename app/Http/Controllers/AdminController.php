@@ -83,6 +83,19 @@ class AdminController extends Controller
             ->orderBy('memberNameLast')
             ->orderBy('memberNameFirst')
             ->get();
+
+        $balances = DB::table('account')
+            ->where('accountVisible', 1)
+            ->select('memberID', DB::raw('SUM(accountValue) as balance'))
+            ->groupBy('memberID')
+            ->get()
+            ->keyBy('memberID');
+
+        $players = $players->map(function($player) use ($balances) {
+            $player->balance = $balances[$player->memberID]->balance ?? 0;
+            return $player;
+        });
+
         return view('admin.players.index', compact('players'));
     }
 
