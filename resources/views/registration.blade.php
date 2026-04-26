@@ -114,15 +114,9 @@
                 ${{ number_format(abs($balance), 2) }}{{ $balance < 0 ? ' owing' : '' }}
             </div>
         </div>
-        @if(session('player_id') == $member->memberID)
         <a href="/portal/topup" style="display:inline-flex; align-items:center; gap:8px; background:#262c39; color:#fff; padding:12px 24px; border-radius:10px; text-decoration:none; font-size:15px; font-weight:600;">
             <i class="fa-solid fa-credit-card"></i> Top up account
         </a>
-        @else
-        <a href="/login" style="display:inline-flex; align-items:center; gap:8px; background:#f4f4f4; color:#262c39; padding:12px 24px; border-radius:10px; text-decoration:none; font-size:15px; font-weight:600;">
-            <i class="fa-solid fa-right-to-bracket"></i> Log in to top up
-        </a>
-        @endif
     </div>
 
 </div>
