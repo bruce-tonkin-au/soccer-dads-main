@@ -7,96 +7,96 @@ use Illuminate\Support\Facades\DB;
 class SeasonsController extends Controller
 {
     public function index()
-{
-    $seasons = DB::table('seasons')
-        ->where('seasonVisible', 1)
-        ->orderBy('seasonID', 'desc')
-        ->get();
+    {
+        $seasons = DB::table('seasons')
+            ->where('seasonVisible', 1)
+            ->orderBy('seasonID', 'desc')
+            ->get();
 
-    // Get all games at once
-    $allGames = DB::table('games')
-        ->where('gameVisible', 1)
-        ->get()
-        ->groupBy('gameSeason');
+        // Get all games at once
+        $allGames = DB::table('games')
+            ->where('gameVisible', 1)
+            ->get()
+            ->groupBy('gameSeason');
 
-    // Get all game IDs
-    $allGameIDs = DB::table('games')
-        ->where('gameVisible', 1)
-        ->pluck('gameID');
+        // Get all game IDs
+        $allGameIDs = DB::table('games')
+            ->where('gameVisible', 1)
+            ->pluck('gameID');
 
-    // Get all goals at once grouped by gameID
-    $allGoals = DB::table('scoring-actions as a')
-        ->join('scoring as s', 'a.scoringID', '=', 's.scoringID')
-        ->whereIn('s.gameID', $allGameIDs)
-        ->where('a.actionGoal', 1)
-        ->where('a.actionActive', 1)
-        ->select('s.gameID')
-        ->get()
-        ->groupBy('gameID');
+        // Get all goals at once grouped by gameID
+        $allGoals = DB::table('scoring-actions as a')
+            ->join('scoring as s', 'a.scoringID', '=', 's.scoringID')
+            ->whereIn('s.gameID', $allGameIDs)
+            ->where('a.actionGoal', 1)
+            ->where('a.actionActive', 1)
+            ->select('s.gameID')
+            ->get()
+            ->groupBy('gameID');
 
-    // Get all awards at once
-    $allAwards = DB::table('season-awards')
-        ->where('awardActive', 1)
-        ->get()
-        ->keyBy('seasonID');
+        // Get all awards at once
+        $allAwards = DB::table('season-awards')
+            ->where('awardActive', 1)
+            ->get()
+            ->keyBy('seasonID');
 
-    // Get all members needed for awards
-    $awardMemberIDs = $allAwards->flatMap(fn($a) => [$a->awardPlayer1, $a->awardPlayer2, $a->awardPlayer3])
-        ->filter()
-        ->unique();
+        // Get all members needed for awards
+        $awardMemberIDs = $allAwards->flatMap(fn($a) => [$a->awardPlayer1, $a->awardPlayer2, $a->awardPlayer3])
+            ->filter()
+            ->unique();
 
-    $awardMembers = DB::table('members')
-        ->whereIn('memberID', $awardMemberIDs)
-        ->get()
-        ->keyBy('memberID');
+        $awardMembers = DB::table('members')
+            ->whereIn('memberID', $awardMemberIDs)
+            ->get()
+            ->keyBy('memberID');
 
-    $seasons = $seasons->map(function($season) use ($allGames, $allGoals, $allAwards, $awardMembers) {
-        $games = $allGames[$season->seasonKey] ?? collect();
-        $gameIDs = $games->pluck('gameID');
-        $sessions = $games->count();
+        $seasons = $seasons->map(function ($season) use ($allGames, $allGoals, $allAwards, $awardMembers) {
+            $games = $allGames[$season->seasonKey] ?? collect();
+            $gameIDs = $games->pluck('gameID');
+            $sessions = $games->count();
 
-        $goals = $gameIDs->sum(fn($id) => isset($allGoals[$id]) ? $allGoals[$id]->count() : 0);
+            $goals = $gameIDs->sum(fn($id) => isset($allGoals[$id]) ? $allGoals[$id]->count() : 0);
 
-        $award = $allAwards[$season->seasonID] ?? null;
+            $award = $allAwards[$season->seasonID] ?? null;
 
-        $winner = $second = $third = null;
+            $winner = $second = $third = null;
 
-        if ($award) {
-            if ($award->awardPlayer1 && isset($awardMembers[$award->awardPlayer1])) {
-                $m = $awardMembers[$award->awardPlayer1];
-                $winner = $m->memberNameFirst . ' ' . $m->memberNameLast;
+            if ($award) {
+                if ($award->awardPlayer1 && isset($awardMembers[$award->awardPlayer1])) {
+                    $m = $awardMembers[$award->awardPlayer1];
+                    $winner = $m->memberNameFirst . ' ' . $m->memberNameLast;
+                }
+                if ($award->awardPlayer2 && isset($awardMembers[$award->awardPlayer2])) {
+                    $m = $awardMembers[$award->awardPlayer2];
+                    $second = $m->memberNameFirst . ' ' . $m->memberNameLast;
+                }
+                if ($award->awardPlayer3 && isset($awardMembers[$award->awardPlayer3])) {
+                    $m = $awardMembers[$award->awardPlayer3];
+                    $third = $m->memberNameFirst . ' ' . $m->memberNameLast;
+                }
             }
-            if ($award->awardPlayer2 && isset($awardMembers[$award->awardPlayer2])) {
-                $m = $awardMembers[$award->awardPlayer2];
-                $second = $m->memberNameFirst . ' ' . $m->memberNameLast;
-            }
-            if ($award->awardPlayer3 && isset($awardMembers[$award->awardPlayer3])) {
-                $m = $awardMembers[$award->awardPlayer3];
-                $third = $m->memberNameFirst . ' ' . $m->memberNameLast;
-            }
-        }
 
-        return (object)[
-            'seasonKey'  => $season->seasonKey,
-            'seasonLink' => $season->seasonLink,
-            'seasonName' => $season->seasonName,
-            'sessions'   => $sessions,
-            'goals'      => $goals,
-            'winner'     => $winner,
-            'second'     => $second,
-            'third'      => $third,
-        ];
-    });
+            return (object)[
+                'seasonKey'  => $season->seasonKey,
+                'seasonLink' => $season->seasonLink,
+                'seasonName' => $season->seasonName,
+                'sessions'   => $sessions,
+                'goals'      => $goals,
+                'winner'     => $winner,
+                'second'     => $second,
+                'third'      => $third,
+            ];
+        });
 
-    return view('seasons.index', compact('seasons'));
-}
+        return view('seasons.index', compact('seasons'));
+    }
 
     public function show($seasonKey)
     {
         $season = DB::table('seasons')
-    ->where('seasonLink', $seasonKey)
-    ->where('seasonVisible', 1)
-    ->firstOrFail();
+            ->where('seasonLink', $seasonKey)
+            ->where('seasonVisible', 1)
+            ->firstOrFail();
 
         $games = DB::table('games')
             ->where('gameSeason', $season->seasonKey)
@@ -176,34 +176,33 @@ class SeasonsController extends Controller
         });
 
         // Get season award winners
-$award = DB::table('season-awards')
-    ->where('seasonID', $season->seasonID)
-    ->where('awardActive', 1)
-    ->first();
+        $award = DB::table('season-awards')
+            ->where('seasonID', $season->seasonID)
+            ->where('awardActive', 1)
+            ->first();
 
-$awardWinners = [];
-if ($award) {
-    $positions = ['awardPlayer1', 'awardPlayer2', 'awardPlayer3'];
-    foreach ($positions as $pos) {
-        if ($award->$pos) {
-            $member = DB::table('members')->where('memberID', $award->$pos)->first();
-            if ($member) {
-                $awardWinners[] = $member->memberNameFirst . ' ' . $member->memberNameLast;
+        $awardWinners = [];
+        if ($award) {
+            $positions = ['awardPlayer1', 'awardPlayer2', 'awardPlayer3'];
+            foreach ($positions as $pos) {
+                if ($award->$pos) {
+                    $member = DB::table('members')->where('memberID', $award->$pos)->first();
+                    if ($member) {
+                        $awardWinners[] = $member->memberNameFirst . ' ' . $member->memberNameLast;
+                    }
+                }
             }
         }
-    }
-}
 
         return view('seasons.show', compact('season', 'nights', 'totalGoals', 'topScorer', 'awardWinners'));
-
     }
 
     public function night($seasonKey, $gameRound)
     {
         $season = DB::table('seasons')
-    ->where('seasonLink', $seasonKey)
-    ->where('seasonVisible', 1)
-    ->firstOrFail();
+            ->where('seasonLink', $seasonKey)
+            ->where('seasonVisible', 1)
+            ->firstOrFail();
 
         $game = DB::table('games')
             ->where('gameSeason', $season->seasonKey)
@@ -317,18 +316,18 @@ if ($award) {
         $ytdAssists = $ytdActions->whereNotNull('secondID')->groupBy('secondID')->map(fn($g) => $g->count());
 
         // Team results for the night
-$results = $scoringRows->map(function ($row) use ($actions, $teams) {
-    $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->where('actionGoal', 1)->count();
-    $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->where('actionGoal', 1)->count();
-    return (object)[
-        'scoringRound' => $row->scoringRound,
-        'scoringGame'  => $row->scoringGame,
-        'homeTeam'     => array_merge($teams[$row->scoringTeamHome] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamHome]),
-        'awayTeam'     => array_merge($teams[$row->scoringTeamAway] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamAway]),
-        'homeGoals'    => $homeGoals,
-        'awayGoals'    => $awayGoals,
-    ];
-});
+        $results = $scoringRows->map(function ($row) use ($actions, $teams) {
+            $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->where('actionGoal', 1)->count();
+            $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->where('actionGoal', 1)->count();
+            return (object)[
+                'scoringRound' => $row->scoringRound,
+                'scoringGame'  => $row->scoringGame,
+                'homeTeam'     => array_merge($teams[$row->scoringTeamHome] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamHome]),
+                'awayTeam'     => array_merge($teams[$row->scoringTeamAway] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamAway]),
+                'homeGoals'    => $homeGoals,
+                'awayGoals'    => $awayGoals,
+            ];
+        });
 
         // YouTube info
         $youtubeID = null;

@@ -225,7 +225,12 @@
         <li><a href="/seasons">Seasons</a></li>
         <li><a href="/players">Players</a></li>
         <li><a href="/about">About</a></li>
-        <li><a href="/login" class="btn-nav"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+        @if(session('player_id'))
+            @php $navPlayer = DB::table('members')->where('memberID', session('player_id'))->value('memberNameFirst'); @endphp
+            <li><a href="/portal" class="btn-nav"><i class="fa-solid fa-user"></i> {{ $navPlayer }}</a></li>
+        @else
+            <li><a href="/login" class="btn-nav"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+        @endif
     </ul>
 </nav>
 
