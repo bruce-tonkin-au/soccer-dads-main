@@ -424,6 +424,136 @@ class AdminController extends Controller
         return view('admin.player-ratings', compact('player', 'ratings', 'averages'));
     }
 
+    public function messages()
+    {
+        $messages = DB::table('messages')->orderBy('created_at', 'desc')->get();
+        return view('admin.messages.index', compact('messages'));
+    }
+
+    public function createMessage()
+    {
+        return view('admin.messages.create');
+    }
+
+    public function storeMessage(Request $request)
+    {
+        $code = strtoupper(\Illuminate\Support\Str::random(8));
+        DB::table('messages')->insert([
+            'messageCode'    => $code,
+            'messageSubject' => $request->input('subject'),
+            'messageBody'    => $request->input('body'),
+            'messageActive'  => 1,
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+        return redirect('/admin/messages/' . $code . '/links')->with('success', 'Message created!');
+    }
+
+    public function editMessage($messageCode)
+    {
+        $message = DB::table('messages')->where('messageCode', $messageCode)->firstOrFail();
+        return view('admin.messages.edit', compact('message'));
+    }
+
+    public function updateMessage(Request $request, $messageCode)
+    {
+        DB::table('messages')->where('messageCode', $messageCode)->update([
+            'messageSubject' => $request->input('subject'),
+            'messageBody'    => $request->input('body'),
+            'messageActive'  => $request->input('active', 1),
+            'updated_at'     => now(),
+        ]);
+        return redirect('/admin/messages')->with('success', 'Message updated.');
+    }
+
+    public function messageLinks($messageCode)
+    {
+        $message = DB::table('messages')->where('messageCode', $messageCode)->firstOrFail();
+
+        $players = DB::table('members')
+            ->where('memberActive', 1)
+            ->whereNull('memberParent')
+            ->orderBy('memberNameLast')
+            ->orderBy('memberNameFirst')
+            ->get();
+
+        return view('admin.messages.links', compact('message', 'players'));
+    }
+
+    public function printSheet($gameID)
+    {
+        $game = DB::table('games as g')
+            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->where('g.gameID', $gameID)
+            ->select('g.*', 's.seasonName')
+            ->firstOrFail();
+
+        $registered = DB::table('game-registrations as r')
+            ->join('members as m', 'r.memberID', '=', 'm.memberID')
+            ->where('r.gameID', $gameID)
+            ->where('r.registrationStatus', 1)
+            ->orderBy('m.memberNameLast')
+            ->orderBy('m.memberNameFirst')
+            ->select('m.*')
+            ->get();
+
+        $gameKeys = DB::table('members')
+            ->whereIn('memberID', $registered->pluck('memberID'))
+            ->pluck('memberKey', 'memberID');
+
+        $gamesPlayed = DB::table('results')
+            ->whereIn('resultMember', $gameKeys->values())
+            ->where('resultActive', 1)
+            ->select('resultMember', DB::raw('COUNT(DISTINCT resultGame) as total'))
+            ->groupBy('resultMember')
+            ->get()
+            ->keyBy('resultMember');
+
+        $bibCounts = DB::table('games')
+            ->whereNotNull('gameBibs')
+            ->where('gameBibs', '!=', '')
+            ->where('gameVisible', 1)
+            ->select('gameBibs', DB::raw('COUNT(*) as total'))
+            ->groupBy('gameBibs')
+            ->get()
+            ->keyBy('gameBibs');
+
+        $balances = DB::table('account')
+            ->whereIn('memberID', $registered->pluck('memberID'))
+            ->where('accountVisible', 1)
+            ->select('memberID', DB::raw('SUM(accountValue) as balance'))
+            ->groupBy('memberID')
+            ->get()
+            ->keyBy('memberID');
+
+        $bibsHolder = null;
+        if ($game->gameBibs) {
+            $bibsHolder = DB::table('members')->where('memberID', $game->gameBibs)->first();
+        }
+
+        $players = $registered->map(function ($member) use ($gameKeys, $gamesPlayed, $bibCounts, $balances) {
+            $key = $gameKeys[$member->memberID] ?? null;
+            $games = $key ? ($gamesPlayed[$key]->total ?? 0) : 0;
+            $bibs = $key ? ($bibCounts[$key]->total ?? 0) : 0;
+            $bibPercent = $games > 0 ? round(($bibs / $games) * 100, 1) : 0;
+            $balance = $balances[$member->memberID]->balance ?? 0;
+
+            return (object) [
+                'memberID'        => $member->memberID,
+                'memberNameFirst' => $member->memberNameFirst,
+                'memberNameLast'  => $member->memberNameLast,
+                'memberCode'      => $member->memberCode,
+                'games'           => $games,
+                'bibPercent'      => $bibPercent,
+                'balance'         => $balance,
+            ];
+        });
+
+        $players = $players->sortBy('memberNameLast')->values();
+
+        return view('admin.print', compact('game', 'players', 'bibsHolder'));
+    }
+
     public function saveTeams(Request $request, $gameID)
     {
         $game = DB::table('games')->where('gameID', $gameID)->firstOrFail();

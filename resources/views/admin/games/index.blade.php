@@ -39,6 +39,9 @@
                     <a href="/admin/teams/{{ $game->gameID }}" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-users"></i> Teams
                     </a>
+                    <a href="/admin/print/{{ $game->gameID }}" target="_blank" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
+                        <i class="fa-solid fa-print"></i> Print
+                    </a>
                     <a href="/admin/seasons/{{ $season->seasonKey }}/games/{{ $game->gameID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-pen"></i> Edit
                     </a>

@@ -29,6 +29,9 @@
             <a href="/admin/teams/{{ $nextGame->gameID }}" class="btn btn-primary">
                 <i class="fa-solid fa-users"></i> Manage teams
             </a>
+            <a href="/admin/print/{{ $nextGame->gameID }}" target="_blank" class="btn btn-secondary">
+                <i class="fa-solid fa-print"></i> Print sheet
+            </a>
             <a href="/admin/seasons/{{ $nextGame->gameSeason }}/games/{{ $nextGame->gameID }}/edit" class="btn btn-secondary">
                 <i class="fa-solid fa-pen"></i> Edit game
             </a>

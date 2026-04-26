@@ -20,7 +20,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             color: #262c39;
-            background: #fff;
+            background: #262c39;
         }
 
         /* Navigation */
@@ -222,9 +222,11 @@
         <i class="fa-solid fa-bars" id="burger-icon"></i>
     </button>
     <ul class="navbar-nav" id="navbar-nav">
+        <li><a href="/">Home</a></li>
         <li><a href="/seasons">Seasons</a></li>
         <li><a href="/players">Players</a></li>
         <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
         @if(session('player_id'))
             @php $navPlayer = DB::table('members')->where('memberID', session('player_id'))->value('memberNameFirst'); @endphp
             <li><a href="/portal" class="btn-nav"><i class="fa-solid fa-user"></i> {{ $navPlayer }}</a></li>
@@ -234,35 +236,59 @@
     </ul>
 </nav>
 
-@yield('content')
+<main style="background:#fff;">
+    @yield('content')
+</main>
 
-<footer class="footer">
-    <div class="footer-inner">
-        <div>
-            <div class="footer-brand">Soccer Dads</div>
-            <p class="footer-tagline">Established 2011</p>
+<footer style="background:#262c39; padding:4rem 2rem 2rem;">
+    <div class="container">
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; margin-bottom:3rem;">
+
+            {{-- Brand --}}
+            <div>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:1rem;">
+                    <img src="/images/Soccer-Dads-Logo.png" style="width:48px;">
+                    <span style="font-family:'GetShow'; font-size:32px; color:#fff; font-weight:normal;">Soccer Dads</span>
+                </div>
+            </div>
+
+            {{-- Quick links --}}
+            <div>
+                <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.4); margin-bottom:1rem;">Quick links</p>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+                    <li><a href="/" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-house" style="width:16px;"></i> Home</a></li>
+                    <li><a href="/seasons" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-chart-line" style="width:16px;"></i> Seasons</a></li>
+                    <li><a href="/players" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-users" style="width:16px;"></i> Players</a></li>
+                    <li><a href="/about" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-circle-info" style="width:16px;"></i> About</a></li>
+                    <li><a href="/contact" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-envelope" style="width:16px;"></i> Contact</a></li>
+                </ul>
+            </div>
+
+            {{-- Connect --}}
+            <div>
+                <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.4); margin-bottom:1rem;">Connect</p>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+                    <li><a href="https://www.facebook.com/SoccerDads/" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-brands fa-facebook" style="width:16px;"></i> Facebook</a></li>
+                    <li><a href="https://twitter.com/soccdads/" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-brands fa-x-twitter" style="width:16px;"></i> X</a></li>
+                    <li><a href="https://instagram.com/soccdads/" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-brands fa-instagram" style="width:16px;"></i> Instagram</a></li>
+                </ul>
+            </div>
+
+            {{-- Contact --}}
+            <div>
+                <p style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.4); margin-bottom:1rem;">Contact</p>
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+                    <li><a href="tel:0428400013" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-phone" style="width:16px;"></i> 0428 400 013</a></li>
+                    <li><a href="mailto:admin@soccerdads.com.au" style="color:rgba(255,255,255,0.6); text-decoration:none; font-size:14px; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-envelope" style="width:16px;"></i> admin@</a></li>
+                </ul>
+            </div>
+
         </div>
-        <div>
-            <p class="footer-heading">Quick links</p>
-            <ul class="footer-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/seasons">Seasons</a></li>
-                <li><a href="/players">Players</a></li>
-                <li><a href="/about">About</a></li>
-            </ul>
+
+        <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:13px; color:rgba(255,255,255,0.3);">© {{ date('Y') }} Soccer Dads</span>
+            <span style="font-size:13px; color:rgba(255,255,255,0.3);">Adelaide Hills, South Australia</span>
         </div>
-        <div>
-            <p class="footer-heading">Connect</p>
-            <ul class="footer-links">
-                <li><a href="https://www.facebook.com/SoccerDads/"><i class="fa-brands fa-facebook"></i> Facebook</a></li>
-                <li><a href="https://twitter.com/soccdads/"><i class="fa-brands fa-twitter"></i> Twitter</a></li>
-                <li><a href="https://instagram.com/soccdads/"><i class="fa-brands fa-instagram"></i> Instagram</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <span>© {{ date('Y') }} Soccer Dads</span>
-        <span>Developed by Codesnap</span>
     </div>
 </footer>
 

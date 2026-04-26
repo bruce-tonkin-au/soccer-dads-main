@@ -27,7 +27,9 @@
     <div style="background:{{ $podium[$i]['bg'] }}; border-radius:12px; padding:1.5rem; text-align:center; color:#fff;">
         <i class="fa-solid {{ $podium[$i]['icon'] }}" style="font-size:24px; margin-bottom:8px; display:block;"></i>
         <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; opacity:0.8; margin-bottom:4px;">{{ $podium[$i]['label'] }}</div>
-        <div style="font-size:18px; font-weight:700;">{{ $winner }}</div>
+        <div style="font-size:18px; font-weight:700;">
+            <a href="/players/{{ $winner->slug }}" style="color:inherit; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.3);">{{ $winner->name }}</a>
+        </div>
     </div>
     @endforeach
 </div>

@@ -188,7 +188,10 @@ class SeasonsController extends Controller
                 if ($award->$pos) {
                     $member = DB::table('members')->where('memberID', $award->$pos)->first();
                     if ($member) {
-                        $awardWinners[] = $member->memberNameFirst . ' ' . $member->memberNameLast;
+                        $awardWinners[] = (object) [
+                            'name' => $member->memberNameFirst . ' ' . $member->memberNameLast,
+                            'slug' => $member->memberSlug,
+                        ];
                     }
                 }
             }
@@ -240,8 +243,10 @@ class SeasonsController extends Controller
                 's.scoringTeamAway',
                 'm.memberNameFirst as scorerFirst',
                 'm.memberNameLast as scorerLast',
+                'm.memberSlug as scorerSlug',
                 'm2.memberNameFirst as assisterFirst',
-                'm2.memberNameLast as assisterLast'
+                'm2.memberNameLast as assisterLast',
+                'm2.memberSlug as assisterSlug'
             )
             ->get();
 

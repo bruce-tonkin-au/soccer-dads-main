@@ -44,12 +44,18 @@
 
     {{-- Summary row --}}
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem;">
-        @foreach($teamNames as $id => $name)
-        <div style="background:{{ $teamColors[$id] }}; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
-            <div style="font-size:24px; font-weight:700;" id="count-{{ $id }}">0</div>
-            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">{{ $name }}</div>
+        <div style="background:#458bc8; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
+            <div style="font-size:24px; font-weight:700;" id="count-3">0</div>
+            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">Blue</div>
         </div>
-        @endforeach
+        <div style="background:#7bba56; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
+            <div style="font-size:24px; font-weight:700;" id="count-2">0</div>
+            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">Green</div>
+        </div>
+        <div style="background:#e68a46; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
+            <div style="font-size:24px; font-weight:700;" id="count-1">0</div>
+            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">Orange</div>
+        </div>
     </div>
 
     {{-- Player assignment table --}}
@@ -60,9 +66,9 @@
                     <th>Player</th>
                     <th>Rating</th>
                     <th style="text-align:center;">Peer reviews</th>
-                    <th style="color:#e68a46; text-align:center;">Orange</th>
-                    <th style="color:#7bba56; text-align:center;">Green</th>
                     <th style="color:#458bc8; text-align:center;">Blue</th>
+                    <th style="color:#7bba56; text-align:center;">Green</th>
+                    <th style="color:#e68a46; text-align:center;">Orange</th>
                     <th style="text-align:center;">Unassigned</th>
                 </tr>
             </thead>
@@ -85,7 +91,7 @@
                             </span>
                         @endif
                     </td>
-                    @foreach($teamNames as $teamID => $teamName)
+                    @foreach([3 => 'Blue', 2 => 'Green', 1 => 'Orange'] as $teamID => $teamName)
                     <td style="text-align:center;">
                         <input type="radio"
                             name="teams[{{ $player->memberID }}]"
@@ -141,10 +147,29 @@
         roleOrder.forEach(role => groups[role].sort((a, b) => b.rating - a.rating));
 
         const teamRatings = {1: 0, 2: 0, 3: 0};
+        const teamCounts = {1: 0, 2: 0, 3: 0};
+
+        const teamOrder = [1, 2, 3].sort(() => Math.random() - 0.5);
+        let startingTeamIndex = 0;
 
         function assignToWeakestTeam(player) {
-            const weakest = Object.entries(teamRatings).sort((a, b) => a[1] - b[1])[0][0];
-            const teamID = parseInt(weakest);
+            let weakest;
+            let lowestRating = Infinity;
+
+            if (teamRatings[1] === 0 && teamRatings[2] === 0 && teamRatings[3] === 0) {
+                weakest = teamOrder[startingTeamIndex % 3];
+                startingTeamIndex++;
+            } else {
+                weakest = teamOrder[0];
+                teamOrder.forEach(t => {
+                    if (teamRatings[t] < lowestRating) {
+                        lowestRating = teamRatings[t];
+                        weakest = t;
+                    }
+                });
+            }
+
+            const teamID = weakest;
             const radio = document.querySelector(`input[name="teams[${player.id}]"][value="${teamID}"]`);
             if (radio) radio.checked = true;
             teamRatings[teamID] += player.rating;

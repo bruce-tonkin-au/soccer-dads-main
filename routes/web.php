@@ -8,6 +8,8 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PlayerAuthController;
 use App\Http\Controllers\PlayerPortalController;
 
@@ -43,6 +45,15 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
 
     Route::get('/ratings', [AdminController::class, 'ratings']);
     Route::get('/ratings/{memberID}', [AdminController::class, 'playerRatings']);
+
+    Route::get('/print/{gameID}', [AdminController::class, 'printSheet']);
+
+    Route::get('/messages', [AdminController::class, 'messages']);
+    Route::get('/messages/create', [AdminController::class, 'createMessage']);
+    Route::post('/messages/create', [AdminController::class, 'storeMessage']);
+    Route::get('/messages/{messageCode}/edit', [AdminController::class, 'editMessage']);
+    Route::post('/messages/{messageCode}/edit', [AdminController::class, 'updateMessage']);
+    Route::get('/messages/{messageCode}/links', [AdminController::class, 'messageLinks']);
 });
 
 Route::get('/', [HomeController::class, 'index']);
@@ -56,6 +67,9 @@ Route::get('/seasons/{seasonKey}', [SeasonsController::class, 'show']);
 Route::get('/seasons/{seasonKey}/{gameRound}', [SeasonsController::class, 'night']);
 
 Route::get('/about', [AboutController::class, 'index']);
+Route::get('/contact', [ContactController::class, 'index']);
+Route::get('/msg/{messageCode}/{memberCode}', [MessageController::class, 'show']);
+Route::get('/contact.html', fn() => redirect('/contact', 301));
 Route::get('/about/history', [AboutController::class, 'history']);
 Route::get('/about/locations', [AboutController::class, 'locations']);
 Route::get('/about/honour-board', [AboutController::class, 'honourBoard']);

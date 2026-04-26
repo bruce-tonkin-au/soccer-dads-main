@@ -49,6 +49,7 @@
     <a href="/admin/players">Players</a>
     <a href="/admin/seasons">Seasons</a>
     <a href="/admin/ratings">Ratings</a>
+    <a href="/admin/messages">Messages</a>
     <form method="POST" action="/admin/logout" style="margin-left:auto;">
         @csrf
         <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:14px;">

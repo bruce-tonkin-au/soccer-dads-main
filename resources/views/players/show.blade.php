@@ -153,10 +153,16 @@
 
 <div class="player-show-hero">
     <div class="container">
-        <a href="/players" style="font-size:13px; color:rgba(255,255,255,0.5); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+        <a href="/players" style="font-size:13px; color:rgba(255,255,255,0.5); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:1.5rem;">
             <i class="fa-solid fa-chevron-left"></i> All players
         </a>
-        <h1>{{ $member->memberNameFirst }} {{ $member->memberNameLast }}</h1>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:1.5rem;">
+            <h1>{{ $member->memberNameFirst }} {{ $member->memberNameLast }}</h1>
+            @if($member->memberPhoto)
+            <img src="{{ Storage::url($member->memberPhoto) }}"
+                 style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,0.2); flex-shrink:0;">
+            @endif
+        </div>
     </div>
 </div>
 
@@ -191,25 +197,6 @@
             </div>
         </div>
 
-        {{-- Goals by team --}}
-        @if($goals > 0)
-        @php
-        $teamDefs = [
-            3 => ['name' => 'Blue',   'color' => '#458bc8'],
-            2 => ['name' => 'Green',  'color' => '#7bba56'],
-            1 => ['name' => 'Orange', 'color' => '#e68a46'],
-        ];
-        @endphp
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:2.5rem;">
-            @foreach($teamDefs as $tid => $team)
-            @php $count = $goalsByTeam[$tid] ?? 0; @endphp
-            <span style="background:{{ $team['color'] }}; color:#fff; padding:7px 16px; border-radius:20px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:7px;">
-                <i class="fa-solid fa-futbol" style="font-size:13px; opacity:0.85;"></i>
-                {{ $count }} {{ $team['name'] }}
-            </span>
-            @endforeach
-        </div>
-        @endif
 
         {{-- Awards --}}
         @if($awardHistory->isNotEmpty())
@@ -228,9 +215,9 @@
                 <div style="font-size:13px; font-weight:700; color:#262c39;">{{ $awardStyles[$award->position]['label'] }}</div>
                 <div style="font-size:11px; color:#888; margin-top:2px;">
                     @if($award->seasonLink)
-                    <a href="/seasons/{{ $award->seasonLink }}" style="color:#888; text-decoration:none;">{{ $award->seasonName }}</a>
+                    <a href="/seasons/{{ $award->seasonLink }}" style="color:#888; text-decoration:none;">{{ str_replace(',', '', $award->seasonName) }}</a>
                     @else
-                    {{ $award->seasonName }}
+                    {{ str_replace(',', '', $award->seasonName) }}
                     @endif
                 </div>
             </div>

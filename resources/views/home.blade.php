@@ -12,7 +12,7 @@
             Soccer Dads
         </h1>
         <p style="font-size:20px; color:rgba(255,255,255,0.7); margin-bottom:2.5rem; line-height:1.6;">
-            Futsal and blokes – What could possibly go wrong?
+            Making more 'old days' together.
         </p>
     </div>
 </div>

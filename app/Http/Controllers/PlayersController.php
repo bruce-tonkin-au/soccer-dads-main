@@ -188,6 +188,7 @@ class PlayersController extends Controller
                   ->orWhere('a.awardPlayer2', $member->memberID)
                   ->orWhere('a.awardPlayer3', $member->memberID);
             })
+            ->orderBy('s.seasonID', 'desc')
             ->select('a.*', 's.seasonName', 's.seasonLink')
             ->get()
             ->map(function ($award) use ($member) {
@@ -198,7 +199,7 @@ class PlayersController extends Controller
                 };
                 return $award;
             })
-            ->sortBy('position')
+            ->sortBy([['position', 'asc']])
             ->values();
 
         $recentActions = DB::table('scoring-actions as a')

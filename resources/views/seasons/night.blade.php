@@ -176,7 +176,13 @@
                             @endphp
                             @forelse($goalActions as $memberID => $action)
                             <tr style="border-bottom:1px solid #f0f0f0;">
-                                <td style="padding:10px 16px; color:#262c39;">{{ $action->scorerFirst }} {{ $action->scorerLast }}</td>
+                                <td style="padding:10px 16px; color:#262c39;">
+                                    @if($action->scorerSlug)
+                                    <a href="/players/{{ $action->scorerSlug }}" style="color:#262c39; text-decoration:none; font-weight:500;">{{ $action->scorerFirst }} {{ $action->scorerLast }}</a>
+                                    @else
+                                    {{ $action->scorerFirst }} {{ $action->scorerLast }}
+                                    @endif
+                                </td>
                                 <td style="padding:10px 16px; text-align:center; font-weight:600; color:#262c39;">{{ $nightGoals[$memberID] ?? 0 }}</td>
                                 <td style="padding:10px 16px; text-align:center; color:#888;">{{ $seasonGoals[$memberID] ?? 0 }}</td>
                                 <td style="padding:10px 16px; text-align:center; color:#888;">{{ $ytdGoals[$memberID] ?? 0 }}</td>
@@ -215,7 +221,13 @@
                             @endphp
                             @forelse($assistActions as $secondID => $action)
                             <tr style="border-bottom:1px solid #f0f0f0;">
-                                <td style="padding:10px 16px; color:#262c39;">{{ $action->assisterFirst }} {{ $action->assisterLast }}</td>
+                                <td style="padding:10px 16px; color:#262c39;">
+                                    @if($action->assisterSlug)
+                                    <a href="/players/{{ $action->assisterSlug }}" style="color:#262c39; text-decoration:none; font-weight:500;">{{ $action->assisterFirst }} {{ $action->assisterLast }}</a>
+                                    @else
+                                    {{ $action->assisterFirst }} {{ $action->assisterLast }}
+                                    @endif
+                                </td>
                                 <td style="padding:10px 16px; text-align:center; font-weight:600; color:#262c39;">{{ $actions->where('actionGoal', 1)->where('secondID', $secondID)->count() }}</td>
                                 <td style="padding:10px 16px; text-align:center; color:#888;">{{ $seasonAssists[$secondID] ?? 0 }}</td>
                                 <td style="padding:10px 16px; text-align:center; color:#888;">{{ $ytdAssists[$secondID] ?? 0 }}</td>
@@ -272,8 +284,20 @@
                                 <i class="fa-solid fa-square" style="color:#fff; -webkit-text-stroke:1px #ccc;"></i> White card
                             @endif
                         </td>
-                        <td>{{ $action->scorerFirst }} {{ $action->scorerLast }}</td>
-                        <td>{{ $action->assisterFirst }} {{ $action->assisterLast }}</td>
+                        <td>
+                            @if($action->scorerSlug)
+                            <a href="/players/{{ $action->scorerSlug }}" style="color:#262c39; text-decoration:none; font-weight:500;">{{ $action->scorerFirst }} {{ $action->scorerLast }}</a>
+                            @else
+                            {{ $action->scorerFirst }} {{ $action->scorerLast }}
+                            @endif
+                        </td>
+                        <td>
+                            @if($action->assisterSlug)
+                            <a href="/players/{{ $action->assisterSlug }}" style="color:#262c39; text-decoration:none; font-weight:500;">{{ $action->assisterFirst }} {{ $action->assisterLast }}</a>
+                            @else
+                            {{ $action->assisterFirst }} {{ $action->assisterLast }}
+                            @endif
+                        </td>
                         @if($youtubeID && $youtubeStart)
                         <td>
                             @php
