@@ -114,7 +114,7 @@
                 ${{ number_format(abs($balance), 2) }}{{ $balance < 0 ? ' owing' : '' }}
             </div>
         </div>
-        <a href="/portal/topup" style="display:inline-flex; align-items:center; gap:8px; background:#262c39; color:#fff; padding:12px 24px; border-radius:10px; text-decoration:none; font-size:15px; font-weight:600;">
+        <a href="/topup/{{ $member->memberCode }}" style="display:inline-flex; align-items:center; gap:8px; background:#262c39; color:#fff; padding:12px 24px; border-radius:10px; text-decoration:none; font-size:15px; font-weight:600;">
             <i class="fa-solid fa-credit-card"></i> Top up account
         </a>
     </div>

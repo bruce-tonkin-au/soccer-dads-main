@@ -93,6 +93,11 @@ Route::middleware('player.auth')->group(function () {
     Route::get('/portal/topup/cancel', [PlayerPortalController::class, 'paymentCancel']);
 });
 
+Route::get('/topup/{memberCode}', [PlayerPortalController::class, 'publicTopup']);
+Route::post('/topup/{memberCode}/create', [PlayerPortalController::class, 'publicCreatePayment']);
+Route::get('/topup/{memberCode}/success', [PlayerPortalController::class, 'publicPaymentSuccess']);
+Route::get('/topup/{memberCode}/cancel', [PlayerPortalController::class, 'publicPaymentCancel']);
+
 Route::post('/stripe/webhook', [PlayerPortalController::class, 'stripeWebhook']);
 
 Route::get('/rate/{memberCode}', [RatingController::class, 'show']);

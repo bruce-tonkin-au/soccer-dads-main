@@ -247,6 +247,85 @@ class PlayerPortalController extends Controller
         return response('OK', 200);
     }
 
+    public function publicTopup($memberCode)
+    {
+        $member = DB::table('members')
+            ->where('memberCode', strtoupper($memberCode))
+            ->where('memberActive', 1)
+            ->firstOrFail();
+
+        $balance = DB::table('account')
+            ->where('memberID', $member->memberID)
+            ->where('accountVisible', 1)
+            ->sum('accountValue');
+
+        return view('player.public-topup', compact('member', 'balance'));
+    }
+
+    public function publicCreatePayment(Request $request, $memberCode)
+    {
+        $member = DB::table('members')
+            ->where('memberCode', strtoupper($memberCode))
+            ->where('memberActive', 1)
+            ->firstOrFail();
+
+        $amount = (int) $request->input('amount');
+
+        if (!in_array($amount, [10, 20, 30, 50, 100]) && ($amount % 10 !== 0 || $amount < 10 || $amount > 500)) {
+            return back()->with('error', 'Invalid amount.');
+        }
+
+        \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+
+        $session = \Stripe\Checkout\Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'aud',
+                    'product_data' => [
+                        'name' => 'Soccer Dads Account Top Up',
+                        'description' => 'Credit for ' . $member->memberNameFirst . ' ' . $member->memberNameLast,
+                    ],
+                    'unit_amount' => $amount * 100,
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            'success_url' => url('/topup/' . $memberCode . '/success?session_id={CHECKOUT_SESSION_ID}'),
+            'cancel_url' => url('/topup/' . $memberCode . '/cancel'),
+            'metadata' => [
+                'memberID'   => $member->memberID,
+                'memberCode' => $member->memberCode,
+                'amount'     => $amount,
+            ],
+            'customer_email' => $member->memberEmail,
+        ]);
+
+        return redirect($session->url);
+    }
+
+    public function publicPaymentSuccess(Request $request, $memberCode)
+    {
+        $member = DB::table('members')
+            ->where('memberCode', strtoupper($memberCode))
+            ->where('memberActive', 1)
+            ->firstOrFail();
+
+        Stripe::setApiKey(config('services.stripe.secret'));
+        $session = StripeSession::retrieve($request->query('session_id'));
+
+        if ($session && $session->payment_status === 'paid') {
+            $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->memberID ?? $member->memberID);
+        }
+
+        return view('player.topup-success', compact('member', 'session'));
+    }
+
+    public function publicPaymentCancel($memberCode)
+    {
+        return redirect('/topup/' . $memberCode)->with('error', 'Payment cancelled.');
+    }
+
     private function fulfillPayment(string $sessionId, float $amount, int $memberID): void
     {
         // Idempotent — skip if account credit already exists for this session
