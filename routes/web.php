@@ -1,13 +1,49 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\SeasonsController;
 use App\Http\Controllers\PlayersController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\PlayerAuthController;
 use App\Http\Controllers\PlayerPortalController;
+
+// Admin auth
+Route::get('/admin/login', [AdminController::class, 'showLogin']);
+Route::post('/admin/login', [AdminController::class, 'login']);
+Route::post('/admin/logout', [AdminController::class, 'logout']);
+
+// Admin area
+Route::middleware('admin.auth')->prefix('admin')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard']);
+
+    Route::get('/players', [AdminController::class, 'players']);
+    Route::get('/players/create', [AdminController::class, 'createPlayer']);
+    Route::post('/players/create', [AdminController::class, 'storePlayer']);
+    Route::get('/players/{memberID}/edit', [AdminController::class, 'editPlayer']);
+    Route::post('/players/{memberID}/edit', [AdminController::class, 'updatePlayer']);
+
+    Route::get('/seasons', [AdminController::class, 'seasons']);
+    Route::get('/seasons/create', [AdminController::class, 'createSeason']);
+    Route::post('/seasons/create', [AdminController::class, 'storeSeason']);
+    Route::get('/seasons/{seasonKey}/edit', [AdminController::class, 'editSeason']);
+    Route::post('/seasons/{seasonKey}/edit', [AdminController::class, 'updateSeason']);
+
+    Route::get('/seasons/{seasonKey}/games', [AdminController::class, 'games']);
+    Route::get('/seasons/{seasonKey}/games/create', [AdminController::class, 'createGame']);
+    Route::post('/seasons/{seasonKey}/games/create', [AdminController::class, 'storeGame']);
+    Route::get('/seasons/{seasonKey}/games/{gameID}/edit', [AdminController::class, 'editGame']);
+    Route::post('/seasons/{seasonKey}/games/{gameID}/edit', [AdminController::class, 'updateGame']);
+
+    Route::get('/teams/{gameID}', [AdminController::class, 'teams']);
+    Route::post('/teams/{gameID}', [AdminController::class, 'saveTeams']);
+
+    Route::get('/ratings', [AdminController::class, 'ratings']);
+    Route::get('/ratings/{memberID}', [AdminController::class, 'playerRatings']);
+});
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/players', [PlayersController::class, 'index']);
@@ -44,6 +80,10 @@ Route::middleware('player.auth')->group(function () {
 });
 
 Route::post('/stripe/webhook', [PlayerPortalController::class, 'stripeWebhook']);
+
+Route::get('/rate/{memberCode}', [RatingController::class, 'show']);
+Route::post('/rate/{memberCode}', [RatingController::class, 'store']);
+Route::get('/rate/{memberCode}/done', [RatingController::class, 'done']);
 
 Route::get('/r/{memberCode}', function($memberCode) {
     return redirect('/reg/' . $memberCode, 301);

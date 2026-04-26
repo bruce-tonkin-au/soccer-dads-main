@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'admin.auth'  => \App\Http\Middleware\AdminAuth::class,
             'player.auth' => \App\Http\Middleware\PlayerAuth::class,
         ]);
         $middleware->validateCsrfTokens(except: [
