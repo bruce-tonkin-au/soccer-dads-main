@@ -36,6 +36,75 @@
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Mobile number</label>
                     <input type="tel" name="mobile" value="{{ $player->memberPhoneMobile ?? '' }}" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;" placeholder="e.g. 0412 345 678">
                 </div>
+                <div style="margin-bottom:1.5rem;">
+                    <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Country of origin</label>
+                    <select name="country" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none; background:#fff;">
+                        <option value="AU" {{ ($player->memberCountry ?? 'AU') == 'AU' ? 'selected' : '' }}>🇦🇺 Australia</option>
+                        <option value="AF" {{ ($player->memberCountry ?? '') == 'AF' ? 'selected' : '' }}>🇦🇫 Afghanistan</option>
+                        <option value="AL" {{ ($player->memberCountry ?? '') == 'AL' ? 'selected' : '' }}>🇦🇱 Albania</option>
+                        <option value="DZ" {{ ($player->memberCountry ?? '') == 'DZ' ? 'selected' : '' }}>🇩🇿 Algeria</option>
+                        <option value="AR" {{ ($player->memberCountry ?? '') == 'AR' ? 'selected' : '' }}>🇦🇷 Argentina</option>
+                        <option value="AT" {{ ($player->memberCountry ?? '') == 'AT' ? 'selected' : '' }}>🇦🇹 Austria</option>
+                        <option value="BE" {{ ($player->memberCountry ?? '') == 'BE' ? 'selected' : '' }}>🇧🇪 Belgium</option>
+                        <option value="BR" {{ ($player->memberCountry ?? '') == 'BR' ? 'selected' : '' }}>🇧🇷 Brazil</option>
+                        <option value="BG" {{ ($player->memberCountry ?? '') == 'BG' ? 'selected' : '' }}>🇧🇬 Bulgaria</option>
+                        <option value="CA" {{ ($player->memberCountry ?? '') == 'CA' ? 'selected' : '' }}>🇨🇦 Canada</option>
+                        <option value="CL" {{ ($player->memberCountry ?? '') == 'CL' ? 'selected' : '' }}>🇨🇱 Chile</option>
+                        <option value="CN" {{ ($player->memberCountry ?? '') == 'CN' ? 'selected' : '' }}>🇨🇳 China</option>
+                        <option value="CO" {{ ($player->memberCountry ?? '') == 'CO' ? 'selected' : '' }}>🇨🇴 Colombia</option>
+                        <option value="HR" {{ ($player->memberCountry ?? '') == 'HR' ? 'selected' : '' }}>🇭🇷 Croatia</option>
+                        <option value="CZ" {{ ($player->memberCountry ?? '') == 'CZ' ? 'selected' : '' }}>🇨🇿 Czech Republic</option>
+                        <option value="DK" {{ ($player->memberCountry ?? '') == 'DK' ? 'selected' : '' }}>🇩🇰 Denmark</option>
+                        <option value="EG" {{ ($player->memberCountry ?? '') == 'EG' ? 'selected' : '' }}>🇪🇬 Egypt</option>
+                        <option value="ET" {{ ($player->memberCountry ?? '') == 'ET' ? 'selected' : '' }}>🇪🇹 Ethiopia</option>
+                        <option value="FI" {{ ($player->memberCountry ?? '') == 'FI' ? 'selected' : '' }}>🇫🇮 Finland</option>
+                        <option value="FR" {{ ($player->memberCountry ?? '') == 'FR' ? 'selected' : '' }}>🇫🇷 France</option>
+                        <option value="DE" {{ ($player->memberCountry ?? '') == 'DE' ? 'selected' : '' }}>🇩🇪 Germany</option>
+                        <option value="GH" {{ ($player->memberCountry ?? '') == 'GH' ? 'selected' : '' }}>🇬🇭 Ghana</option>
+                        <option value="GR" {{ ($player->memberCountry ?? '') == 'GR' ? 'selected' : '' }}>🇬🇷 Greece</option>
+                        <option value="HU" {{ ($player->memberCountry ?? '') == 'HU' ? 'selected' : '' }}>🇭🇺 Hungary</option>
+                        <option value="IN" {{ ($player->memberCountry ?? '') == 'IN' ? 'selected' : '' }}>🇮🇳 India</option>
+                        <option value="ID" {{ ($player->memberCountry ?? '') == 'ID' ? 'selected' : '' }}>🇮🇩 Indonesia</option>
+                        <option value="IR" {{ ($player->memberCountry ?? '') == 'IR' ? 'selected' : '' }}>🇮🇷 Iran</option>
+                        <option value="IQ" {{ ($player->memberCountry ?? '') == 'IQ' ? 'selected' : '' }}>🇮🇶 Iraq</option>
+                        <option value="IE" {{ ($player->memberCountry ?? '') == 'IE' ? 'selected' : '' }}>🇮🇪 Ireland</option>
+                        <option value="IL" {{ ($player->memberCountry ?? '') == 'IL' ? 'selected' : '' }}>🇮🇱 Israel</option>
+                        <option value="IT" {{ ($player->memberCountry ?? '') == 'IT' ? 'selected' : '' }}>🇮🇹 Italy</option>
+                        <option value="JP" {{ ($player->memberCountry ?? '') == 'JP' ? 'selected' : '' }}>🇯🇵 Japan</option>
+                        <option value="JO" {{ ($player->memberCountry ?? '') == 'JO' ? 'selected' : '' }}>🇯🇴 Jordan</option>
+                        <option value="KE" {{ ($player->memberCountry ?? '') == 'KE' ? 'selected' : '' }}>🇰🇪 Kenya</option>
+                        <option value="KR" {{ ($player->memberCountry ?? '') == 'KR' ? 'selected' : '' }}>🇰🇷 Korea</option>
+                        <option value="LB" {{ ($player->memberCountry ?? '') == 'LB' ? 'selected' : '' }}>🇱🇧 Lebanon</option>
+                        <option value="MY" {{ ($player->memberCountry ?? '') == 'MY' ? 'selected' : '' }}>🇲🇾 Malaysia</option>
+                        <option value="MX" {{ ($player->memberCountry ?? '') == 'MX' ? 'selected' : '' }}>🇲🇽 Mexico</option>
+                        <option value="NL" {{ ($player->memberCountry ?? '') == 'NL' ? 'selected' : '' }}>🇳🇱 Netherlands</option>
+                        <option value="NZ" {{ ($player->memberCountry ?? '') == 'NZ' ? 'selected' : '' }}>🇳🇿 New Zealand</option>
+                        <option value="NG" {{ ($player->memberCountry ?? '') == 'NG' ? 'selected' : '' }}>🇳🇬 Nigeria</option>
+                        <option value="NO" {{ ($player->memberCountry ?? '') == 'NO' ? 'selected' : '' }}>🇳🇴 Norway</option>
+                        <option value="PK" {{ ($player->memberCountry ?? '') == 'PK' ? 'selected' : '' }}>🇵🇰 Pakistan</option>
+                        <option value="PE" {{ ($player->memberCountry ?? '') == 'PE' ? 'selected' : '' }}>🇵🇪 Peru</option>
+                        <option value="PH" {{ ($player->memberCountry ?? '') == 'PH' ? 'selected' : '' }}>🇵🇭 Philippines</option>
+                        <option value="PL" {{ ($player->memberCountry ?? '') == 'PL' ? 'selected' : '' }}>🇵🇱 Poland</option>
+                        <option value="PT" {{ ($player->memberCountry ?? '') == 'PT' ? 'selected' : '' }}>🇵🇹 Portugal</option>
+                        <option value="RO" {{ ($player->memberCountry ?? '') == 'RO' ? 'selected' : '' }}>🇷🇴 Romania</option>
+                        <option value="RU" {{ ($player->memberCountry ?? '') == 'RU' ? 'selected' : '' }}>🇷🇺 Russia</option>
+                        <option value="SA" {{ ($player->memberCountry ?? '') == 'SA' ? 'selected' : '' }}>🇸🇦 Saudi Arabia</option>
+                        <option value="ZA" {{ ($player->memberCountry ?? '') == 'ZA' ? 'selected' : '' }}>🇿🇦 South Africa</option>
+                        <option value="ES" {{ ($player->memberCountry ?? '') == 'ES' ? 'selected' : '' }}>🇪🇸 Spain</option>
+                        <option value="LK" {{ ($player->memberCountry ?? '') == 'LK' ? 'selected' : '' }}>🇱🇰 Sri Lanka</option>
+                        <option value="SE" {{ ($player->memberCountry ?? '') == 'SE' ? 'selected' : '' }}>🇸🇪 Sweden</option>
+                        <option value="CH" {{ ($player->memberCountry ?? '') == 'CH' ? 'selected' : '' }}>🇨🇭 Switzerland</option>
+                        <option value="TH" {{ ($player->memberCountry ?? '') == 'TH' ? 'selected' : '' }}>🇹🇭 Thailand</option>
+                        <option value="TN" {{ ($player->memberCountry ?? '') == 'TN' ? 'selected' : '' }}>🇹🇳 Tunisia</option>
+                        <option value="TR" {{ ($player->memberCountry ?? '') == 'TR' ? 'selected' : '' }}>🇹🇷 Turkey</option>
+                        <option value="UA" {{ ($player->memberCountry ?? '') == 'UA' ? 'selected' : '' }}>🇺🇦 Ukraine</option>
+                        <option value="AE" {{ ($player->memberCountry ?? '') == 'AE' ? 'selected' : '' }}>🇦🇪 United Arab Emirates</option>
+                        <option value="GB" {{ ($player->memberCountry ?? '') == 'GB' ? 'selected' : '' }}>🇬🇧 United Kingdom</option>
+                        <option value="US" {{ ($player->memberCountry ?? '') == 'US' ? 'selected' : '' }}>🇺🇸 United States</option>
+                        <option value="VN" {{ ($player->memberCountry ?? '') == 'VN' ? 'selected' : '' }}>🇻🇳 Vietnam</option>
+                        <option value="ZW" {{ ($player->memberCountry ?? '') == 'ZW' ? 'selected' : '' }}>🇿🇼 Zimbabwe</option>
+                    </select>
+                </div>
                 {{-- Profile photo --}}
                 <div style="margin-bottom:1.5rem;">
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Profile photo</label>

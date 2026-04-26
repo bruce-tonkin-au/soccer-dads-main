@@ -148,11 +148,7 @@
     <div class="player-sub">How well do you know this player?</div>
 </div>
 
-<form method="POST" action="/rate/{{ $rater->memberCode }}" id="rating-form">
-    @csrf
-    <input type="hidden" name="ratedMemberID" value="{{ $nextPlayer->memberID }}">
-    <input type="hidden" name="action" value="rate" id="form-action">
-
+<div class="questions-wrapper">
     <div class="questions">
 
         <div class="question-block">
@@ -171,7 +167,6 @@
                     <i class="fa-solid fa-bullseye option-icon"></i>Clinical
                 </button>
             </div>
-            <input type="hidden" name="ratingGoal" id="ratingGoal" value="0">
         </div>
 
         <div class="question-block">
@@ -190,7 +185,6 @@
                     <i class="fa-solid fa-wand-magic-sparkles option-icon"></i>Playmaker
                 </button>
             </div>
-            <input type="hidden" name="ratingPassing" id="ratingPassing" value="0">
         </div>
 
         <div class="question-block">
@@ -209,7 +203,6 @@
                     <i class="fa-solid fa-person-running option-icon"></i>Engine room
                 </button>
             </div>
-            <input type="hidden" name="ratingWork" id="ratingWork" value="0">
         </div>
 
         <div class="question-block">
@@ -228,7 +221,6 @@
                     <i class="fa-solid fa-shield-halved option-icon"></i>Rock solid
                 </button>
             </div>
-            <input type="hidden" name="ratingDefending" id="ratingDefending" value="0">
         </div>
 
         <div class="question-block">
@@ -247,25 +239,35 @@
                     <i class="fa-solid fa-trophy option-icon"></i>Top player
                 </button>
             </div>
-            <input type="hidden" name="ratingOverall" id="ratingOverall" value="0">
         </div>
 
     </div>
+</div>
 
-</form>
+<div style="display:grid; grid-template-columns:1fr 3fr; gap:10px; margin:0 1.5rem 2rem;">
 
-{{-- Separate skip form --}}
-<form method="POST" action="/rate/{{ $rater->memberCode }}" style="margin: 0 1.5rem 2rem; display:grid; grid-template-columns:1fr 3fr; gap:10px;">
-    @csrf
-    <input type="hidden" name="ratedMemberID" value="{{ $nextPlayer->memberID }}">
-    <input type="hidden" name="action" value="skip">
-    <button type="submit" class="btn-skip">
-        <i class="fa-solid fa-forward"></i> Skip
-    </button>
-    <button type="submit" form="rating-form" class="btn-next" id="btn-next" disabled>
-        Next player <i class="fa-solid fa-arrow-right"></i>
-    </button>
-</form>
+    <form method="POST" action="/rate/{{ $rater->memberCode }}">
+        @csrf
+        <input type="hidden" name="ratedMemberID" value="{{ $nextPlayer->memberID }}">
+        <input type="hidden" name="action" value="skip">
+        <button type="submit" class="btn-skip" style="width:100%;">
+            <i class="fa-solid fa-forward"></i> Skip
+        </button>
+    </form>
+
+    <form method="POST" action="/rate/{{ $rater->memberCode }}" id="rating-form">
+        @csrf
+        <input type="hidden" name="ratedMemberID" value="{{ $nextPlayer->memberID }}">
+        <input type="hidden" name="action" value="rate">
+        @foreach(['ratingGoal', 'ratingPassing', 'ratingWork', 'ratingDefending', 'ratingOverall'] as $field)
+        <input type="hidden" name="{{ $field }}" id="{{ $field }}" value="0">
+        @endforeach
+        <button type="submit" class="btn-next" id="btn-next" disabled>
+            Next player <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </form>
+
+</div>
 
 <script>
     const answers = {

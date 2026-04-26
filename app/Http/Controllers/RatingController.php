@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RatingController extends Controller
 {
@@ -90,7 +91,11 @@ class RatingController extends Controller
             ->pluck('ratedMemberID')
             ->toArray();
 
-        $nextPlayer = $teammates->first(fn($p) => !in_array($p->memberID, $alreadyRated));
+        $skippedIDs = session("rating_skips_{$memberCode}", []);
+
+        $nextPlayer = $teammates->first(
+            fn($p) => !in_array($p->memberID, $alreadyRated) && !in_array($p->memberID, $skippedIDs)
+        );
 
         $totalToRate = $teammates->count();
         $ratedCount  = count(array_intersect($teammates->pluck('memberID')->toArray(), $alreadyRated));
@@ -112,36 +117,49 @@ class RatingController extends Controller
         $ratedMemberID = $request->input('ratedMemberID');
         $action        = $request->input('action');
 
-        if ($action !== 'skip') {
-            $existing = DB::table('player-ratings')
-                ->where('raterMemberID', $rater->memberID)
-                ->where('ratedMemberID', $ratedMemberID)
-                ->first();
+        Log::info('Rating store called', [
+            'action'        => $action,
+            'ratedMemberID' => $ratedMemberID,
+            'all'           => $request->all(),
+        ]);
 
-            if ($existing) {
-                DB::table('player-ratings')
-                    ->where('ratingID', $existing->ratingID)
-                    ->update([
-                        'ratingGoal'      => $request->input('ratingGoal', 0),
-                        'ratingPassing'   => $request->input('ratingPassing', 0),
-                        'ratingWork'      => $request->input('ratingWork', 0),
-                        'ratingDefending' => $request->input('ratingDefending', 0),
-                        'ratingOverall'   => $request->input('ratingOverall', 0),
-                        'updated_at'      => now(),
-                    ]);
-            } else {
-                DB::table('player-ratings')->insert([
-                    'raterMemberID'   => $rater->memberID,
-                    'ratedMemberID'   => $ratedMemberID,
+        if ($action === 'skip') {
+            $sessionKey = "rating_skips_{$memberCode}";
+            $skipped = session($sessionKey, []);
+            $skipped[] = (int) $ratedMemberID;
+            session([$sessionKey => array_unique($skipped)]);
+
+            return redirect("/rate/{$memberCode}");
+        }
+
+        $existing = DB::table('player-ratings')
+            ->where('raterMemberID', $rater->memberID)
+            ->where('ratedMemberID', $ratedMemberID)
+            ->first();
+
+        if ($existing) {
+            DB::table('player-ratings')
+                ->where('ratingID', $existing->ratingID)
+                ->update([
                     'ratingGoal'      => $request->input('ratingGoal', 0),
                     'ratingPassing'   => $request->input('ratingPassing', 0),
                     'ratingWork'      => $request->input('ratingWork', 0),
                     'ratingDefending' => $request->input('ratingDefending', 0),
                     'ratingOverall'   => $request->input('ratingOverall', 0),
-                    'created_at'      => now(),
                     'updated_at'      => now(),
                 ]);
-            }
+        } else {
+            DB::table('player-ratings')->insert([
+                'raterMemberID'   => $rater->memberID,
+                'ratedMemberID'   => $ratedMemberID,
+                'ratingGoal'      => $request->input('ratingGoal', 0),
+                'ratingPassing'   => $request->input('ratingPassing', 0),
+                'ratingWork'      => $request->input('ratingWork', 0),
+                'ratingDefending' => $request->input('ratingDefending', 0),
+                'ratingOverall'   => $request->input('ratingOverall', 0),
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ]);
         }
 
         return redirect("/rate/{$memberCode}");

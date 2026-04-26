@@ -101,6 +101,7 @@ class PlayerPortalController extends Controller
         $data = [
             'memberEmail'       => $request->input('email'),
             'memberPhoneMobile' => $request->input('mobile'),
+            'memberCountry'     => $request->input('country'),
         ];
 
         if ($request->hasFile('photo')) {
