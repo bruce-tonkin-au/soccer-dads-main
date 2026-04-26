@@ -99,8 +99,8 @@ class PlayerPortalController extends Controller
         $player = $this->getPlayer();
 
         $data = [
-            'memberEmail'  => $request->input('email'),
-            'memberMobile' => $request->input('mobile'),
+            'memberEmail'       => $request->input('email'),
+            'memberPhoneMobile' => $request->input('mobile'),
         ];
 
         if ($request->hasFile('photo')) {

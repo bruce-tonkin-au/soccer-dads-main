@@ -254,4 +254,84 @@ class PlayersController extends Controller
             'recentActions'
         ));
     }
+
+    public function card($memberSlug)
+    {
+        $member = DB::table('members')
+            ->where('memberSlug', $memberSlug)
+            ->where('memberActive', 1)
+            ->firstOrFail();
+
+        $goals = DB::table('scoring-actions')
+            ->where('memberID', $member->memberID)
+            ->where('actionGoal', 1)
+            ->where('actionActive', 1)
+            ->count();
+
+        $assists = DB::table('scoring-actions')
+            ->where('secondID', $member->memberID)
+            ->where('actionGoal', 1)
+            ->where('actionActive', 1)
+            ->count();
+
+        $games = DB::table('results')
+            ->where('resultMember', $member->memberKey)
+            ->where('resultActive', 1)
+            ->distinct('resultGame')
+            ->count('resultGame');
+
+        $shooting  = $games > 0 ? min(99, max(1, round(($goals / $games) * 25))) : 0;
+        $passing   = $games > 0 ? min(99, max(1, round(($assists / $games) * 30))) : 0;
+        $physical  = min(99, max(1, round($games / 6)));
+        $pace      = min(99, max(1, round($games / 5)));
+
+        $saves = DB::table('scoring-actions')
+            ->where('memberID', $member->memberID)
+            ->where('typeID', 3)
+            ->where('actionActive', 1)
+            ->count();
+        $defending = $games > 0 ? min(99, max(1, round(($saves / $games) * 20))) : 1;
+
+        $overall = min(99, max(1, round(($shooting * 0.35) + ($passing * 0.25) + ($pace * 0.15) + ($physical * 0.15) + ($defending * 0.10))));
+
+        $teamGoals = DB::table('scoring-actions')
+            ->where('memberID', $member->memberID)
+            ->where('actionGoal', 1)
+            ->where('actionActive', 1)
+            ->whereIn('teamID', [1, 2, 3])
+            ->select('teamID', DB::raw('count(*) as total'))
+            ->groupBy('teamID')
+            ->orderByDesc('total')
+            ->first();
+
+        $teamColors = [
+            1 => ['name' => 'Orange', 'color' => '#e68a46', 'card' => '#c97535'],
+            2 => ['name' => 'Green',  'color' => '#7bba56', 'card' => '#5a9e38'],
+            3 => ['name' => 'Blue',   'color' => '#458bc8', 'card' => '#2d6fa8'],
+        ];
+        $team = $teamGoals ? ($teamColors[$teamGoals->teamID] ?? $teamColors[3]) : $teamColors[3];
+
+        $awards = DB::table('season-awards')
+            ->where(function ($q) use ($member) {
+                $q->where('awardPlayer1', $member->memberID)
+                  ->orWhere('awardPlayer2', $member->memberID)
+                  ->orWhere('awardPlayer3', $member->memberID);
+            })
+            ->where('awardActive', 1)
+            ->count();
+
+        if ($saves > $goals) {
+            $position = 'GK';
+        } elseif ($assists > $goals) {
+            $position = 'MID';
+        } else {
+            $position = 'FWD';
+        }
+
+        return view('players.card', compact(
+            'member', 'overall', 'position', 'team',
+            'shooting', 'passing', 'pace', 'physical', 'defending',
+            'goals', 'assists', 'games', 'awards'
+        ));
+    }
 }

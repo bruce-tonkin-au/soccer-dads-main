@@ -34,9 +34,8 @@
                 </div>
                 <div style="margin-bottom:1.5rem;">
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Mobile number</label>
-                    <input type="tel" name="mobile" value="{{ $player->memberMobile ?? '' }}" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    <input type="tel" name="mobile" value="{{ $player->memberPhoneMobile ?? '' }}" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;" placeholder="e.g. 0412 345 678">
                 </div>
-
                 {{-- Profile photo --}}
                 <div style="margin-bottom:1.5rem;">
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Profile photo</label>
@@ -50,7 +49,9 @@
                     </div>
                     @endif
                     <input type="file" name="photo" accept="image/*" style="font-size:14px; color:#444;">
-                    <div style="font-size:12px; color:#aaa; margin-top:4px;">JPG or PNG. Used on your public player profile.</div>
+                    <div style="font-size:12px; color:#aaa; margin-top:4px; line-height:1.6;">
+                        JPG or PNG. <strong style="color:#888;">Best size: 400×400px square.</strong> Your face should be centred. Used on your public player profile.
+                    </div>
                 </div>
 
                 {{-- FIFA card photo --}}
@@ -66,7 +67,9 @@
                     </div>
                     @endif
                     <input type="file" name="photo_card" accept="image/*" style="font-size:14px; color:#444;">
-                    <div style="font-size:12px; color:#aaa; margin-top:4px;">JPG or PNG. Used on your FIFA-style player card.</div>
+                    <div style="font-size:12px; color:#aaa; margin-top:4px; line-height:1.6;">
+                        JPG or PNG. <strong style="color:#888;">Best size: 400×500px portrait.</strong> Stand against a plain background with your full upper body visible. This photo appears on your player card.
+                    </div>
                 </div>
 
                 <button type="submit" style="background:#262c39; color:#fff; border:none; border-radius:8px; padding:12px 24px; font-size:15px; font-weight:600; cursor:pointer;">

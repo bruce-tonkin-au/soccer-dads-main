@@ -12,6 +12,7 @@ use App\Http\Controllers\PlayerPortalController;
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/players', [PlayersController::class, 'index']);
 Route::get('/players/{memberSlug}', [PlayersController::class, 'show']);
+Route::get('/players/{memberSlug}/card', [PlayersController::class, 'card']);
 Route::get('/reg/{memberCode}', [RegistrationController::class, 'show']);
 Route::post('/reg/{memberCode}', [RegistrationController::class, 'update']);
 Route::get('/seasons', [SeasonsController::class, 'index']);
