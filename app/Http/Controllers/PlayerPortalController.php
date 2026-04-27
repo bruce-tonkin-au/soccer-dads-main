@@ -94,6 +94,25 @@ class PlayerPortalController extends Controller
         return view('player.profile', compact('player'));
     }
 
+    public function saveBirthday(Request $request)
+    {
+        $player = $this->getPlayer();
+
+        if ($player->memberBirthday) {
+            return back()->with('error', 'Your birthday has already been saved.');
+        }
+
+        $request->validate(['birthday' => 'required|date']);
+
+        $birthday = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('birthday'))->format('Y-m-d');
+
+        DB::table('members')->where('memberID', $player->memberID)->update([
+            'memberBirthday' => $birthday,
+        ]);
+
+        return back()->with('success', 'Your birthday has been saved.');
+    }
+
     public function updateProfile(Request $request)
     {
         $player = $this->getPlayer();

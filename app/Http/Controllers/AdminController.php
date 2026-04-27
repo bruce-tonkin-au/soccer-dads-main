@@ -155,6 +155,7 @@ class AdminController extends Controller
             'memberPhoneMobile' => $request->input('mobile'),
             'memberActive'      => $request->input('active', 0),
             'memberParent'      => $request->input('parent') ?: null,
+            'memberBirthday'    => $request->input('birthday') ?: null,
         ]);
         return redirect('/admin/players')->with('success', 'Player updated.');
     }
@@ -409,6 +410,7 @@ class AdminController extends Controller
                 'rating' => $p->rating,
                 'role'   => $p->role,
                 'bench'  => (bool) $p->bench,
+                'age'    => $p->memberBirthday ? \Carbon\Carbon::parse($p->memberBirthday)->age : null,
             ];
         })->values();
 

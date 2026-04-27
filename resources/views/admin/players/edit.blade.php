@@ -56,6 +56,10 @@
                 <option value="0" {{ !$player->memberActive ? 'selected' : '' }}>Inactive</option>
             </select>
         </div>
+        <div class="form-group">
+            <label class="form-label">Birthday</label>
+            <input type="date" name="birthday" class="form-control" value="{{ $player->memberBirthday ? \Carbon\Carbon::parse($player->memberBirthday)->format('Y-m-d') : '' }}">
+        </div>
         <div style="display:flex; gap:8px; margin-top:1rem;">
             <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-floppy-disk"></i> Save changes

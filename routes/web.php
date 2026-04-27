@@ -92,6 +92,7 @@ Route::middleware('player.auth')->group(function () {
     Route::post('/portal/topup/create', [PlayerPortalController::class, 'createPayment']);
     Route::get('/portal/topup/success', [PlayerPortalController::class, 'paymentSuccess']);
     Route::get('/portal/topup/cancel', [PlayerPortalController::class, 'paymentCancel']);
+    Route::post('/portal/birthday', [PlayerPortalController::class, 'saveBirthday']);
 });
 
 Route::get('/topup/{memberCode}', [PlayerPortalController::class, 'publicTopup']);

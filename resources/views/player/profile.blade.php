@@ -37,6 +37,19 @@
                     <input type="tel" name="mobile" value="{{ $player->memberPhoneMobile ?? '' }}" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;" placeholder="e.g. 0412 345 678">
                 </div>
                 <div style="margin-bottom:1.5rem;">
+                    <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Birthday</label>
+                    @if($player->memberBirthday)
+                        <div style="font-size:18px; font-weight:600; color:#262c39;">{{ \Carbon\Carbon::parse($player->memberBirthday)->format('d/m/Y') }}</div>
+                        <div style="font-size:12px; color:#aaa; margin-top:4px;">To update your birthday, please contact admin.</div>
+                    @else
+                        <input type="date" name="birthday" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none; margin-bottom:8px;">
+                        <div style="font-size:12px; color:#aaa; margin-bottom:12px;">Enter your birthday — this can only be set once.</div>
+                        <button type="submit" formaction="/portal/birthday" style="background:#262c39; color:#fff; border:none; border-radius:8px; padding:10px 20px; font-size:14px; font-weight:600; cursor:pointer;">
+                            Save birthday
+                        </button>
+                    @endif
+                </div>
+                <div style="margin-bottom:1.5rem;">
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Country of origin</label>
                     <select name="country" style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none; background:#fff;">
                         <option value="AU" {{ ($player->memberCountry ?? 'AU') == 'AU' ? 'selected' : '' }}>🇦🇺 Australia</option>

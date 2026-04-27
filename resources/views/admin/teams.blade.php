@@ -61,17 +61,20 @@
         <div style="background:#458bc8; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
             <div style="font-size:24px; font-weight:700;" id="count-3">0</div>
             <div style="font-size:13px; opacity:0.7; margin-top:4px;">avg <span id="avg-3">—</span></div>
-            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">Blue</div>
+            <div style="font-size:13px; opacity:0.7; margin-top:2px;">age <span id="age-3">—</span></div>
+            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Blue</div>
         </div>
         <div style="background:#7bba56; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
             <div style="font-size:24px; font-weight:700;" id="count-2">0</div>
             <div style="font-size:13px; opacity:0.7; margin-top:4px;">avg <span id="avg-2">—</span></div>
-            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">Green</div>
+            <div style="font-size:13px; opacity:0.7; margin-top:2px;">age <span id="age-2">—</span></div>
+            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Green</div>
         </div>
         <div style="background:#e68a46; border-radius:10px; padding:1rem; text-align:center; color:#fff;">
             <div style="font-size:24px; font-weight:700;" id="count-1">0</div>
             <div style="font-size:13px; opacity:0.7; margin-top:4px;">avg <span id="avg-1">—</span></div>
-            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em;">Orange</div>
+            <div style="font-size:13px; opacity:0.7; margin-top:2px;">age <span id="age-1">—</span></div>
+            <div style="font-size:12px; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Orange</div>
         </div>
     </div>
 
@@ -179,14 +182,22 @@
             const checked = document.querySelectorAll(`input[type="radio"][value="${teamID}"]:checked`);
             document.getElementById(`count-${teamID}`).textContent = checked.length;
 
-            let total = 0;
+            let ratingTotal = 0;
+            let ageTotal = 0, ageCount = 0;
+
             checked.forEach(input => {
                 const memberID = input.name.match(/\[(\d+)\]/)[1];
                 const entry = playerData.find(p => p.id == memberID);
-                if (entry) total += entry.rating;
+                if (entry) {
+                    ratingTotal += entry.rating;
+                    if (entry.age !== null) { ageTotal += entry.age; ageCount++; }
+                }
             });
+
             document.getElementById(`avg-${teamID}`).textContent =
-                checked.length > 0 ? (total / checked.length).toFixed(1) : '—';
+                checked.length > 0 ? (ratingTotal / checked.length).toFixed(1) : '—';
+            document.getElementById(`age-${teamID}`).textContent =
+                ageCount > 0 ? (ageTotal / ageCount).toFixed(1) : '—';
         });
     }
 
