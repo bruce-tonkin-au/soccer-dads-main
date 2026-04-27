@@ -260,7 +260,7 @@ class AdminController extends Controller
             ->where('r.gameID', $gameID)
             ->where('r.registrationStatus', 1)
             ->orderBy('m.memberNameLast')
-            ->select('m.*')
+            ->select('m.*', 'r.registrationBench')
             ->get();
 
         $teamKeyMap = [
@@ -288,7 +288,8 @@ class AdminController extends Controller
                 ->where('resultActive', 1)
                 ->distinct('resultGame')
                 ->count('resultGame');
-            $player->rating = $games > 0 ? min(99, round(($goals / $games) * 25) + round($games / 5)) : 1;
+            $player->rating = $games > 0 ? min(99, round(($goals / $games) * 25) + round($games / 5)) : null;
+            $player->bench  = (bool) ($player->registrationBench ?? 0);
 
             $assignment    = $existingAssignments[$player->memberKey] ?? null;
             $player->teamID = null;
@@ -303,6 +304,19 @@ class AdminController extends Controller
             return $player;
         })->sortByDesc('rating')->values();
 
+        $rated = $registered->filter(fn($p) => $p->rating !== null);
+        if ($rated->isNotEmpty()) {
+            $midRating = (int) round(($rated->min('rating') + $rated->max('rating')) / 2);
+        } else {
+            $midRating = 50;
+        }
+        $registered = $registered->map(function ($player) use ($midRating) {
+            if ($player->rating === null) {
+                $player->rating = $midRating;
+            }
+            return $player;
+        });
+
         $peerRatings = DB::table('player-ratings')
             ->whereIn('ratedMemberID', $registered->pluck('memberID'))
             ->select(
@@ -311,7 +325,8 @@ class AdminController extends Controller
                 DB::raw('AVG(ratingGoal) as avgGoal'),
                 DB::raw('AVG(ratingPassing) as avgPassing'),
                 DB::raw('AVG(ratingWork) as avgWork'),
-                DB::raw('AVG(ratingDefending) as avgDefending')
+                DB::raw('AVG(ratingDefending) as avgDefending'),
+                DB::raw('AVG(ratingOverall) as avgOverall')
             )
             ->groupBy('ratedMemberID')
             ->get()
@@ -361,16 +376,64 @@ class AdminController extends Controller
                 $g = $games > 0 ? $goals / $games : 0;
                 $a = $games > 0 ? $assists / $games : 0;
                 $s = $games > 0 ? $saves / $games : 0;
-                $attrs = ['striker' => $g, 'playmaker' => $a, 'defender' => $s, 'workhorse' => 0.1];
-                arsort($attrs);
-                $player->role = array_key_first($attrs);
+                if ($s > $g && $s > $a) {
+                    $player->role = 'defender';
+                } elseif ($a > $g) {
+                    $player->role = 'playmaker';
+                } else {
+                    $player->role = 'striker';
+                }
+            }
+
+            $performanceRating = $player->rating;
+            if ($peer && $peer->ratingCount >= 1) {
+                $peerScore = min(99, round(
+                    (((float) $peer->avgGoal * 0.35) +
+                     ((float) $peer->avgPassing * 0.25) +
+                     ((float) $peer->avgWork * 0.20) +
+                     ((float) $peer->avgDefending * 0.10) +
+                     ((float) $peer->avgOverall * 0.10)) / 4 * 99
+                ));
+                $player->rating = min(99, round(($peerScore * 0.70) + ($performanceRating * 0.30)));
+            } else {
+                $player->rating = $performanceRating;
             }
 
             $player->roleIcon = $roleIconMap[$player->role];
             return $player;
         });
 
-        return view('admin.teams', compact('game', 'registered', 'teamNames', 'teamColors'));
+        $playerDataForJs = $registered->map(function ($p) {
+            return [
+                'id'     => $p->memberID,
+                'rating' => $p->rating,
+                'role'   => $p->role,
+                'bench'  => (bool) $p->bench,
+            ];
+        })->values();
+
+        return view('admin.teams', compact('game', 'registered', 'teamNames', 'teamColors', 'playerDataForJs'));
+    }
+
+    public function toggleBench($gameID, $memberID)
+    {
+        $reg = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('memberID', $memberID)
+            ->first();
+
+        if (!$reg) {
+            return response()->json(['error' => 'Not found'], 404);
+        }
+
+        $newValue = $reg->registrationBench ? 0 : 1;
+
+        DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('memberID', $memberID)
+            ->update(['registrationBench' => $newValue]);
+
+        return response()->json(['bench' => $newValue]);
     }
 
     public function ratings()
