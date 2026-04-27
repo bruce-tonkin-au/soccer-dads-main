@@ -162,6 +162,13 @@
         <div class="next-game-date">{{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }}</div>
         <div class="next-game-sub">{{ $nextGame->seasonName }} · Round {{ $nextGame->gameRound }}</div>
 
+        @if($atCapacity)
+        <div style="border:2px solid #e68a46; background:#fff8e6; border-radius:10px; padding:1rem 1.25rem;">
+            <div style="font-size:22px; margin-bottom:0.4rem;">⚽</div>
+            <div style="font-weight:700; color:#c0600a; font-size:15px; margin-bottom:0.25rem;">Game is at capacity</div>
+            <div style="color:#888; font-size:14px;">All 18 spots are filled for this game.</div>
+        </div>
+        @else
         <div class="reg-buttons">
             <form method="POST" action="/reg/{{ $member->memberCode }}">
                 @csrf
@@ -178,6 +185,7 @@
                 </button>
             </form>
         </div>
+        @endif
     </div>
     @endif
 

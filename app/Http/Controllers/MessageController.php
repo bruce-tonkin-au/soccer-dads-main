@@ -41,11 +41,19 @@ class MessageController extends Controller
         }
 
         $registration = null;
+        $atCapacity = false;
         if ($nextGame) {
             $registration = DB::table('game-registrations')
                 ->where('gameID', $nextGame->gameID)
                 ->where('memberID', $member->memberID)
                 ->first();
+
+            $confirmedCount = DB::table('game-registrations')
+                ->where('gameID', $nextGame->gameID)
+                ->where('registrationStatus', 1)
+                ->count();
+
+            $atCapacity = $confirmedCount >= 18;
         }
 
         $lastRating = DB::table('player-ratings')
@@ -57,7 +65,7 @@ class MessageController extends Controller
             \Carbon\Carbon::parse($lastRating->created_at)->diffInDays(now()) > 14;
 
         return view('message', compact(
-            'message', 'member', 'nextGame', 'registration', 'needsPeerReview'
+            'message', 'member', 'nextGame', 'registration', 'needsPeerReview', 'atCapacity'
         ));
     }
 }
