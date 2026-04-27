@@ -207,6 +207,18 @@
         text-align: center;
         border-radius: 8px;
     }
+    #footer-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+    #footer-grid > div:nth-child(1),
+    #footer-grid > div:nth-child(3) {
+        display: none;
+    }
+    #footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
 }
     </style>
     @stack('styles')
@@ -242,7 +254,7 @@
 
 <footer style="background:#262c39; padding:4rem 2rem 2rem;">
     <div class="container">
-        <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; margin-bottom:3rem;">
+        <div id="footer-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; margin-bottom:3rem;">
 
             {{-- Brand --}}
             <div>
@@ -285,7 +297,7 @@
 
         </div>
 
-        <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+        <div id="footer-bottom" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center;">
             <span style="font-size:13px; color:rgba(255,255,255,0.3);">© {{ date('Y') }} Soccer Dads</span>
             <span style="font-size:13px; color:rgba(255,255,255,0.3);">Adelaide Hills, South Australia</span>
         </div>

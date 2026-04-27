@@ -63,8 +63,12 @@
     #players-table tbody tr:last-child td {
         border-bottom: none;
     }
-
-
+    @media (max-width: 768px) {
+        #players-table td:nth-child(n+3),
+        #players-table th:nth-child(n+3) {
+            display: none;
+        }
+    }
 </style>
 @endpush
 

@@ -20,7 +20,7 @@
 {{-- Stats bar --}}
 <div style="background:linear-gradient(to right, #458bc8, #7bba56, #e68a46); padding:2rem;">
     <div class="container">
-        <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:2rem; text-align:center;">
+        <div class="stats-bar-grid" style="display:grid; grid-template-columns:repeat(5,1fr); gap:2rem; text-align:center;">
             <div>
                 <div style="font-size:36px; font-weight:700; color:#fff;">{{ $stats['seasons'] }}</div>
                 <div style="font-size:13px; color:rgba(255,255,255,0.8); text-transform:uppercase; letter-spacing:0.08em;">Seasons</div>
@@ -70,7 +70,7 @@
 <div style="padding:5rem 2rem;">
     <div class="container">
         <h2 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:3rem; text-align:center;">How it works</h2>
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;">
+        <div class="how-it-works-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;">
             <div style="text-align:center; padding:2rem;">
                 <div style="width:64px; height:64px; background:#458bc8; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
     <i class="fa-solid fa-envelope" style="color:#fff; font-size:24px;"></i>
@@ -97,3 +97,19 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+    @media (max-width: 768px) {
+        .stats-bar-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .stats-bar-grid > div:nth-child(5) {
+            grid-column: 1 / -1;
+        }
+        .how-it-works-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+@endpush

@@ -11,7 +11,7 @@
 
 <div style="padding:4rem 2rem;">
     <div class="container">
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
+        <div class="about-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
             <a href="/about/history" style="text-decoration:none;">
                 <div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; padding:2rem; text-align:center; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <i class="fa-solid fa-book-open" style="font-size:36px; color:#458bc8; margin-bottom:1rem; display:block;"></i>
@@ -38,3 +38,13 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+    @media (max-width: 768px) {
+        .about-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+@endpush

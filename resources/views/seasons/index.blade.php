@@ -63,6 +63,12 @@
     #seasons-table tbody tr:last-child td {
         border-bottom: none;
     }
+    @media (max-width: 768px) {
+        #seasons-table td:nth-child(n+2),
+        #seasons-table th:nth-child(n+2) {
+            display: none;
+        }
+    }
 </style>
 @endpush
 
