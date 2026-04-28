@@ -347,7 +347,7 @@ class SeasonsController extends Controller
             ->join('members as m', 'r.resultMemberID', '=', 'm.memberID')
             ->where('r.resultGameID', $game->gameID)
             ->where('r.resultActive', 1)
-            ->select('m.memberNameFirst', 'm.memberNameLast', 'm.memberSlug', 'r.resultTeamID')
+            ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug', 'r.resultTeamID')
             ->get()
             ->groupBy('resultTeamID');
 
