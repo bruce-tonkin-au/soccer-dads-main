@@ -343,6 +343,14 @@ class SeasonsController extends Controller
 
         $youtubeStart = $game->gameYouTubeStart ?? null;
 
+        $teamPlayers = DB::table('results as r')
+            ->join('members as m', 'r.resultMemberID', '=', 'm.memberID')
+            ->where('r.resultGameID', $game->gameID)
+            ->where('r.resultActive', 1)
+            ->select('m.memberNameFirst', 'm.memberNameLast', 'm.memberSlug', 'r.resultTeamID')
+            ->get()
+            ->groupBy('resultTeamID');
+
         return view('seasons.night', compact(
             'season',
             'game',
@@ -357,7 +365,8 @@ class SeasonsController extends Controller
             'allTimeGoals',
             'allTimeAssists',
             'youtubeID',
-            'youtubeStart'
+            'youtubeStart',
+            'teamPlayers'
         ));
     }
 }

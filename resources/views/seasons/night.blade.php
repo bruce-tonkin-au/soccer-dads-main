@@ -55,7 +55,8 @@
                 $scorerCounts = $teamGoalScorers->groupBy('memberID')->map(fn($g) => [
                     'name' => $g->first()->scorerFirst . ' ' . $g->first()->scorerLast,
                     'goals' => $g->count()
-                ])->sortByDesc('goals');
+                ])->sortByDesc('goals')->keyBy('name');
+                $players = $teamPlayers[$teamID] ?? collect();
             @endphp
             <div style="background:{{ $team['color'] }}; border-radius:16px; padding:1.5rem; color:#fff; display:flex; flex-direction:column;">
                 <div style="font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.7); margin-bottom:4px;">{{ $positions[$i] }}</div>
@@ -63,13 +64,16 @@
                 <div style="font-size:18px; font-weight:600; margin-bottom:4px;">{{ $team['name'] }}</div>
                 <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:1rem;">{{ $teamNightGoals[$teamID] ?? 0 }} goals</div>
                 <div style="border-top:1px solid rgba(255,255,255,0.2); padding-top:1rem; flex:1;">
-                    @forelse($scorerCounts as $scorer)
+                    @forelse($players as $player)
+                    @php $fullName = $player->memberNameFirst . ' ' . $player->memberNameLast; @endphp
                     <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:6px;">
-                        <span style="color:rgba(255,255,255,0.9);">{{ $scorer['name'] }}</span>
-                        <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:20px; font-size:12px; font-weight:600;">{{ $scorer['goals'] }}</span>
+                        <span style="color:rgba(255,255,255,0.9);">{{ $fullName }}</span>
+                        @if(isset($scorerCounts[$fullName]))
+                        <span style="background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:20px; font-size:12px; font-weight:600;">{{ $scorerCounts[$fullName]['goals'] }}</span>
+                        @endif
                     </div>
                     @empty
-                    <div style="font-size:13px; color:rgba(255,255,255,0.5);">No goals</div>
+                    <div style="font-size:13px; color:rgba(255,255,255,0.5);">No players</div>
                     @endforelse
                 </div>
             </div>
@@ -367,12 +371,12 @@
             awayPoints = 1;
         }
 
-        if (homeID === 3) blue += homePoints;
-        if (homeID === 2) green += homePoints;
-        if (homeID === 1) orange += homePoints;
-        if (awayID === 3) blue += awayPoints;
-        if (awayID === 2) green += awayPoints;
-        if (awayID === 1) orange += awayPoints;
+        if (homeID == 3) blue += homePoints;
+        if (homeID == 2) green += homePoints;
+        if (homeID == 1) orange += homePoints;
+        if (awayID == 3) blue += awayPoints;
+        if (awayID == 2) green += awayPoints;
+        if (awayID == 1) orange += awayPoints;
 
         bluePoints.push(blue);
         greenPoints.push(green);
