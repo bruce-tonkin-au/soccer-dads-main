@@ -9,7 +9,7 @@
         </a>
         <h2 style="margin-bottom:0;">Edit — {{ $season->seasonName }}</h2>
     </div>
-    <form method="POST" action="/admin/seasons/{{ $season->seasonKey }}/edit">
+    <form method="POST" action="/admin/seasons/{{ $season->seasonID }}/edit">
         @csrf
         <div class="form-group">
             <label class="form-label">Season name</label>

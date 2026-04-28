@@ -32,13 +32,12 @@ class PlayersController extends Controller
             ->groupBy('secondID')
             ->pluck('total', 'secondID');
 
-        $gameCounts = DB::table('members as m')
-            ->join('results as r', 'r.resultMember', '=', 'm.memberKey')
-            ->whereIn('m.memberID', $memberIDs)
-            ->where('r.resultActive', 1)
-            ->select('m.memberID', DB::raw('count(distinct r.resultGame) as total'))
-            ->groupBy('m.memberID')
-            ->pluck('total', 'memberID');
+        $gameCounts = DB::table('results')
+            ->whereIn('resultMemberID', $memberIDs)
+            ->where('resultActive', 1)
+            ->select('resultMemberID', DB::raw('count(distinct resultGameID) as total'))
+            ->groupBy('resultMemberID')
+            ->pluck('total', 'resultMemberID');
 
         $allAwards = DB::table('season-awards as sa')
             ->join('seasons as s', 'sa.seasonID', '=', 's.seasonID')
@@ -86,13 +85,13 @@ class PlayersController extends Controller
             ->count();
 
         $gamesPlayed = DB::table('results')
-            ->where('resultMember', $member->memberKey)
+            ->where('resultMemberID', $member->memberID)
             ->where('resultActive', 1)
-            ->count(DB::raw('distinct resultGame'));
+            ->count(DB::raw('distinct resultGameID'));
 
         $dateRange = DB::table('results as r')
-            ->join('games as g', 'g.gameKey', '=', 'r.resultGame')
-            ->where('r.resultMember', $member->memberKey)
+            ->join('games as g', 'g.gameID', '=', 'r.resultGameID')
+            ->where('r.resultMemberID', $member->memberID)
             ->where('r.resultActive', 1)
             ->selectRaw("
                 MIN(CASE WHEN g.gameDate LIKE '%/%'
@@ -122,7 +121,7 @@ class PlayersController extends Controller
 
         $goalsBySeason = DB::table('scoring-actions as a')
             ->join('games as g', 'a.gameID', '=', 'g.gameID')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('a.memberID', $member->memberID)
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
@@ -133,7 +132,7 @@ class PlayersController extends Controller
 
         $assistsBySeason = DB::table('scoring-actions as a')
             ->join('games as g', 'a.gameID', '=', 'g.gameID')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('a.secondID', $member->memberID)
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
@@ -143,12 +142,12 @@ class PlayersController extends Controller
             ->get();
 
         $gamesBySeason = DB::table('results as r')
-            ->join('games as g', 'g.gameKey', '=', 'r.resultGame')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
-            ->where('r.resultMember', $member->memberKey)
+            ->join('games as g', 'g.gameID', '=', 'r.resultGameID')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
+            ->where('r.resultMemberID', $member->memberID)
             ->where('r.resultActive', 1)
             ->where('g.gameVisible', 1)
-            ->select('s.seasonID', DB::raw('count(distinct r.resultGame) as games'))
+            ->select('s.seasonID', DB::raw('count(distinct r.resultGameID) as games'))
             ->groupBy('s.seasonID')
             ->get();
 
@@ -204,7 +203,7 @@ class PlayersController extends Controller
 
         $recentActions = DB::table('scoring-actions as a')
             ->join('games as g', 'a.gameID', '=', 'g.gameID')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->join('scoring as sc', 'a.scoringID', '=', 'sc.scoringID')
             ->leftJoin('members as m2', 'a.secondID', '=', 'm2.memberID')
             ->where('a.memberID', $member->memberID)
@@ -276,10 +275,10 @@ class PlayersController extends Controller
             ->count();
 
         $games = DB::table('results')
-            ->where('resultMember', $member->memberKey)
+            ->where('resultMemberID', $member->memberID)
             ->where('resultActive', 1)
-            ->distinct('resultGame')
-            ->count('resultGame');
+            ->distinct('resultGameID')
+            ->count('resultGameID');
 
         $shooting  = $games > 0 ? min(99, max(1, round(($goals / $games) * 25))) : 0;
         $passing   = $games > 0 ? min(99, max(1, round(($assists / $games) * 30))) : 0;

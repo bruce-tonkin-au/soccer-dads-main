@@ -4,12 +4,12 @@
 
 <div class="admin-card" style="max-width:500px;">
     <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
-        <a href="/admin/seasons/{{ $season->seasonKey }}/games" class="btn btn-secondary" style="padding:6px 12px;">
+        <a href="/admin/seasons/{{ $season->seasonID }}/games" class="btn btn-secondary" style="padding:6px 12px;">
             <i class="fa-solid fa-chevron-left"></i>
         </a>
         <h2 style="margin-bottom:0;">Edit Round {{ $game->gameRound }} — {{ $season->seasonName }}</h2>
     </div>
-    <form method="POST" action="/admin/seasons/{{ $season->seasonKey }}/games/{{ $game->gameID }}/edit">
+    <form method="POST" action="/admin/seasons/{{ $season->seasonID }}/games/{{ $game->gameID }}/edit">
         @csrf
         <div class="form-group">
             <label class="form-label">Round number</label>

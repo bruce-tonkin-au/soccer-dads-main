@@ -49,9 +49,9 @@ class AdminController extends Controller
         $nextGame = null;
         if ($currentSeason) {
             $nextGame = DB::table('games as g')
-                ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+                ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
                 ->where('g.gameVisible', 1)
-                ->where('g.gameSeason', $currentSeason->seasonKey)
+                ->where('g.gameSeasonID', $currentSeason->seasonID)
                 ->whereNotExists(function ($q) {
                     $q->select(DB::raw(1))->from('scoring')
                       ->whereColumn('scoring.gameID', 'g.gameID')
@@ -69,7 +69,7 @@ class AdminController extends Controller
                 ->where('r.gameID', $nextGame->gameID)
                 ->where('r.registrationStatus', 1)
                 ->orderBy('m.memberNameLast')
-                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberKey', 'm.memberSlug')
+                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
                 ->get();
         }
 
@@ -120,17 +120,12 @@ class AdminController extends Controller
             $slug = $baseSlug . '-' . $counter++;
         }
 
-        do {
-            $key = Str::random(12);
-        } while (DB::table('members')->where('memberKey', $key)->exists());
-
         DB::table('members')->insert([
             'memberNameFirst'   => $firstName,
             'memberNameLast'    => $lastName,
             'memberEmail'       => $request->input('email'),
             'memberPhoneMobile' => $request->input('mobile'),
             'memberCode'        => $code,
-            'memberKey'         => $key,
             'memberSlug'        => $slug,
             'memberActive'      => 1,
             'memberParent'      => $request->input('parent') ?: null,
@@ -174,9 +169,7 @@ class AdminController extends Controller
 
     public function storeSeason(Request $request)
     {
-        $key = Str::random(12);
         DB::table('seasons')->insert([
-            'seasonKey'     => $key,
             'seasonLink'    => $request->input('seasonLink'),
             'seasonName'    => $request->input('seasonName'),
             'seasonVisible' => $request->input('seasonVisible', 1),
@@ -184,15 +177,15 @@ class AdminController extends Controller
         return redirect('/admin/seasons')->with('success', 'Season created.');
     }
 
-    public function editSeason($seasonKey)
+    public function editSeason($seasonID)
     {
-        $season = DB::table('seasons')->where('seasonKey', $seasonKey)->firstOrFail();
+        $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
         return view('admin.seasons.edit', compact('season'));
     }
 
-    public function updateSeason(Request $request, $seasonKey)
+    public function updateSeason(Request $request, $seasonID)
     {
-        DB::table('seasons')->where('seasonKey', $seasonKey)->update([
+        DB::table('seasons')->where('seasonID', $seasonID)->update([
             'seasonLink'    => $request->input('seasonLink'),
             'seasonName'    => $request->input('seasonName'),
             'seasonVisible' => $request->input('seasonVisible', 1),
@@ -201,41 +194,39 @@ class AdminController extends Controller
     }
 
     // GAMES
-    public function games($seasonKey)
+    public function games($seasonID)
     {
-        $season = DB::table('seasons')->where('seasonKey', $seasonKey)->firstOrFail();
-        $games  = DB::table('games')->where('gameSeason', $seasonKey)->orderBy('gameRound')->get();
+        $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
+        $games  = DB::table('games')->where('gameSeasonID', $seasonID)->orderBy('gameRound')->get();
         return view('admin.games.index', compact('season', 'games'));
     }
 
-    public function createGame($seasonKey)
+    public function createGame($seasonID)
     {
-        $season = DB::table('seasons')->where('seasonKey', $seasonKey)->firstOrFail();
+        $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
         return view('admin.games.create', compact('season'));
     }
 
-    public function storeGame(Request $request, $seasonKey)
+    public function storeGame(Request $request, $seasonID)
     {
-        $gameKey = Str::random(12);
         DB::table('games')->insert([
-            'gameKey'     => $gameKey,
-            'gameSeason'  => $seasonKey,
-            'gameRound'   => $request->input('gameRound'),
-            'gameDate'    => $request->input('gameDate'),
-            'gameYouTube' => $request->input('gameYouTube'),
-            'gameVisible' => $request->input('gameVisible', 1),
+            'gameSeasonID' => $seasonID,
+            'gameRound'    => $request->input('gameRound'),
+            'gameDate'     => $request->input('gameDate'),
+            'gameYouTube'  => $request->input('gameYouTube'),
+            'gameVisible'  => $request->input('gameVisible', 1),
         ]);
-        return redirect("/admin/seasons/{$seasonKey}/games")->with('success', 'Game created.');
+        return redirect("/admin/seasons/{$seasonID}/games")->with('success', 'Game created.');
     }
 
-    public function editGame($seasonKey, $gameID)
+    public function editGame($seasonID, $gameID)
     {
-        $season = DB::table('seasons')->where('seasonKey', $seasonKey)->firstOrFail();
+        $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
         $game   = DB::table('games')->where('gameID', $gameID)->firstOrFail();
         return view('admin.games.edit', compact('season', 'game'));
     }
 
-    public function updateGame(Request $request, $seasonKey, $gameID)
+    public function updateGame(Request $request, $seasonID, $gameID)
     {
         DB::table('games')->where('gameID', $gameID)->update([
             'gameRound'        => $request->input('gameRound'),
@@ -244,16 +235,16 @@ class AdminController extends Controller
             'gameYouTubeStart' => $request->input('gameYouTubeStart') ?: null,
             'gameVisible'      => $request->input('gameVisible', 1),
         ]);
-        return redirect("/admin/seasons/{$seasonKey}/games")->with('success', 'Game updated.');
+        return redirect("/admin/seasons/{$seasonID}/games")->with('success', 'Game updated.');
     }
 
     // TEAMS
     public function teams($gameID)
     {
         $game = DB::table('games as g')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('g.gameID', $gameID)
-            ->select('g.*', 's.seasonName', 's.seasonKey')
+            ->select('g.*', 's.seasonName', 's.seasonID')
             ->firstOrFail();
 
         $registered = DB::table('game-registrations as r')
@@ -264,44 +255,31 @@ class AdminController extends Controller
             ->select('m.*', 'r.registrationBench')
             ->get();
 
-        $teamKeyMap = [
-            1 => 'DHJ902klu908',
-            2 => 'WHD891094lkm',
-            3 => '902ULK982nbg',
-        ];
         $teamNames  = [1 => 'Orange', 2 => 'Green', 3 => 'Blue'];
         $teamColors = [1 => '#e68a46', 2 => '#7bba56', 3 => '#458bc8'];
 
         $existingAssignments = DB::table('results')
-            ->where('resultGame', $game->gameKey)
+            ->where('resultGameID', $game->gameID)
             ->where('resultActive', 1)
             ->get()
-            ->keyBy('resultMember');
+            ->keyBy('resultMemberID');
 
-        $registered = $registered->map(function ($player) use ($existingAssignments, $teamKeyMap) {
+        $registered = $registered->map(function ($player) use ($existingAssignments) {
             $goals = DB::table('scoring-actions')
                 ->where('memberID', $player->memberID)
                 ->where('actionGoal', 1)
                 ->where('actionActive', 1)
                 ->count();
             $games = DB::table('results')
-                ->where('resultMember', $player->memberKey)
+                ->where('resultMemberID', $player->memberID)
                 ->where('resultActive', 1)
-                ->distinct('resultGame')
-                ->count('resultGame');
+                ->distinct('resultGameID')
+                ->count('resultGameID');
             $player->rating = $games > 0 ? min(99, round(($goals / $games) * 25) + round($games / 5)) : null;
             $player->bench  = (bool) ($player->registrationBench ?? 0);
 
-            $assignment    = $existingAssignments[$player->memberKey] ?? null;
-            $player->teamID = null;
-            if ($assignment) {
-                foreach ($teamKeyMap as $key => $id) {
-                    if ($assignment->resultTeam === $key) {
-                        $player->teamID = $id;
-                        break;
-                    }
-                }
-            }
+            $assignment     = $existingAssignments[$player->memberID] ?? null;
+            $player->teamID = $assignment ? $assignment->resultTeamID : null;
             return $player;
         })->sortByDesc('rating')->values();
 
@@ -370,10 +348,10 @@ class AdminController extends Controller
                     ->where('actionActive', 1)
                     ->count();
                 $games = DB::table('results')
-                    ->where('resultMember', $player->memberKey)
+                    ->where('resultMemberID', $player->memberID)
                     ->where('resultActive', 1)
-                    ->distinct('resultGame')
-                    ->count('resultGame');
+                    ->distinct('resultGameID')
+                    ->count('resultGameID');
                 $g = $games > 0 ? $goals / $games : 0;
                 $a = $games > 0 ? $assists / $games : 0;
                 $s = $games > 0 ? $saves / $games : 0;
@@ -561,7 +539,7 @@ class AdminController extends Controller
     public function printSheet($gameID)
     {
         $game = DB::table('games as g')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('g.gameID', $gameID)
             ->select('g.*', 's.seasonName')
             ->firstOrFail();
@@ -575,17 +553,15 @@ class AdminController extends Controller
             ->select('m.*')
             ->get();
 
-        $gameKeys = DB::table('members')
-            ->whereIn('memberID', $registered->pluck('memberID'))
-            ->pluck('memberKey', 'memberID');
+        $memberIDs = $registered->pluck('memberID');
 
         $gamesPlayed = DB::table('results')
-            ->whereIn('resultMember', $gameKeys->values())
+            ->whereIn('resultMemberID', $memberIDs)
             ->where('resultActive', 1)
-            ->select('resultMember', DB::raw('COUNT(DISTINCT resultGame) as total'))
-            ->groupBy('resultMember')
+            ->select('resultMemberID', DB::raw('COUNT(DISTINCT resultGameID) as total'))
+            ->groupBy('resultMemberID')
             ->get()
-            ->keyBy('resultMember');
+            ->keyBy('resultMemberID');
 
         $bibCounts = DB::table('games')
             ->whereNotNull('gameBibs')
@@ -597,7 +573,7 @@ class AdminController extends Controller
             ->keyBy('gameBibs');
 
         $balances = DB::table('account')
-            ->whereIn('memberID', $registered->pluck('memberID'))
+            ->whereIn('memberID', $memberIDs)
             ->where('accountVisible', 1)
             ->select('memberID', DB::raw('SUM(accountValue) as balance'))
             ->groupBy('memberID')
@@ -609,12 +585,11 @@ class AdminController extends Controller
             $bibsHolder = DB::table('members')->where('memberID', $game->gameBibs)->first();
         }
 
-        $players = $registered->map(function ($member) use ($gameKeys, $gamesPlayed, $bibCounts, $balances) {
-            $key = $gameKeys[$member->memberID] ?? null;
-            $games = $key ? ($gamesPlayed[$key]->total ?? 0) : 0;
-            $bibs = $key ? ($bibCounts[$key]->total ?? 0) : 0;
+        $players = $registered->map(function ($member) use ($gamesPlayed, $bibCounts, $balances) {
+            $games      = $gamesPlayed[$member->memberID]->total ?? 0;
+            $bibs       = isset($bibCounts[$member->memberID]) ? $bibCounts[$member->memberID]->total : 0;
             $bibPercent = $games > 0 ? round(($bibs / $games) * 100, 1) : 0;
-            $balance = $balances[$member->memberID]->balance ?? 0;
+            $balance    = $balances[$member->memberID]->balance ?? 0;
 
             return (object) [
                 'memberID'        => $member->memberID,
@@ -634,46 +609,35 @@ class AdminController extends Controller
 
     public function saveTeams(Request $request, $gameID)
     {
-        $game = DB::table('games')->where('gameID', $gameID)->firstOrFail();
-
-        $teamKeyMap = [
-            1 => 'DHJ902klu908',
-            2 => 'WHD891094lkm',
-            3 => '902ULK982nbg',
-        ];
+        $game      = DB::table('games')->where('gameID', $gameID)->firstOrFail();
         $pointsMap = [1 => 3, 2 => 2, 3 => 1];
 
         foreach ($request->input('teams', []) as $memberID => $teamID) {
-            if (!$teamID) continue;
-
-            $member  = DB::table('members')->where('memberID', $memberID)->first();
-            if (!$member) continue;
-
-            $teamKey = $teamKeyMap[$teamID] ?? null;
-            if (!$teamKey) continue;
+            $teamID = (int) $teamID;
+            if (!$teamID || !isset($pointsMap[$teamID])) continue;
 
             $existing = DB::table('results')
-                ->where('resultGame', $game->gameKey)
-                ->where('resultMember', $member->memberKey)
+                ->where('resultGameID', $game->gameID)
+                ->where('resultMemberID', $memberID)
                 ->first();
 
             if ($existing) {
                 DB::table('results')->where('resultID', $existing->resultID)->update([
-                    'resultTeam'   => $teamKey,
+                    'resultTeamID' => $teamID,
                     'resultPoints' => $pointsMap[$teamID],
                     'resultEdited' => now(),
                 ]);
             } else {
                 DB::table('results')->insert([
-                    'resultSeason'  => $game->gameSeason,
-                    'resultGame'    => $game->gameKey,
-                    'resultMember'  => $member->memberKey,
-                    'resultTeam'    => $teamKey,
-                    'resultPoints'  => $pointsMap[$teamID],
-                    'resultActive'  => 1,
-                    'resultVisited' => 0,
-                    'resultCreated' => now(),
-                    'resultEdited'  => now(),
+                    'resultSeasonID' => $game->gameSeasonID,
+                    'resultGameID'   => $game->gameID,
+                    'resultMemberID' => $memberID,
+                    'resultTeamID'   => $teamID,
+                    'resultPoints'   => $pointsMap[$teamID],
+                    'resultActive'   => 1,
+                    'resultVisited'  => 0,
+                    'resultCreated'  => now(),
+                    'resultEdited'   => now(),
                 ]);
             }
         }

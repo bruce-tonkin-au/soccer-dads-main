@@ -17,22 +17,21 @@ class RatingController extends Controller
 
         $threeMonthsAgo = now()->subMonths(3);
 
-        $myRecentGames = DB::table('results as r')
-            ->join('games as g', 'r.resultGame', '=', 'g.gameKey')
-            ->where('r.resultMember', $rater->memberKey)
+        $myRecentGameIDs = DB::table('results as r')
+            ->join('games as g', 'r.resultGameID', '=', 'g.gameID')
+            ->where('r.resultMemberID', $rater->memberID)
             ->where('r.resultActive', 1)
             ->where(function ($q) use ($threeMonthsAgo) {
                 $q->whereRaw("STR_TO_DATE(g.gameDate, '%e/%c/%Y') >= ?", [$threeMonthsAgo->format('Y-m-d')])
                   ->orWhere('g.gameDate', '>=', $threeMonthsAgo->format('Y-m-d'));
             })
-            ->pluck('r.resultGame');
+            ->pluck('r.resultGameID');
 
         $recentTeammates = DB::table('results as r')
-            ->join('members as m', 'r.resultMember', '=', 'm.memberKey')
-            ->whereIn('r.resultGame', $myRecentGames)
-            ->where('r.resultMember', '!=', $rater->memberKey)
+            ->join('members as m', 'r.resultMemberID', '=', 'm.memberID')
+            ->whereIn('r.resultGameID', $myRecentGameIDs)
+            ->where('r.resultMemberID', '!=', $rater->memberID)
             ->where('m.memberActive', 1)
-            ->whereNotNull('m.memberKey')
             ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug', 'm.memberPhoto')
             ->distinct()
             ->get();
@@ -44,7 +43,7 @@ class RatingController extends Controller
 
         $nextGame = DB::table('games')
             ->where('gameVisible', 1)
-            ->where('gameSeason', $currentSeason->seasonKey)
+            ->where('gameSeasonID', $currentSeason->seasonID)
             ->whereNotExists(function ($q) {
                 $q->select(DB::raw(1))->from('scoring')
                   ->whereColumn('scoring.gameID', 'games.gameID')
@@ -70,20 +69,15 @@ class RatingController extends Controller
             ->unique('memberID')
             ->values();
 
-        $teammateKeys = DB::table('members')
-            ->whereIn('memberID', $teammates->pluck('memberID'))
-            ->pluck('memberKey', 'memberID');
-
-        $playedMemberKeys = DB::table('results')
-            ->whereIn('resultMember', $teammateKeys->values())
+        $playedMemberIDs = DB::table('results')
+            ->whereIn('resultMemberID', $teammates->pluck('memberID'))
             ->where('resultActive', 1)
-            ->distinct('resultMember')
-            ->pluck('resultMember')
+            ->distinct('resultMemberID')
+            ->pluck('resultMemberID')
             ->toArray();
 
-        $teammates = $teammates->filter(function ($player) use ($teammateKeys, $playedMemberKeys) {
-            $key = $teammateKeys[$player->memberID] ?? null;
-            return $key && in_array($key, $playedMemberKeys);
+        $teammates = $teammates->filter(function ($player) use ($playedMemberIDs) {
+            return in_array($player->memberID, $playedMemberIDs);
         })->values();
 
         $alreadyRated = DB::table('player-ratings')

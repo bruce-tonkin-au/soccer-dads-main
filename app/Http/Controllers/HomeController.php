@@ -17,10 +17,10 @@ class HomeController extends Controller
         ];
 
         $nextGame = DB::table('games as g')
-            ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->whereRaw("STR_TO_DATE(g.gameDate, '%d/%m/%Y') >= CURDATE()")
             ->orderByRaw("STR_TO_DATE(g.gameDate, '%d/%m/%Y') ASC")
-            ->select('g.*', 's.seasonName')
+            ->select('g.*', 's.seasonName', 's.seasonLink')
             ->first();
 
         return view('home', compact('stats', 'nextGame'));

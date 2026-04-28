@@ -58,7 +58,7 @@
                 </div>
                 <div style="font-size:14px; color:#888;">Round {{ $nextGame->gameRound }} · Season {{ $nextGame->seasonName }}</div>
             </div>
-            <a href="/r/{{ $nextGame->gameKey }}" class="btn btn-primary">
+            <a href="/seasons/{{ $nextGame->seasonLink }}/{{ $nextGame->gameRound }}" class="btn btn-primary">
                 <i class="fa-solid fa-futbol"></i> Register attendance
             </a>
         </div>

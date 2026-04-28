@@ -32,9 +32,9 @@ class PlayerPortalController extends Controller
         $nextGame = null;
         if ($currentSeason) {
             $nextGame = DB::table('games as g')
-                ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+                ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
                 ->where('g.gameVisible', 1)
-                ->where('g.gameSeason', $currentSeason->seasonKey)
+                ->where('g.gameSeasonID', $currentSeason->seasonID)
                 ->whereNotExists(function ($query) {
                     $query->select(DB::raw(1))
                         ->from('scoring')
@@ -69,7 +69,7 @@ class PlayerPortalController extends Controller
 
         $transactions = DB::table('account as a')
             ->leftJoin('games as g', 'a.gameID', '=', 'g.gameID')
-            ->leftJoin('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+            ->leftJoin('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('a.memberID', $player->memberID)
             ->where('a.accountVisible', 1)
             ->orderBy('a.accountCreated', 'desc')
@@ -157,7 +157,7 @@ class PlayerPortalController extends Controller
         $actions = DB::table('scoring-actions as a')
             ->join('scoring as s', 'a.scoringID', '=', 's.scoringID')
             ->join('games as g', 's.gameID', '=', 'g.gameID')
-            ->join('seasons as se', 'g.gameSeason', '=', 'se.seasonKey')
+            ->join('seasons as se', 'g.gameSeasonID', '=', 'se.seasonID')
             ->leftJoin('members as m2', 'a.secondID', '=', 'm2.memberID')
             ->where('a.memberID', $player->memberID)
             ->where('a.actionActive', 1)

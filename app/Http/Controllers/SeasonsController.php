@@ -17,7 +17,7 @@ class SeasonsController extends Controller
         $allGames = DB::table('games')
             ->where('gameVisible', 1)
             ->get()
-            ->groupBy('gameSeason');
+            ->groupBy('gameSeasonID');
 
         // Get all game IDs
         $allGameIDs = DB::table('games')
@@ -51,7 +51,7 @@ class SeasonsController extends Controller
             ->keyBy('memberID');
 
         $seasons = $seasons->map(function ($season) use ($allGames, $allGoals, $allAwards, $awardMembers) {
-            $games = $allGames[$season->seasonKey] ?? collect();
+            $games = $allGames[$season->seasonID] ?? collect();
             $gameIDs = $games->pluck('gameID');
             $sessions = $games->count();
 
@@ -77,7 +77,7 @@ class SeasonsController extends Controller
             }
 
             return (object)[
-                'seasonKey'  => $season->seasonKey,
+                'seasonID'   => $season->seasonID,
                 'seasonLink' => $season->seasonLink,
                 'seasonName' => $season->seasonName,
                 'sessions'   => $sessions,
@@ -99,7 +99,7 @@ class SeasonsController extends Controller
             ->firstOrFail();
 
         $games = DB::table('games')
-            ->where('gameSeason', $season->seasonKey)
+            ->where('gameSeasonID', $season->seasonID)
             ->where('gameVisible', 1)
             ->orderBy('gameRound', 'asc')
             ->get();
@@ -208,7 +208,7 @@ class SeasonsController extends Controller
             ->firstOrFail();
 
         $game = DB::table('games')
-            ->where('gameSeason', $season->seasonKey)
+            ->where('gameSeasonID', $season->seasonID)
             ->where('gameRound', $gameRound)
             ->where('gameVisible', 1)
             ->firstOrFail();
@@ -257,7 +257,7 @@ class SeasonsController extends Controller
 
         // Goals for season YTD (up to and including this night)
         $previousGames = DB::table('games')
-            ->where('gameSeason', $season->seasonKey)
+            ->where('gameSeasonID', $season->seasonID)
             ->where('gameRound', '<=', $gameRound)
             ->where('gameVisible', 1)
             ->pluck('gameID');

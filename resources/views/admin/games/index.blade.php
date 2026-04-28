@@ -8,7 +8,7 @@
             <a href="/admin/seasons" style="font-size:13px; color:#888; text-decoration:none;">← Seasons</a>
             <h2 style="margin-bottom:0; margin-top:4px;">{{ $season->seasonName }} — Games</h2>
         </div>
-        <a href="/admin/seasons/{{ $season->seasonKey }}/games/create" class="btn btn-primary">
+        <a href="/admin/seasons/{{ $season->seasonID }}/games/create" class="btn btn-primary">
             <i class="fa-solid fa-plus"></i> Add game
         </a>
     </div>
@@ -42,7 +42,7 @@
                     <a href="/admin/print/{{ $game->gameID }}" target="_blank" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-print"></i> Print
                     </a>
-                    <a href="/admin/seasons/{{ $season->seasonKey }}/games/{{ $game->gameID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
+                    <a href="/admin/seasons/{{ $season->seasonID }}/games/{{ $game->gameID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-pen"></i> Edit
                     </a>
                 </td>

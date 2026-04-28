@@ -15,9 +15,9 @@ class RegistrationController extends Controller
         ->first();
 
     return DB::table('games as g')
-        ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+        ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
         ->where('g.gameVisible', 1)
-        ->where('g.gameSeason', $currentSeason->seasonKey)
+        ->where('g.gameSeasonID', $currentSeason->seasonID)
         ->orderBy('g.gameID', 'asc')
         ->select('g.*', 's.seasonName')
         ->first();

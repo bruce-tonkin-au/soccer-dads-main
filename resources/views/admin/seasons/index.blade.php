@@ -31,10 +31,10 @@
                     @endif
                 </td>
                 <td style="display:flex; gap:8px;">
-                    <a href="/admin/seasons/{{ $season->seasonKey }}/games" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
+                    <a href="/admin/seasons/{{ $season->seasonID }}/games" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-calendar"></i> Games
                     </a>
-                    <a href="/admin/seasons/{{ $season->seasonKey }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
+                    <a href="/admin/seasons/{{ $season->seasonID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-pen"></i> Edit
                     </a>
                 </td>

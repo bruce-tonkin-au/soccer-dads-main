@@ -31,14 +31,14 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/seasons', [AdminController::class, 'seasons']);
     Route::get('/seasons/create', [AdminController::class, 'createSeason']);
     Route::post('/seasons/create', [AdminController::class, 'storeSeason']);
-    Route::get('/seasons/{seasonKey}/edit', [AdminController::class, 'editSeason']);
-    Route::post('/seasons/{seasonKey}/edit', [AdminController::class, 'updateSeason']);
+    Route::get('/seasons/{seasonID}/edit', [AdminController::class, 'editSeason']);
+    Route::post('/seasons/{seasonID}/edit', [AdminController::class, 'updateSeason']);
 
-    Route::get('/seasons/{seasonKey}/games', [AdminController::class, 'games']);
-    Route::get('/seasons/{seasonKey}/games/create', [AdminController::class, 'createGame']);
-    Route::post('/seasons/{seasonKey}/games/create', [AdminController::class, 'storeGame']);
-    Route::get('/seasons/{seasonKey}/games/{gameID}/edit', [AdminController::class, 'editGame']);
-    Route::post('/seasons/{seasonKey}/games/{gameID}/edit', [AdminController::class, 'updateGame']);
+    Route::get('/seasons/{seasonID}/games', [AdminController::class, 'games']);
+    Route::get('/seasons/{seasonID}/games/create', [AdminController::class, 'createGame']);
+    Route::post('/seasons/{seasonID}/games/create', [AdminController::class, 'storeGame']);
+    Route::get('/seasons/{seasonID}/games/{gameID}/edit', [AdminController::class, 'editGame']);
+    Route::post('/seasons/{seasonID}/games/{gameID}/edit', [AdminController::class, 'updateGame']);
 
     Route::get('/teams/{gameID}', [AdminController::class, 'teams']);
     Route::post('/teams/{gameID}', [AdminController::class, 'saveTeams']);

@@ -27,9 +27,9 @@ class MessageController extends Controller
         $nextGame = null;
         if ($currentSeason) {
             $nextGame = DB::table('games as g')
-                ->join('seasons as s', 'g.gameSeason', '=', 's.seasonKey')
+                ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
                 ->where('g.gameVisible', 1)
-                ->where('g.gameSeason', $currentSeason->seasonKey)
+                ->where('g.gameSeasonID', $currentSeason->seasonID)
                 ->whereNotExists(function ($q) {
                     $q->select(DB::raw(1))->from('scoring')
                       ->whereColumn('scoring.gameID', 'g.gameID')
