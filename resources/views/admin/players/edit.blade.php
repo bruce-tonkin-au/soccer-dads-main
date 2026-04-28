@@ -12,7 +12,6 @@
 
     <div style="background:#f8f8f8; border-radius:8px; padding:12px 16px; margin-bottom:1.5rem; font-size:13px; color:#888;">
         Member code: <strong style="color:#262c39;">{{ $player->memberCode }}</strong> &nbsp;·&nbsp;
-        Member key: <strong style="color:#262c39;">{{ $player->memberKey }}</strong> &nbsp;·&nbsp;
         Slug: <strong style="color:#262c39;">{{ $player->memberSlug }}</strong>
     </div>
 
