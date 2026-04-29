@@ -45,26 +45,6 @@
     </div>
 </div>
 
-{{-- Next game --}}
-@if(isset($nextGame))
-<div style="padding:4rem 2rem; background:#f8f8f8;">
-    <div class="container">
-        <h2 style="font-family:'GetShow'; font-weight:normal; font-size:48px; color:#262c39; margin-bottom:0.5rem;">Next game</h2>
-        <p style="color:#888; font-size:14px; margin-bottom:2rem;">Don't forget to register your attendance!</p>
-        <div style="background:#fff; border-radius:16px; padding:2rem; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-            <div>
-                <div style="font-size:24px; font-weight:600; color:#262c39; margin-bottom:4px;">
-                    {{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }}
-                </div>
-                <div style="font-size:14px; color:#888;">Round {{ $nextGame->gameRound }} · Season {{ $nextGame->seasonName }}</div>
-            </div>
-            <a href="/seasons/{{ $nextGame->seasonLink }}/{{ $nextGame->gameRound }}" class="btn btn-primary">
-                <i class="fa-solid fa-futbol"></i> Register attendance
-            </a>
-        </div>
-    </div>
-</div>
-@endif
 
 {{-- How it works --}}
 <div style="padding:5rem 2rem;">
