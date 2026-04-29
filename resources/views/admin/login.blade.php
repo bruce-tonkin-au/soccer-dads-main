@@ -26,8 +26,8 @@
         <form method="POST" action="/admin/login">
             @csrf
             <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" autofocus>
+                <label>Email</label>
+                <input type="email" name="email" autocomplete="email" autofocus>
             </div>
             <div class="form-group">
                 <label>Password</label>

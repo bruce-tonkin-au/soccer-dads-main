@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -11,23 +12,30 @@ class AdminController extends Controller
     // AUTH
     public function showLogin()
     {
-        if (session('admin_authenticated')) return redirect('/admin');
+        if (Auth::check()) return redirect('/admin');
         return view('admin.login');
     }
 
     public function login(Request $request)
     {
-        if ($request->input('username') === env('ADMIN_USERNAME') &&
-            $request->input('password') === env('ADMIN_PASSWORD')) {
-            session(['admin_authenticated' => true]);
+        $credentials = $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials, false)) {
+            $request->session()->regenerate();
             return redirect('/admin');
         }
+
         return back()->with('error', 'Invalid credentials.');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        session()->forget('admin_authenticated');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect('/admin/login');
     }
 
