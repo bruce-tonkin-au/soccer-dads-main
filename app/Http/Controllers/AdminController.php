@@ -86,7 +86,7 @@ class AdminController extends Controller
 
         $balances = DB::table('account')
             ->where('accountVisible', 1)
-            ->select('memberID', DB::raw('SUM(accountValue) as balance'))
+            ->select('memberID', DB::raw('SUM("accountValue") as balance'))
             ->groupBy('memberID')
             ->get()
             ->keyBy('memberID');
@@ -300,12 +300,12 @@ class AdminController extends Controller
             ->whereIn('ratedMemberID', $registered->pluck('memberID'))
             ->select(
                 'ratedMemberID',
-                DB::raw('COUNT(*) as ratingCount'),
-                DB::raw('AVG(ratingGoal) as avgGoal'),
-                DB::raw('AVG(ratingPassing) as avgPassing'),
-                DB::raw('AVG(ratingWork) as avgWork'),
-                DB::raw('AVG(ratingDefending) as avgDefending'),
-                DB::raw('AVG(ratingOverall) as avgOverall')
+                DB::raw('COUNT(*) as "ratingCount"'),
+                DB::raw('AVG("ratingGoal") as "avgGoal"'),
+                DB::raw('AVG("ratingPassing") as "avgPassing"'),
+                DB::raw('AVG("ratingWork") as "avgWork"'),
+                DB::raw('AVG("ratingDefending") as "avgDefending"'),
+                DB::raw('AVG("ratingOverall") as "avgOverall"')
             )
             ->groupBy('ratedMemberID')
             ->get()
@@ -439,13 +439,13 @@ class AdminController extends Controller
                 'm.memberNameFirst',
                 'm.memberNameLast',
                 'm.memberSlug',
-                DB::raw('COUNT(*) as ratingCount'),
-                DB::raw('ROUND(AVG(r.ratingGoal), 1) as avgGoal'),
-                DB::raw('ROUND(AVG(r.ratingPassing), 1) as avgPassing'),
-                DB::raw('ROUND(AVG(r.ratingWork), 1) as avgWork'),
-                DB::raw('ROUND(AVG(r.ratingDefending), 1) as avgDefending'),
-                DB::raw('ROUND(AVG(r.ratingOverall), 1) as avgOverall'),
-                DB::raw('ROUND((AVG(r.ratingGoal) + AVG(r.ratingPassing) + AVG(r.ratingWork) + AVG(r.ratingDefending) + AVG(r.ratingOverall)) / 5 * 24.75, 0) as compositeRating')
+                DB::raw('COUNT(*) as "ratingCount"'),
+                DB::raw('ROUND(AVG(r."ratingGoal"), 1) as "avgGoal"'),
+                DB::raw('ROUND(AVG(r."ratingPassing"), 1) as "avgPassing"'),
+                DB::raw('ROUND(AVG(r."ratingWork"), 1) as "avgWork"'),
+                DB::raw('ROUND(AVG(r."ratingDefending"), 1) as "avgDefending"'),
+                DB::raw('ROUND(AVG(r."ratingOverall"), 1) as "avgOverall"'),
+                DB::raw('ROUND((AVG(r."ratingGoal") + AVG(r."ratingPassing") + AVG(r."ratingWork") + AVG(r."ratingDefending") + AVG(r."ratingOverall")) / 5 * 24.75, 0) as "compositeRating"')
             )
             ->groupBy('r.ratedMemberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
             ->orderByDesc('compositeRating')
@@ -468,11 +468,11 @@ class AdminController extends Controller
         $averages = DB::table('player-ratings')
             ->where('ratedMemberID', $memberID)
             ->select(
-                DB::raw('ROUND(AVG(ratingGoal), 2) as avgGoal'),
-                DB::raw('ROUND(AVG(ratingPassing), 2) as avgPassing'),
-                DB::raw('ROUND(AVG(ratingWork), 2) as avgWork'),
-                DB::raw('ROUND(AVG(ratingDefending), 2) as avgDefending'),
-                DB::raw('ROUND(AVG(ratingOverall), 2) as avgOverall'),
+                DB::raw('ROUND(AVG("ratingGoal"), 2) as "avgGoal"'),
+                DB::raw('ROUND(AVG("ratingPassing"), 2) as "avgPassing"'),
+                DB::raw('ROUND(AVG("ratingWork"), 2) as "avgWork"'),
+                DB::raw('ROUND(AVG("ratingDefending"), 2) as "avgDefending"'),
+                DB::raw('ROUND(AVG("ratingOverall"), 2) as "avgOverall"'),
                 DB::raw('COUNT(*) as total')
             )
             ->first();
@@ -558,7 +558,7 @@ class AdminController extends Controller
         $gamesPlayed = DB::table('results')
             ->whereIn('resultMemberID', $memberIDs)
             ->where('resultActive', 1)
-            ->select('resultMemberID', DB::raw('COUNT(DISTINCT resultGameID) as total'))
+            ->select('resultMemberID', DB::raw('COUNT(DISTINCT "resultGameID") as total'))
             ->groupBy('resultMemberID')
             ->get()
             ->keyBy('resultMemberID');
@@ -575,7 +575,7 @@ class AdminController extends Controller
         $balances = DB::table('account')
             ->whereIn('memberID', $memberIDs)
             ->where('accountVisible', 1)
-            ->select('memberID', DB::raw('SUM(accountValue) as balance'))
+            ->select('memberID', DB::raw('SUM("accountValue") as balance'))
             ->groupBy('memberID')
             ->get()
             ->keyBy('memberID');

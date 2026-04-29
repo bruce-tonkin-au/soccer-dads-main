@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('paymentSource')->nullable()->after('paymentVisible');
         });
 
-        DB::statement("UPDATE `account-payments` SET paymentSource = CASE
-            WHEN formPaymentID IS NOT NULL AND formPaymentID != '' THEN 'stripe'
-            WHEN formPaymentType = 2 THEN 'cash'
+        DB::statement("UPDATE \"account-payments\" SET \"paymentSource\" = CASE
+            WHEN \"formPaymentID\" IS NOT NULL AND \"formPaymentID\" != '' THEN 'stripe'
+            WHEN \"formPaymentType\" = 2 THEN 'cash'
             ELSE 'other'
         END");
     }

@@ -18,8 +18,8 @@ class HomeController extends Controller
 
         $nextGame = DB::table('games as g')
             ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
-            ->whereRaw("STR_TO_DATE(g.gameDate, '%d/%m/%Y') >= CURDATE()")
-            ->orderByRaw("STR_TO_DATE(g.gameDate, '%d/%m/%Y') ASC")
+            ->whereRaw('g."gameDate" >= CURRENT_DATE')
+            ->orderByRaw('g."gameDate" ASC')
             ->select('g.*', 's.seasonName', 's.seasonLink')
             ->first();
 

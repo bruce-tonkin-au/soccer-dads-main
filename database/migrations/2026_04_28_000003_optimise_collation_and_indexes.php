@@ -13,8 +13,10 @@ return new class extends Migration
         try {
             Schema::table($table, $callback);
         } catch (\Illuminate\Database\QueryException $e) {
-            // Error 1061: duplicate key name — index already exists, skip.
-            if (!str_contains($e->getMessage(), '1061')) {
+            // MySQL error 1061: duplicate key name
+            // PostgreSQL error code 42P07: duplicate_table / duplicate index
+            $msg = $e->getMessage();
+            if (!str_contains($msg, '1061') && !str_contains($msg, '42P07') && !str_contains($msg, 'already exists')) {
                 throw $e;
             }
         }
@@ -34,29 +36,20 @@ return new class extends Migration
         // correct config (member_tokens, player-ratings, messages, users)
         // since CONVERT TO is idempotent for those.
 
-        $db = DB::connection()->getDatabaseName();
-        DB::statement("ALTER DATABASE `{$db}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        // Charset/collation conversion is MySQL-only; PostgreSQL uses the
+        // database encoding set at creation time (UTF8) and has no equivalent.
+        if (DB::connection()->getDriverName() === 'mysql') {
+            $db = DB::connection()->getDatabaseName();
+            DB::statement("ALTER DATABASE `{$db}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 
-        $legacyTables = [
-            'members',
-            'seasons',
-            'games',
-            'game-registrations',
-            'scoring',
-            'scoring-actions',
-            'results',
-            'account',
-            'account-payments',
-            'season-awards',
-            // Laravel-created but included for completeness:
-            'member_tokens',
-            'player-ratings',
-            'messages',
-            'users',
-        ];
-
-        foreach ($legacyTables as $table) {
-            DB::statement("ALTER TABLE `{$table}` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            foreach ([
+                'members', 'seasons', 'games', 'game-registrations',
+                'scoring', 'scoring-actions', 'results', 'account',
+                'account-payments', 'season-awards',
+                'member_tokens', 'player-ratings', 'messages', 'users',
+            ] as $table) {
+                DB::statement("ALTER TABLE `{$table}` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            }
         }
 
         // ── PART 2: Indexes ──────────────────────────────────────────────
@@ -265,20 +258,18 @@ return new class extends Migration
             $table->tinyInteger('resultVisited')->default(0)->after('resultActive');
         });
 
-        // ── Collation rollback ────────────────────────────────────────────
-        // WARNING: converting back to utf8mb3 will silently truncate or
-        // corrupt any 4-byte characters (emoji, some CJK) stored since
-        // the up() migration ran. Only proceed if you are certain no such
-        // data was written.
-        $db = DB::connection()->getDatabaseName();
-        DB::statement("ALTER DATABASE `{$db}` CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci");
+        // Collation rollback is MySQL-only; no-op on PostgreSQL.
+        if (DB::connection()->getDriverName() === 'mysql') {
+            $db = DB::connection()->getDatabaseName();
+            DB::statement("ALTER DATABASE `{$db}` CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci");
 
-        foreach ([
-            'members', 'seasons', 'games', 'game-registrations',
-            'scoring', 'scoring-actions', 'results', 'account',
-            'account-payments', 'season-awards',
-        ] as $table) {
-            DB::statement("ALTER TABLE `{$table}` CONVERT TO CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci");
+            foreach ([
+                'members', 'seasons', 'games', 'game-registrations',
+                'scoring', 'scoring-actions', 'results', 'account',
+                'account-payments', 'season-awards',
+            ] as $table) {
+                DB::statement("ALTER TABLE `{$table}` CONVERT TO CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci");
+            }
         }
 
         // ── Index rollback ────────────────────────────────────────────────

@@ -35,7 +35,7 @@ class PlayersController extends Controller
         $gameCounts = DB::table('results')
             ->whereIn('resultMemberID', $memberIDs)
             ->where('resultActive', 1)
-            ->select('resultMemberID', DB::raw('count(distinct resultGameID) as total'))
+            ->select('resultMemberID', DB::raw('count(distinct "resultGameID") as total'))
             ->groupBy('resultMemberID')
             ->pluck('total', 'resultMemberID');
 
@@ -87,20 +87,13 @@ class PlayersController extends Controller
         $gamesPlayed = DB::table('results')
             ->where('resultMemberID', $member->memberID)
             ->where('resultActive', 1)
-            ->count(DB::raw('distinct resultGameID'));
+            ->count(DB::raw('distinct "resultGameID"'));
 
         $dateRange = DB::table('results as r')
             ->join('games as g', 'g.gameID', '=', 'r.resultGameID')
             ->where('r.resultMemberID', $member->memberID)
             ->where('r.resultActive', 1)
-            ->selectRaw("
-                MIN(CASE WHEN g.gameDate LIKE '%/%'
-                    THEN STR_TO_DATE(g.gameDate, '%e/%c/%Y')
-                    ELSE STR_TO_DATE(g.gameDate, '%Y-%m-%d') END) as firstPlayed,
-                MAX(CASE WHEN g.gameDate LIKE '%/%'
-                    THEN STR_TO_DATE(g.gameDate, '%e/%c/%Y')
-                    ELSE STR_TO_DATE(g.gameDate, '%Y-%m-%d') END) as lastPlayed
-            ")
+            ->selectRaw('MIN(g."gameDate") as "firstPlayed", MAX(g."gameDate") as "lastPlayed"')
             ->first();
 
         $firstPlayed = $dateRange?->firstPlayed
@@ -147,7 +140,7 @@ class PlayersController extends Controller
             ->where('r.resultMemberID', $member->memberID)
             ->where('r.resultActive', 1)
             ->where('g.gameVisible', 1)
-            ->select('s.seasonID', DB::raw('count(distinct r.resultGameID) as games'))
+            ->select('s.seasonID', DB::raw('count(distinct r."resultGameID") as games'))
             ->groupBy('s.seasonID')
             ->get();
 

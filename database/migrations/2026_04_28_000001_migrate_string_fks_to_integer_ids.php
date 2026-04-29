@@ -14,9 +14,11 @@ return new class extends Migration
             $table->unsignedBigInteger('gameSeasonID')->nullable()->after('gameID');
         });
 
-        DB::statement('UPDATE games g
-            JOIN seasons s ON g.gameSeason = s.seasonKey
-            SET g.gameSeasonID = s.seasonID');
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('UPDATE games SET "gameSeasonID" = s."seasonID" FROM seasons s WHERE games."gameSeason" = s."seasonKey"');
+        } else {
+            DB::statement('UPDATE games g JOIN seasons s ON g.gameSeason = s.seasonKey SET g.gameSeasonID = s.seasonID');
+        }
 
         Schema::table('games', function (Blueprint $table) {
             $table->dropColumn('gameSeason');
@@ -30,17 +32,15 @@ return new class extends Migration
             $table->unsignedTinyInteger('resultTeamID')->nullable()->after('resultTeam');
         });
 
-        DB::statement('UPDATE results r
-            JOIN games g ON r.resultGame = g.gameKey
-            SET r.resultGameID = g.gameID');
-
-        DB::statement('UPDATE results r
-            JOIN members m ON r.resultMember = m.memberKey
-            SET r.resultMemberID = m.memberID');
-
-        DB::statement('UPDATE results r
-            JOIN seasons s ON r.resultSeason = s.seasonKey
-            SET r.resultSeasonID = s.seasonID');
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('UPDATE results SET "resultGameID" = g."gameID" FROM games g WHERE results."resultGame" = g."gameKey"');
+            DB::statement('UPDATE results SET "resultMemberID" = m."memberID" FROM members m WHERE results."resultMember" = m."memberKey"');
+            DB::statement('UPDATE results SET "resultSeasonID" = s."seasonID" FROM seasons s WHERE results."resultSeason" = s."seasonKey"');
+        } else {
+            DB::statement('UPDATE results r JOIN games g ON r.resultGame = g.gameKey SET r.resultGameID = g.gameID');
+            DB::statement('UPDATE results r JOIN members m ON r.resultMember = m.memberKey SET r.resultMemberID = m.memberID');
+            DB::statement('UPDATE results r JOIN seasons s ON r.resultSeason = s.seasonKey SET r.resultSeasonID = s.seasonID');
+        }
 
         // Convert hardcoded team string keys to integer team IDs
         DB::table('results')->where('resultTeam', 'DHJ902klu908')->update(['resultTeamID' => 1]);

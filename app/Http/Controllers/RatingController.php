@@ -22,8 +22,7 @@ class RatingController extends Controller
             ->where('r.resultMemberID', $rater->memberID)
             ->where('r.resultActive', 1)
             ->where(function ($q) use ($threeMonthsAgo) {
-                $q->whereRaw("STR_TO_DATE(g.gameDate, '%e/%c/%Y') >= ?", [$threeMonthsAgo->format('Y-m-d')])
-                  ->orWhere('g.gameDate', '>=', $threeMonthsAgo->format('Y-m-d'));
+                $q->where('g.gameDate', '>=', $threeMonthsAgo->format('Y-m-d'));
             })
             ->pluck('r.resultGameID');
 
