@@ -15,7 +15,7 @@ class MessageController extends Controller
             ->firstOrFail();
 
         $member = DB::table('members')
-            ->where('memberCode', strtoupper($memberCode))
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 

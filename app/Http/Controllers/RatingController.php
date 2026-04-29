@@ -11,7 +11,7 @@ class RatingController extends Controller
     public function show($memberCode)
     {
         $rater = DB::table('members')
-            ->where('memberCode', $memberCode)
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 
@@ -103,7 +103,7 @@ class RatingController extends Controller
     public function store(Request $request, $memberCode)
     {
         $rater = DB::table('members')
-            ->where('memberCode', $memberCode)
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 
@@ -161,7 +161,7 @@ class RatingController extends Controller
     public function done($memberCode)
     {
         $rater = DB::table('members')
-            ->where('memberCode', $memberCode)
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 

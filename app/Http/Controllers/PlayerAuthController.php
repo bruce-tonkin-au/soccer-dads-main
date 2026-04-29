@@ -20,10 +20,10 @@ class PlayerAuthController extends Controller
 
     public function sendMagicLink(Request $request)
     {
-        $code = strtoupper(trim($request->input('code')));
+        $code = trim($request->input('code'));
 
         $member = DB::table('members')
-            ->where('memberCode', $code)
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$code])
             ->where('memberActive', 1)
             ->first();
 

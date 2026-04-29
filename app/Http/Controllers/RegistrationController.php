@@ -26,7 +26,7 @@ class RegistrationController extends Controller
     public function show($memberCode)
     {
         $member = DB::table('members')
-            ->where('memberCode', $memberCode)
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->first();
 
         if (!$member) abort(404);
@@ -72,7 +72,7 @@ class RegistrationController extends Controller
     public function update(Request $request, $memberCode)
 {
     $member = DB::table('members')
-        ->where('memberCode', $memberCode)
+        ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
         ->first();
 
     if (!$member) abort(404);

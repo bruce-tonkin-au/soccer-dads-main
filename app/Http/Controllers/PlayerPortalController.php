@@ -270,7 +270,7 @@ class PlayerPortalController extends Controller
     public function publicTopup($memberCode)
     {
         $member = DB::table('members')
-            ->where('memberCode', strtoupper($memberCode))
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 
@@ -285,7 +285,7 @@ class PlayerPortalController extends Controller
     public function publicCreatePayment(Request $request, $memberCode)
     {
         $member = DB::table('members')
-            ->where('memberCode', strtoupper($memberCode))
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 
@@ -327,7 +327,7 @@ class PlayerPortalController extends Controller
     public function publicPaymentSuccess(Request $request, $memberCode)
     {
         $member = DB::table('members')
-            ->where('memberCode', strtoupper($memberCode))
+            ->whereRaw('LOWER("memberCode") = LOWER(?)', [$memberCode])
             ->where('memberActive', 1)
             ->firstOrFail();
 
