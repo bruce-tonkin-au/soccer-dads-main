@@ -129,7 +129,7 @@
             <form method="POST" action="/login">
                 @csrf
                 <label class="form-label">Your player code</label>
-                <input type="text" name="code" class="form-input" placeholder="···" maxlength="3" autocomplete="off" autocapitalize="characters" autofocus>
+                <input type="text" name="code" class="form-input" placeholder="···" maxlength="3" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" autofocus>
                 <button type="submit" class="btn-login">
                     <i class="fa-solid fa-paper-plane"></i> Send login link
                 </button>
