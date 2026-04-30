@@ -234,7 +234,7 @@ class PlayerPortalController extends Controller
         $session = StripeSession::retrieve($request->query('session_id'));
 
         if ($session && $session->payment_status === 'paid') {
-            $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->member_id ?? $player->memberID);
+            $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->memberID ?? $player->memberID);
         }
 
         return view('player.topup-success', compact('player', 'session'));
@@ -260,7 +260,7 @@ class PlayerPortalController extends Controller
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
             if ($session->payment_status === 'paid') {
-                $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->member_id);
+                $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->memberID);
             }
         }
 
