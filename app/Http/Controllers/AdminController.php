@@ -239,7 +239,7 @@ class AdminController extends Controller
             'teamAID'              => null,
             'teamBID'              => null,
             'teamCID'              => null,
-            'settingsPointsWin'    => 3,
+            'settingsPointsWin'    => 2,
             'settingsPointsDraw'   => 1,
             'commentatorID'        => 1,
             'settingsActive'       => 1,
