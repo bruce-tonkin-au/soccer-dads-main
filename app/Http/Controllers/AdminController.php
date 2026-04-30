@@ -696,7 +696,7 @@ class AdminController extends Controller
                             'teamID'       => $teamColor,
                             'teamsActive'  => 1,
                             'teamsVisible' => 1,
-                        ]);
+                        ], 'teamsID');
                         $teamRowMap[$teamColor] = (int) $newTeamsID;
                         \Log::info("saveTeams: scoring-teams row created for teamColor=$teamColor", [
                             'gameID'  => $gameID,
