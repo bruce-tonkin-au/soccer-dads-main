@@ -758,6 +758,47 @@ class AdminController extends Controller
                     'gameID'       => $gameID,
                     'playersSaved' => count($assignments),
                 ]);
+
+                // ── scoring schedule ──────────────────────────────────────────
+                // Generate round-robin rows in the scoring table if none exist
+                // yet for this game. Safe to call repeatedly — skipped when rows
+                // already exist. Standard 3-team schedule: 3 matchups per round,
+                // same fixture order every round.
+                if (!DB::table('scoring')->where('gameID', $gameID)->exists()) {
+                    $settings   = DB::table('scoring-settings')->where('gameID', $gameID)->first();
+                    $roundCount = $settings ? ($settings->settingsRounds ?? 7) : 7;
+
+                    $matchups = [
+                        1 => ['home' => 1, 'away' => 2],
+                        2 => ['home' => 2, 'away' => 3],
+                        3 => ['home' => 3, 'away' => 1],
+                    ];
+
+                    $scoringRows = [];
+                    for ($round = 1; $round <= $roundCount; $round++) {
+                        foreach ($matchups as $gameNum => $matchup) {
+                            $scoringRows[] = [
+                                'gameID'          => $gameID,
+                                'scoringRound'    => $round,
+                                'scoringGame'     => $gameNum,
+                                'scoringTeamHome' => $matchup['home'],
+                                'scoringTeamAway' => $matchup['away'],
+                                'scoringElapsed'  => 0,
+                                'scoringActive'   => 1,
+                                'scoringVisible'  => 1,
+                                'scoringCreated'  => now(),
+                                'scoringEdited'   => now(),
+                            ];
+                        }
+                    }
+
+                    DB::table('scoring')->insert($scoringRows);
+                    \Log::info('saveTeams: scoring schedule generated', [
+                        'gameID'       => $gameID,
+                        'rounds'       => $roundCount,
+                        'rowsInserted' => count($scoringRows),
+                    ]);
+                }
             });
 
         } catch (\Throwable $e) {
