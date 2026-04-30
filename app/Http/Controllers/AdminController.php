@@ -652,6 +652,8 @@ class AdminController extends Controller
 
     public function saveTeams(Request $request, $gameID)
     {
+        $gameID = (int) $gameID;
+
         try {
             $game      = DB::table('games')->where('gameID', $gameID)->firstOrFail();
             $pointsMap = [1 => 3, 2 => 2, 3 => 1];
@@ -664,88 +666,99 @@ class AdminController extends Controller
                 $assignments[(int) $memberID] = $teamColor;
             }
 
-            \Log::info('saveTeams called', [
+            \Log::info('saveTeams: starting', [
                 'gameID'          => $gameID,
                 'assignmentCount' => count($assignments),
-                'assignments'     => $assignments,
             ]);
 
-            // ── results table ────────────────────────────────────────────────
-            foreach ($assignments as $memberID => $teamColor) {
-                $existing = DB::table('results')
-                    ->where('resultGameID', $game->gameID)
-                    ->where('resultMemberID', $memberID)
-                    ->first();
+            DB::transaction(function () use ($gameID, $game, $pointsMap, $assignments) {
 
-                if ($existing) {
-                    DB::table('results')->where('resultID', $existing->resultID)->update([
-                        'resultTeamID' => $teamColor,
-                        'resultPoints' => $pointsMap[$teamColor],
-                        'resultEdited' => now(),
-                    ]);
-                } else {
-                    DB::table('results')->insert([
-                        'resultSeasonID' => $game->gameSeasonID,
-                        'resultGameID'   => $game->gameID,
-                        'resultMemberID' => $memberID,
-                        'resultTeamID'   => $teamColor,
-                        'resultPoints'   => $pointsMap[$teamColor],
-                        'resultActive'   => 1,
-                        'resultCreated'  => now(),
-                        'resultEdited'   => now(),
+                // ── scoring-teams ─────────────────────────────────────────────
+                // Ensure one row exists per team color (1=Orange, 2=Green, 3=Blue).
+                // Done first so the scoreboard rows exist even before players are
+                // assigned, and so $teamRowMap is available for scoring-teams-players.
+                $teamRowMap = []; // teamColor => teamsID
+                foreach ([1, 2, 3] as $teamColor) {
+                    $row = DB::table('scoring-teams')
+                        ->where('gameID', $gameID)
+                        ->where('teamID', $teamColor)
+                        ->first();
+
+                    if ($row) {
+                        $teamRowMap[$teamColor] = (int) $row->teamsID;
+                        \Log::info("saveTeams: scoring-teams row exists for teamColor=$teamColor", [
+                            'gameID'  => $gameID,
+                            'teamsID' => $row->teamsID,
+                        ]);
+                    } else {
+                        $newTeamsID = DB::table('scoring-teams')->insertGetId([
+                            'gameID'       => $gameID,
+                            'teamID'       => $teamColor,
+                            'teamsActive'  => 1,
+                            'teamsVisible' => 1,
+                        ]);
+                        $teamRowMap[$teamColor] = (int) $newTeamsID;
+                        \Log::info("saveTeams: scoring-teams row created for teamColor=$teamColor", [
+                            'gameID'  => $gameID,
+                            'teamsID' => $newTeamsID,
+                        ]);
+                    }
+                }
+
+                // ── scoring-teams-players ─────────────────────────────────────
+                // scoring-teams-players.teamID is the scoring-teams.teamsID
+                // surrogate PK, not the 1/2/3 colour identifier.
+                DB::table('scoring-teams-players')
+                    ->whereIn('teamID', array_values($teamRowMap))
+                    ->delete();
+
+                foreach ($assignments as $memberID => $teamColor) {
+                    DB::table('scoring-teams-players')->insert([
+                        'teamID'        => $teamRowMap[$teamColor],
+                        'memberID'      => $memberID,
+                        'playerActive'  => 1,
+                        'playerVisible' => 1,
                     ]);
                 }
-            }
 
-            // ── scoring-teams ────────────────────────────────────────────────
-            // Ensure one row exists per team color (1=Orange, 2=Green, 3=Blue).
-            // Always create all three so the scoreboard always has a full set.
-            $teamRowMap = []; // teamColor => teamsID
-            foreach ([1, 2, 3] as $teamColor) {
-                $row = DB::table('scoring-teams')
-                    ->where('gameID', $gameID)
-                    ->where('teamID', $teamColor)
-                    ->first();
-
-                if ($row) {
-                    $teamRowMap[$teamColor] = $row->teamsID;
-                } else {
-                    $teamRowMap[$teamColor] = DB::table('scoring-teams')->insertGetId([
-                        'gameID'       => $gameID,
-                        'teamID'       => $teamColor,
-                        'teamsActive'  => 1,
-                        'teamsVisible' => 1,
-                    ]);
-                }
-            }
-
-            \Log::info('saveTeams: scoring-teams rows', [
-                'gameID'     => $gameID,
-                'teamRowMap' => $teamRowMap,
-            ]);
-
-            // ── scoring-teams-players ────────────────────────────────────────
-            // Wipe all existing player rows for this game's three team records,
-            // then re-insert from the submitted assignments.
-            // Note: scoring-teams-players.teamID is scoring-teams.teamsID (the
-            // surrogate PK), not the 1/2/3 color identifier.
-            DB::table('scoring-teams-players')
-                ->whereIn('teamID', array_values($teamRowMap))
-                ->delete();
-
-            foreach ($assignments as $memberID => $teamColor) {
-                DB::table('scoring-teams-players')->insert([
-                    'teamID'        => $teamRowMap[$teamColor],
-                    'memberID'      => $memberID,
-                    'playerActive'  => 1,
-                    'playerVisible' => 1,
+                \Log::info('saveTeams: scoring-teams-players written', [
+                    'gameID'       => $gameID,
+                    'teamRowMap'   => $teamRowMap,
+                    'playersSaved' => count($assignments),
                 ]);
-            }
 
-            \Log::info('saveTeams: complete', [
-                'gameID'       => $gameID,
-                'playersSaved' => count($assignments),
-            ]);
+                // ── results ───────────────────────────────────────────────────
+                foreach ($assignments as $memberID => $teamColor) {
+                    $existing = DB::table('results')
+                        ->where('resultGameID', $game->gameID)
+                        ->where('resultMemberID', $memberID)
+                        ->first();
+
+                    if ($existing) {
+                        DB::table('results')->where('resultID', $existing->resultID)->update([
+                            'resultTeamID' => $teamColor,
+                            'resultPoints' => $pointsMap[$teamColor],
+                            'resultEdited' => now(),
+                        ]);
+                    } else {
+                        DB::table('results')->insert([
+                            'resultSeasonID' => $game->gameSeasonID,
+                            'resultGameID'   => $game->gameID,
+                            'resultMemberID' => $memberID,
+                            'resultTeamID'   => $teamColor,
+                            'resultPoints'   => $pointsMap[$teamColor],
+                            'resultActive'   => 1,
+                            'resultCreated'  => now(),
+                            'resultEdited'   => now(),
+                        ]);
+                    }
+                }
+
+                \Log::info('saveTeams: complete', [
+                    'gameID'       => $gameID,
+                    'playersSaved' => count($assignments),
+                ]);
+            });
 
         } catch (\Throwable $e) {
             \Log::error('saveTeams failed', [
