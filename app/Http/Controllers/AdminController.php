@@ -221,14 +221,31 @@ class AdminController extends Controller
             $gameCode = strtoupper(Str::random(4));
         } while (DB::table('games')->where('gameCode', $gameCode)->exists());
 
-        DB::table('games')->insert([
+        $gameID = DB::table('games')->insertGetId([
             'gameSeasonID' => $seasonID,
             'gameRound'    => $request->input('gameRound'),
             'gameDate'     => $request->input('gameDate'),
             'gameYouTube'  => $request->input('gameYouTube'),
             'gameVisible'  => $request->input('gameVisible', 1),
             'gameCode'     => $gameCode,
+        ], 'gameID');
+
+        DB::table('scoring-settings')->insert([
+            'gameID'               => $gameID,
+            'settingsRounds'       => 7,
+            'settingsGamesPerRound'=> 3,
+            'settingsGameDuration' => 60,
+            'settingsTeams'        => 3,
+            'teamAID'              => null,
+            'teamBID'              => null,
+            'teamCID'              => null,
+            'settingsPointsWin'    => 3,
+            'settingsPointsDraw'   => 1,
+            'commentatorID'        => 1,
+            'settingsActive'       => 1,
+            'settingsVisible'      => 1,
         ]);
+
         return redirect("/admin/seasons/{$seasonID}/games")->with('success', 'Game created.');
     }
 
