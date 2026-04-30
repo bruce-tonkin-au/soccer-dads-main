@@ -1,5 +1,10 @@
 @extends('admin.layout')
 @section('title', 'Players')
+
+@push('styles')
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+@endpush
+
 @section('content')
 
 <div class="admin-card">
@@ -9,7 +14,7 @@
             <i class="fa-solid fa-user-plus"></i> Add player
         </a>
     </div>
-    <table>
+    <table id="players-table">
         <thead>
             <tr>
                 <th>Name</th>
@@ -50,3 +55,15 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new DataTable('#players-table', {
+            pageLength: 25,
+            columnDefs: [{ orderable: false, targets: -1 }]
+        });
+    });
+</script>
+@endpush
