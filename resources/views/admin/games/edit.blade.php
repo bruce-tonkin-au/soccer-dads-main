@@ -12,6 +12,13 @@
     <form method="POST" action="/admin/seasons/{{ $season->seasonID }}/games/{{ $game->gameID }}/edit">
         @csrf
         <div class="form-group">
+            <label class="form-label">Game code</label>
+            <input type="text" name="gameCode" class="form-control" value="{{ old('gameCode', $game->gameCode) }}" maxlength="4" style="text-transform:uppercase;" placeholder="e.g. A3K9">
+            @error('gameCode')
+                <div style="color:red; margin-top:4px;">{{ $message }}</div>
+            @enderror
+        </div>
+        <div class="form-group">
             <label class="form-label">Round number</label>
             <input type="number" name="gameRound" class="form-control" value="{{ $game->gameRound }}" required>
         </div>

@@ -217,12 +217,17 @@ class AdminController extends Controller
 
     public function storeGame(Request $request, $seasonID)
     {
+        do {
+            $gameCode = strtoupper(Str::random(4));
+        } while (DB::table('games')->where('gameCode', $gameCode)->exists());
+
         DB::table('games')->insert([
             'gameSeasonID' => $seasonID,
             'gameRound'    => $request->input('gameRound'),
             'gameDate'     => $request->input('gameDate'),
             'gameYouTube'  => $request->input('gameYouTube'),
             'gameVisible'  => $request->input('gameVisible', 1),
+            'gameCode'     => $gameCode,
         ]);
         return redirect("/admin/seasons/{$seasonID}/games")->with('success', 'Game created.');
     }
@@ -236,12 +241,25 @@ class AdminController extends Controller
 
     public function updateGame(Request $request, $seasonID, $gameID)
     {
+        $gameCode = strtoupper(trim($request->input('gameCode', ''))) ?: null;
+
+        if ($gameCode) {
+            $taken = DB::table('games')
+                ->where('gameCode', $gameCode)
+                ->where('gameID', '!=', $gameID)
+                ->exists();
+            if ($taken) {
+                return back()->withErrors(['gameCode' => 'This game code is already in use by another game.'])->withInput();
+            }
+        }
+
         DB::table('games')->where('gameID', $gameID)->update([
             'gameRound'        => $request->input('gameRound'),
             'gameDate'         => $request->input('gameDate'),
             'gameYouTube'      => $request->input('gameYouTube'),
             'gameYouTubeStart' => $request->input('gameYouTubeStart') ?: null,
             'gameVisible'      => $request->input('gameVisible', 1),
+            'gameCode'         => $gameCode,
         ]);
         return redirect("/admin/seasons/{$seasonID}/games")->with('success', 'Game updated.');
     }
