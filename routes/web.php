@@ -106,6 +106,10 @@ Route::get('/rate/{memberCode}', [RatingController::class, 'show']);
 Route::post('/rate/{memberCode}', [RatingController::class, 'store']);
 Route::get('/rate/{memberCode}/done', [RatingController::class, 'done']);
 
+Route::get('/reg/{memberCode}.html', function($memberCode) {
+    return redirect('/reg/' . $memberCode, 301);
+});
+
 Route::get('/r/{memberCode}', function($memberCode) {
     return redirect('/reg/' . $memberCode, 301);
 });
