@@ -68,10 +68,10 @@
         </div>
     </div>
     <div class="admin-card">
-        <h2>System</h2>
+        <h2>Scoreboard</h2>
         <div style="font-size:14px; color:#888; line-height:2;">
-            <div>Scoring system: <a href="http://localhost:8000" target="_blank" style="color:#458bc8;">localhost:8000</a></div>
-            <div>Main site: <a href="http://localhost:8001" target="_blank" style="color:#458bc8;">localhost:8001</a></div>
+            <div><a href="https://scoreboard.soccerdads.com.au" target="_blank" style="color:#458bc8;">scoreboard.soccerdads.com.au</a></div>
+            <div style="margin-top:6px; line-height:1.5;">To add to your iPhone home screen: open the link in Safari, tap the Share button, then tap Add to Home Screen.</div>
         </div>
     </div>
 </div>
