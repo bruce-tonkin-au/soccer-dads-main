@@ -635,37 +635,45 @@ class AdminController extends Controller
 
     public function saveTeams(Request $request, $gameID)
     {
-        $game      = DB::table('games')->where('gameID', $gameID)->firstOrFail();
-        $pointsMap = [1 => 3, 2 => 2, 3 => 1];
+        try {
+            $game      = DB::table('games')->where('gameID', $gameID)->firstOrFail();
+            $pointsMap = [1 => 3, 2 => 2, 3 => 1];
 
-        foreach ($request->input('teams', []) as $memberID => $teamID) {
-            $teamID = (int) $teamID;
-            if (!$teamID || !isset($pointsMap[$teamID])) continue;
+            foreach ($request->input('teams', []) as $memberID => $teamID) {
+                $teamID = (int) $teamID;
+                if (!$teamID || !isset($pointsMap[$teamID])) continue;
 
-            $existing = DB::table('results')
-                ->where('resultGameID', $game->gameID)
-                ->where('resultMemberID', $memberID)
-                ->first();
+                $existing = DB::table('results')
+                    ->where('resultGameID', $game->gameID)
+                    ->where('resultMemberID', $memberID)
+                    ->first();
 
-            if ($existing) {
-                DB::table('results')->where('resultID', $existing->resultID)->update([
-                    'resultTeamID' => $teamID,
-                    'resultPoints' => $pointsMap[$teamID],
-                    'resultEdited' => now(),
-                ]);
-            } else {
-                DB::table('results')->insert([
-                    'resultSeasonID' => $game->gameSeasonID,
-                    'resultGameID'   => $game->gameID,
-                    'resultMemberID' => $memberID,
-                    'resultTeamID'   => $teamID,
-                    'resultPoints'   => $pointsMap[$teamID],
-                    'resultActive'   => 1,
-                    'resultVisited'  => 0,
-                    'resultCreated'  => now(),
-                    'resultEdited'   => now(),
-                ]);
+                if ($existing) {
+                    DB::table('results')->where('resultID', $existing->resultID)->update([
+                        'resultTeamID' => $teamID,
+                        'resultPoints' => $pointsMap[$teamID],
+                        'resultEdited' => now(),
+                    ]);
+                } else {
+                    DB::table('results')->insert([
+                        'resultSeasonID' => $game->gameSeasonID,
+                        'resultGameID'   => $game->gameID,
+                        'resultMemberID' => $memberID,
+                        'resultTeamID'   => $teamID,
+                        'resultPoints'   => $pointsMap[$teamID],
+                        'resultActive'   => 1,
+                        'resultCreated'  => now(),
+                        'resultEdited'   => now(),
+                    ]);
+                }
             }
+        } catch (\Throwable $e) {
+            \Log::error('saveTeams failed', [
+                'gameID'    => $gameID,
+                'message'   => $e->getMessage(),
+                'trace'     => $e->getTraceAsString(),
+            ]);
+            throw $e;
         }
 
         return redirect("/admin/teams/{$gameID}")->with('success', 'Teams saved successfully!');
