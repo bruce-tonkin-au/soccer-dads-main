@@ -61,6 +61,7 @@
                 <div style="font-size:48px; font-weight:700; line-height:1; margin-bottom:4px;">{{ $teamNightPoints[$teamID] ?? 0 }}</div>
                 <div style="font-size:18px; font-weight:600; margin-bottom:4px;">{{ $team['name'] }}</div>
                 <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:1rem;">{{ $teamNightGoals[$teamID] ?? 0 }} goals</div>
+                @if($nightStarted)
                 <div style="border-top:1px solid rgba(255,255,255,0.2); padding-top:1rem; flex:1;">
                     @forelse($players as $player)
                     <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:6px;">
@@ -73,6 +74,7 @@
                     <div style="font-size:13px; color:rgba(255,255,255,0.5);">No players</div>
                     @endforelse
                 </div>
+                @endif
             </div>
             @endforeach
         </div>

@@ -321,6 +321,8 @@ class SeasonsController extends Controller
         $ytdGoals = $ytdActions->groupBy('memberID')->map(fn($g) => $g->count());
         $ytdAssists = $ytdActions->whereNotNull('secondID')->groupBy('secondID')->map(fn($g) => $g->count());
 
+        $nightStarted = $scoringRows->whereNotNull('scoringStarted')->isNotEmpty();
+
         // Team results for the night
         $results = $scoringRows->map(function ($row) use ($actions, $teams) {
             $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->where('actionGoal', 1)->count();
@@ -368,7 +370,8 @@ class SeasonsController extends Controller
             'allTimeAssists',
             'youtubeID',
             'youtubeStart',
-            'teamPlayers'
+            'teamPlayers',
+            'nightStarted'
         ));
     }
 }
