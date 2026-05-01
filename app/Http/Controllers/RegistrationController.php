@@ -18,7 +18,8 @@ class RegistrationController extends Controller
         ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
         ->where('g.gameVisible', 1)
         ->where('g.gameSeasonID', $currentSeason->seasonID)
-        ->orderBy('g.gameID', 'asc')
+        ->whereRaw('g."gameDate" >= (NOW() AT TIME ZONE \'Australia/Adelaide\')::date')
+        ->orderByRaw('g."gameDate" ASC')
         ->select('g.*', 's.seasonName')
         ->first();
 }
