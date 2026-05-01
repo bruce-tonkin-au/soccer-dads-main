@@ -132,6 +132,7 @@ class SeasonsController extends Controller
             $scoringRows = DB::table('scoring')
                 ->where('gameID', $game->gameID)
                 ->where('scoringActive', 1)
+                ->whereNotNull('scoringEnded')
                 ->get();
 
             $scoringIDs = $scoringRows->pluck('scoringID');
@@ -327,6 +328,7 @@ class SeasonsController extends Controller
             return (object)[
                 'scoringRound' => $row->scoringRound,
                 'scoringGame'  => $row->scoringGame,
+                'scoringEnded' => $row->scoringEnded,
                 'homeTeam'     => array_merge($teams[$row->scoringTeamHome] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamHome]),
                 'awayTeam'     => array_merge($teams[$row->scoringTeamAway] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamAway]),
                 'homeGoals'    => $homeGoals,

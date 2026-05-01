@@ -27,6 +27,7 @@
     foreach($results as $r) {
         $homeID = $r->homeTeam['id'];
         $awayID = $r->awayTeam['id'];
+        if (!$r->scoringEnded) continue;
         $teamNightGoals[$homeID] = ($teamNightGoals[$homeID] ?? 0) + $r->homeGoals;
         $teamNightGoals[$awayID] = ($teamNightGoals[$awayID] ?? 0) + $r->awayGoals;
         if ($r->homeGoals > $r->awayGoals) {
@@ -119,6 +120,7 @@
                         @php
                             $teamPoints = [1 => 0, 2 => 0, 3 => 0];
                             foreach($games as $g) {
+                                if (!$g->scoringEnded) continue;
                                 $homeID = $g->homeTeam['id'];
                                 $awayID = $g->awayTeam['id'];
                                 if ($g->homeGoals > $g->awayGoals) {
