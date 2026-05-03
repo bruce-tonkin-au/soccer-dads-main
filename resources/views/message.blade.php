@@ -162,13 +162,73 @@
         <div class="next-game-date">{{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }}</div>
         <div class="next-game-sub">{{ $nextGame->seasonName }} · Round {{ $nextGame->gameRound }}</div>
 
-        @if($atCapacity)
-        <div style="border:2px solid #e68a46; background:#fff8e6; border-radius:10px; padding:1rem 1.25rem;">
-            <div style="font-size:22px; margin-bottom:0.4rem;">⚽</div>
-            <div style="font-weight:700; color:#c0600a; font-size:15px; margin-bottom:0.25rem;">Game is at capacity</div>
-            <div style="color:#888; font-size:14px;">All 18 spots are filled for this game.</div>
+        @php
+            $isActive = $registration && $registration->registrationStatus == 1 && $registration->registrationBench == 0;
+            $suffix = match(true) {
+                $benchPosition === null => '',
+                ($benchPosition % 100) >= 11 && ($benchPosition % 100) <= 13 => 'th',
+                ($benchPosition % 10) === 1 => 'st',
+                ($benchPosition % 10) === 2 => 'nd',
+                ($benchPosition % 10) === 3 => 'rd',
+                default => 'th',
+            };
+        @endphp
+
+        @if($isActive)
+        {{-- Scenario 1: registered and playing --}}
+        <div class="reg-buttons">
+            <form method="POST" action="/reg/{{ $member->memberCode }}">
+                @csrf
+                <button type="submit" name="status" value="1" class="btn btn-active-yes">
+                    <i class="fa-solid fa-circle-check" style="color:#7bba56;"></i> I'm in
+                </button>
+            </form>
+            <form method="POST" action="/reg/{{ $member->memberCode }}">
+                @csrf
+                <button type="submit" name="status" value="2" class="btn">
+                    <i class="fa-solid fa-circle-xmark" style="color:#e24b4a;"></i> Can't make it
+                </button>
+            </form>
         </div>
+
+        @elseif($onBench)
+        {{-- Scenario 2: on the reserves bench --}}
+        <div style="border:2px solid #e68a46; background:#fff8ee; border-radius:10px; padding:1rem 1.25rem; margin-bottom:0.75rem;">
+            <div style="font-weight:700; color:#c0600a; font-size:15px; margin-bottom:0.25rem;">
+                <i class="fa-solid fa-clock" style="margin-right:4px;"></i>You're on the reserves bench
+            </div>
+            <div style="color:#666; font-size:14px; line-height:1.6;">
+                The game is at capacity. You're <strong>{{ $benchPosition }}{{ $suffix }}</strong> in the queue — you'll be automatically added to the game if a spot opens up.
+            </div>
+        </div>
+        <form method="POST" action="/reg/{{ $member->memberCode }}">
+            @csrf
+            <button type="submit" name="status" value="2"
+                style="background:none; border:1px solid #ddd; border-radius:8px; padding:8px 16px; font-size:13px; color:#888; cursor:pointer; width:100%;">
+                <i class="fa-solid fa-circle-xmark" style="color:#e24b4a;"></i> Remove me from the bench
+            </button>
+        </form>
+
+        @elseif($atCapacity)
+        {{-- Scenario 3: not registered, game full --}}
+        <div style="border:2px solid #e68a46; background:#fff8ee; border-radius:10px; padding:1rem 1.25rem; margin-bottom:0.75rem;">
+            <div style="font-weight:700; color:#c0600a; font-size:15px; margin-bottom:0.25rem;">
+                <i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i>Game is full
+            </div>
+            <div style="color:#666; font-size:14px; line-height:1.6;">
+                All 18 spots are taken, but you can join the reserves bench. You'll be automatically added to the game if someone withdraws.
+            </div>
+        </div>
+        <form method="POST" action="/reg/{{ $member->memberCode }}">
+            @csrf
+            <button type="submit" name="status" value="1"
+                style="display:inline-flex; align-items:center; gap:8px; background:#e68a46; color:#fff; border:none; padding:12px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; width:100%; justify-content:center;">
+                <i class="fa-solid fa-clock"></i> Join the reserves bench
+            </button>
+        </form>
+
         @else
+        {{-- Scenario 4: not registered, spots available --}}
         <div class="reg-buttons">
             <form method="POST" action="/reg/{{ $member->memberCode }}">
                 @csrf

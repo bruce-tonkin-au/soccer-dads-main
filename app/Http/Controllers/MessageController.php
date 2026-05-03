@@ -41,19 +41,38 @@ class MessageController extends Controller
         }
 
         $registration = null;
-        $atCapacity = false;
+        $atCapacity   = false;
+        $onBench      = false;
+        $benchPosition = null;
         if ($nextGame) {
             $registration = DB::table('game-registrations')
                 ->where('gameID', $nextGame->gameID)
                 ->where('memberID', $member->memberID)
                 ->first();
 
-            $confirmedCount = DB::table('game-registrations')
+            $activeCount = DB::table('game-registrations')
                 ->where('gameID', $nextGame->gameID)
                 ->where('registrationStatus', 1)
+                ->where('registrationBench', 0)
                 ->count();
 
-            $atCapacity = $confirmedCount >= 18;
+            $atCapacity = $activeCount >= 18;
+
+            $onBench = $registration
+                && $registration->registrationStatus == 1
+                && $registration->registrationBench == 1;
+
+            if ($onBench) {
+                $benchIds = DB::table('game-registrations')
+                    ->where('gameID', $nextGame->gameID)
+                    ->where('registrationBench', 1)
+                    ->where('registrationStatus', 1)
+                    ->orderBy('registrationCreated')
+                    ->orderBy('registrationID')
+                    ->pluck('registrationID');
+                $idx = $benchIds->search($registration->registrationID);
+                $benchPosition = $idx !== false ? $idx + 1 : 1;
+            }
         }
 
         $lastRating = DB::table('player-ratings')
@@ -65,7 +84,8 @@ class MessageController extends Controller
             \Carbon\Carbon::parse($lastRating->created_at)->diffInDays(now()) > 14;
 
         return view('message', compact(
-            'message', 'member', 'nextGame', 'registration', 'needsPeerReview', 'atCapacity'
+            'message', 'member', 'nextGame', 'registration',
+            'needsPeerReview', 'atCapacity', 'onBench', 'benchPosition'
         ));
     }
 }
