@@ -71,6 +71,7 @@ class AdminController extends Controller
         }
 
         $registrations = null;
+        $recentUnregistered = null;
         if ($nextGame) {
             $registrations = DB::table('game-registrations as r')
                 ->join('members as m', 'r.memberID', '=', 'm.memberID')
@@ -79,9 +80,36 @@ class AdminController extends Controller
                 ->orderBy('m.memberNameLast')
                 ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
                 ->get();
+
+            $recentGameIds = DB::table('games')
+                ->where('gameVisible', 1)
+                ->where('gameID', '<', $nextGame->gameID)
+                ->whereExists(function ($q) {
+                    $q->select(DB::raw(1))->from('scoring')
+                      ->whereColumn('scoring.gameID', 'games.gameID')
+                      ->whereNotNull('scoring.scoringEnded');
+                })
+                ->orderBy('gameID', 'desc')
+                ->limit(5)
+                ->pluck('gameID');
+
+            if ($recentGameIds->isNotEmpty()) {
+                $registeredIds = $registrations->pluck('memberID');
+
+                $recentUnregistered = DB::table('results as r')
+                    ->join('members as m', 'r.resultMemberID', '=', 'm.memberID')
+                    ->where('r.resultActive', 1)
+                    ->where('m.memberActive', 1)
+                    ->whereIn('r.resultGameID', $recentGameIds)
+                    ->when($registeredIds->isNotEmpty(), fn ($q) => $q->whereNotIn('m.memberID', $registeredIds))
+                    ->orderBy('m.memberNameLast')
+                    ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
+                    ->distinct()
+                    ->get();
+            }
         }
 
-        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations'));
+        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'recentUnregistered'));
     }
 
     // PLAYERS

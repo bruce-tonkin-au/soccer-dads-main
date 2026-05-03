@@ -47,6 +47,18 @@
         @endforeach
     </div>
     @endif
+    @if($recentUnregistered && $recentUnregistered->count() > 0)
+    <div style="margin-top:1rem;">
+        <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">Not yet registered — played recently</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            @foreach($recentUnregistered as $r)
+            <a href="/admin/players/{{ $r->memberID }}/edit" style="background:transparent; border:1.5px dashed #ccc; border-radius:20px; padding:5px 13px; font-size:13px; color:#aaa; text-decoration:none;">
+                {{ $r->memberNameFirst }} {{ $r->memberNameLast }}
+            </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
 </div>
 @endif
 
