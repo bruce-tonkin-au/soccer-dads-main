@@ -21,6 +21,12 @@
     </div>
 </div>
 
+@if(session('success'))
+<div style="background:#f0fdf4; border:1px solid #7bba56; border-radius:8px; padding:12px 16px; margin-bottom:1.5rem; font-size:14px; color:#262c39;">
+    <i class="fa-solid fa-circle-check" style="color:#7bba56;"></i> {{ session('success') }}
+</div>
+@endif
+
 @if($nextGame)
 <div class="admin-card">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
@@ -37,16 +43,45 @@
             </a>
         </div>
     </div>
-    <p style="font-size:13px; color:#888; margin-bottom:1rem;">{{ $registrations?->count() ?? 0 }} players registered</p>
+    <p style="font-size:13px; color:#888; margin-bottom:1rem;">{{ $registrations?->count() ?? 0 }}/18 active players registered</p>
     @if($registrations && $registrations->count() > 0)
     <div style="display:flex; flex-wrap:wrap; gap:8px;">
         @foreach($registrations as $r)
-        <a href="/admin/players/{{ $r->memberID }}/edit" style="background:#f4f4f4; border-radius:20px; padding:6px 14px; font-size:13px; color:#262c39; text-decoration:none;">
-            {{ $r->memberNameFirst }} {{ $r->memberNameLast }}
-        </a>
+        <div style="display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;">
+            <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#262c39; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
+            <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/demote/{{ $r->memberID }}" style="margin:0;">
+                @csrf
+                <button type="submit" title="Move to bench" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#e68a46'" onmouseout="this.style.color='#aaa'">
+                    <i class="fa-solid fa-arrow-down"></i>
+                </button>
+            </form>
+        </div>
         @endforeach
     </div>
     @endif
+
+    @if($benchRegistrations && $benchRegistrations->count() > 0)
+    <div style="margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid #eee;">
+        <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
+            <i class="fa-solid fa-clock" style="margin-right:4px;"></i>Reserves bench
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            @foreach($benchRegistrations as $i => $r)
+            <div style="display:inline-flex; align-items:center; gap:6px; background:#fff8ee; border:1px solid #f0d090; border-radius:20px; padding:4px 4px 4px 10px; font-size:13px; color:#262c39;">
+                <span style="font-size:11px; color:#e68a46; font-weight:600; min-width:20px;">{{ $i + 1 }}.</span>
+                <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#262c39; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
+                <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/promote/{{ $r->memberID }}" style="margin:0;">
+                    @csrf
+                    <button type="submit" title="Promote to active" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#7bba56'" onmouseout="this.style.color='#aaa'">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </form>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     @if($recentUnregistered && $recentUnregistered->count() > 0)
     <div style="margin-top:1rem;">
         <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">Not yet registered — played recently</p>
