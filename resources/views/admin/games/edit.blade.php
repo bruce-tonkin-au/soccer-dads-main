@@ -32,7 +32,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">YouTube start time</label>
-            <input type="datetime-local" name="gameYouTubeStart" class="form-control" value="{{ $game->gameYouTubeStart ? \Carbon\Carbon::parse($game->gameYouTubeStart)->format('Y-m-d\TH:i') : '' }}">
+            <input type="datetime-local" name="gameYouTubeStart" class="form-control" step="1" value="{{ $game->gameYouTubeStart ? \Carbon\Carbon::parse($game->gameYouTubeStart)->format('Y-m-d\TH:i:s') : '' }}">
         </div>
         <div class="form-group">
             <label class="form-label">Visible</label>
