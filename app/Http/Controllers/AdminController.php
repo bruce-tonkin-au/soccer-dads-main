@@ -302,14 +302,27 @@ class AdminController extends Controller
 
     public function editGame($seasonID, $gameID)
     {
-        $season  = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
-        $game    = DB::table('games')->where('gameID', $gameID)->firstOrFail();
+        $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
+        $game   = DB::table('games')->where('gameID', $gameID)->firstOrFail();
+
+        // Attendees for this game night, plus the already-saved bibs washer (if any)
+        $attendeeIDs = DB::table('results')
+            ->where('resultGameID', $gameID)
+            ->where('resultActive', 1)
+            ->pluck('resultMemberID')
+            ->unique();
+
+        if ($game->gameBibsMemberID) {
+            $attendeeIDs = $attendeeIDs->push($game->gameBibsMemberID)->unique();
+        }
+
         $members = DB::table('members')
-            ->where('memberActive', 1)
+            ->whereIn('memberID', $attendeeIDs)
             ->orderBy('memberNameLast')
             ->orderBy('memberNameFirst')
             ->select('memberID', 'memberNameFirst', 'memberNameLast')
             ->get();
+
         return view('admin.games.edit', compact('season', 'game', 'members'));
     }
 
