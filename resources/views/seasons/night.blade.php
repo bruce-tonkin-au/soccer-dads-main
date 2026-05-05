@@ -307,9 +307,9 @@
                         @if($youtubeID && $youtubeStart)
                         <td>
                             @php
-                                $offset = \Carbon\Carbon::parse($youtubeStart)->diffInSeconds(\Carbon\Carbon::parse($action->actionTime));
+                                $t = $youtubeOffset + (int) \Carbon\Carbon::parse($youtubeStart)->diffInSeconds(\Carbon\Carbon::parse($action->actionTime));
                             @endphp
-                            <a href="https://www.youtube.com/watch?v={{ $youtubeID }}&t={{ $offset }}s" target="_blank" style="color:#e24b4a; font-size:12px; text-decoration:none;">
+                            <a href="https://www.youtube.com/watch?v={{ $youtubeID }}&t={{ $t }}" target="_blank" style="color:#e24b4a; font-size:12px; text-decoration:none;">
                                 <i class="fa-brands fa-youtube"></i> Watch
                             </a>
                         </td>

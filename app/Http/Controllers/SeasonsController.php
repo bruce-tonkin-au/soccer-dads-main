@@ -340,10 +340,17 @@ class SeasonsController extends Controller
         });
 
         // YouTube info
-        $youtubeID = null;
+        $youtubeID     = null;
+        $youtubeOffset = 0; // seconds already into the video where kickoff falls (pre-roll)
         if ($game->gameYouTube) {
-            preg_match('/(?:youtu\.be\/|v=)([^&\s]+)/', $game->gameYouTube, $matches);
+            // Stop at ? or & so a URL like youtu.be/ID?t=120 gives just the ID
+            preg_match('/(?:youtu\.be\/|v=)([^&?\s]+)/', $game->gameYouTube, $matches);
             $youtubeID = $matches[1] ?? null;
+
+            // Extract any ?t=SECONDS already in the URL (the pre-roll before kickoff)
+            if (preg_match('/[?&]t=(\d+)/', $game->gameYouTube, $tMatches)) {
+                $youtubeOffset = (int) $tMatches[1];
+            }
         }
 
         $youtubeStart = $game->gameYouTubeStart ?? null;
@@ -371,6 +378,7 @@ class SeasonsController extends Controller
             'allTimeAssists',
             'youtubeID',
             'youtubeStart',
+            'youtubeOffset',
             'teamPlayers',
             'nightStarted'
         ));
