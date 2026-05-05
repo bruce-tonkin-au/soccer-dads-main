@@ -132,7 +132,6 @@ class SeasonsController extends Controller
             $scoringRows = DB::table('scoring')
                 ->where('gameID', $game->gameID)
                 ->where('scoringActive', 1)
-                ->whereNotNull('scoringEnded')
                 ->get();
 
             $scoringIDs = $scoringRows->pluck('scoringID');
@@ -153,6 +152,8 @@ class SeasonsController extends Controller
             foreach ($scoringRows as $row) {
                 $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->count();
                 $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->count();
+                // Skip games not yet played: no goals and no official end time
+                if (!$row->scoringEnded && $homeGoals === 0 && $awayGoals === 0) continue;
                 if ($homeGoals > $awayGoals) {
                     $teamGoals[$row->scoringTeamHome] = ($teamGoals[$row->scoringTeamHome] ?? 0) + 2;
                 } elseif ($awayGoals > $homeGoals) {
