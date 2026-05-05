@@ -43,8 +43,10 @@
             </a>
         </div>
     </div>
-    <p style="font-size:13px; color:#888; margin-bottom:1rem;">{{ $registrations?->count() ?? 0 }}/18 active players registered</p>
     @if($registrations && $registrations->count() > 0)
+    <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
+        <i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>Registered — {{ $registrations->count() }}/{{ $stats['players'] }}
+    </p>
     <div style="display:flex; flex-wrap:wrap; gap:8px;">
         @foreach($registrations as $r)
         <div style="display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;">
@@ -88,6 +90,21 @@
         <div style="display:flex; flex-wrap:wrap; gap:8px;">
             @foreach($recentUnregistered as $r)
             <a href="/admin/players/{{ $r->memberID }}/edit" style="background:transparent; border:1.5px dashed #ccc; border-radius:20px; padding:5px 13px; font-size:13px; color:#aaa; text-decoration:none;">
+                {{ $r->memberNameFirst }} {{ $r->memberNameLast }}
+            </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    @if($notGoingRegistrations && $notGoingRegistrations->count() > 0)
+    <div style="margin-top:1rem;">
+        <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
+            <i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i>Not going
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            @foreach($notGoingRegistrations as $r)
+            <a href="/admin/players/{{ $r->memberID }}/edit" style="background:#fff3f3; border:1.5px dashed #e24b4a; border-radius:20px; padding:5px 13px; font-size:13px; color:#e24b4a; text-decoration:none;">
                 {{ $r->memberNameFirst }} {{ $r->memberNameLast }}
             </a>
             @endforeach

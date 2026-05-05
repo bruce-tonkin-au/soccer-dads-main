@@ -73,6 +73,7 @@ class AdminController extends Controller
         $registrations = null;
         $benchRegistrations = null;
         $recentUnregistered = null;
+        $notGoingRegistrations = null;
         if ($nextGame) {
             $registrations = DB::table('game-registrations as r')
                 ->join('members as m', 'r.memberID', '=', 'm.memberID')
@@ -121,9 +122,17 @@ class AdminController extends Controller
                     ->distinct()
                     ->get();
             }
+
+            $notGoingRegistrations = DB::table('game-registrations as r')
+                ->join('members as m', 'r.memberID', '=', 'm.memberID')
+                ->where('r.gameID', $nextGame->gameID)
+                ->where('r.registrationStatus', 2)
+                ->orderBy('m.memberNameLast')
+                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
+                ->get();
         }
 
-        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'benchRegistrations', 'recentUnregistered'));
+        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'benchRegistrations', 'recentUnregistered', 'notGoingRegistrations'));
     }
 
     // PLAYERS
