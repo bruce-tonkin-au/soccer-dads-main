@@ -158,7 +158,7 @@
                 </tr>
                 <tr>
                     <td>Bibs</td>
-                    <td>&nbsp;</td>
+                    <td>{{ $bibsHolder ? $bibsHolder->memberNameFirst . ' ' . $bibsHolder->memberNameLast : '—' }}</td>
                 </tr>
             </table>
         </div>

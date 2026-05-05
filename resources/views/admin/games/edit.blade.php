@@ -41,6 +41,17 @@
                 <option value="0" {{ !$game->gameVisible ? 'selected' : '' }}>No</option>
             </select>
         </div>
+        <div class="form-group">
+            <label class="form-label">Bibs washer</label>
+            <select name="gameBibsMemberID" class="form-control">
+                <option value="">— Not assigned —</option>
+                @foreach($members as $member)
+                <option value="{{ $member->memberID }}" {{ $game->gameBibsMemberID == $member->memberID ? 'selected' : '' }}>
+                    {{ $member->memberNameLast }}, {{ $member->memberNameFirst }}
+                </option>
+                @endforeach
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">
             <i class="fa-solid fa-floppy-disk"></i> Save changes
         </button>

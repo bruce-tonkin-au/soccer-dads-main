@@ -302,9 +302,15 @@ class AdminController extends Controller
 
     public function editGame($seasonID, $gameID)
     {
-        $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
-        $game   = DB::table('games')->where('gameID', $gameID)->firstOrFail();
-        return view('admin.games.edit', compact('season', 'game'));
+        $season  = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
+        $game    = DB::table('games')->where('gameID', $gameID)->firstOrFail();
+        $members = DB::table('members')
+            ->where('memberActive', 1)
+            ->orderBy('memberNameLast')
+            ->orderBy('memberNameFirst')
+            ->select('memberID', 'memberNameFirst', 'memberNameLast')
+            ->get();
+        return view('admin.games.edit', compact('season', 'game', 'members'));
     }
 
     public function updateGame(Request $request, $seasonID, $gameID)
@@ -322,12 +328,13 @@ class AdminController extends Controller
         }
 
         DB::table('games')->where('gameID', $gameID)->update([
-            'gameRound'        => $request->input('gameRound'),
-            'gameDate'         => $request->input('gameDate'),
-            'gameYouTube'      => $request->input('gameYouTube'),
-            'gameYouTubeStart' => $request->input('gameYouTubeStart') ?: null,
-            'gameVisible'      => $request->input('gameVisible', 1),
-            'gameCode'         => $gameCode,
+            'gameRound'          => $request->input('gameRound'),
+            'gameDate'           => $request->input('gameDate'),
+            'gameYouTube'        => $request->input('gameYouTube'),
+            'gameYouTubeStart'   => $request->input('gameYouTubeStart') ?: null,
+            'gameVisible'        => $request->input('gameVisible', 1),
+            'gameCode'           => $gameCode,
+            'gameBibsMemberID'   => $request->input('gameBibsMemberID') ?: null,
         ]);
         return redirect("/admin/seasons/{$seasonID}/games")->with('success', 'Game updated.');
     }
@@ -686,13 +693,12 @@ class AdminController extends Controller
             ->keyBy('resultMemberID');
 
         $bibCounts = DB::table('games')
-            ->whereNotNull('gameBibs')
-            ->where('gameBibs', '!=', '')
+            ->whereNotNull('gameBibsMemberID')
             ->where('gameVisible', 1)
-            ->select('gameBibs', DB::raw('COUNT(*) as total'))
-            ->groupBy('gameBibs')
+            ->select('gameBibsMemberID', DB::raw('COUNT(*) as total'))
+            ->groupBy('gameBibsMemberID')
             ->get()
-            ->keyBy('gameBibs');
+            ->keyBy('gameBibsMemberID');
 
         $balances = DB::table('account')
             ->whereIn('memberID', $memberIDs)
@@ -703,8 +709,8 @@ class AdminController extends Controller
             ->keyBy('memberID');
 
         $bibsHolder = null;
-        if ($game->gameBibs) {
-            $bibsHolder = DB::table('members')->where('memberID', $game->gameBibs)->first();
+        if ($game->gameBibsMemberID) {
+            $bibsHolder = DB::table('members')->where('memberID', $game->gameBibsMemberID)->first();
         }
 
         $players = $registered->map(function ($member) use ($gamesPlayed, $bibCounts, $balances) {
