@@ -54,12 +54,12 @@ class FixActionTimesUtcToAdelaide extends Command
 
         if (!$dryRun) {
             DB::statement(
-                "UPDATE `scoring-actions`
-                 SET actionTime    = DATE_ADD(actionTime,    INTERVAL 570 MINUTE),
-                     actionCreated = DATE_ADD(actionCreated, INTERVAL 570 MINUTE),
-                     actionEdited  = DATE_ADD(actionEdited,  INTERVAL 570 MINUTE)
-                 WHERE scoringID IN (" . $scoringIDs->implode(',') . ")
-                   AND actionActive = 1"
+                'UPDATE "scoring-actions"
+                 SET "actionTime"    = "actionTime"    + INTERVAL \'570 minutes\',
+                     "actionCreated" = "actionCreated" + INTERVAL \'570 minutes\',
+                     "actionEdited"  = "actionEdited"  + INTERVAL \'570 minutes\'
+                 WHERE "scoringID" IN (' . $scoringIDs->implode(',') . ')
+                   AND "actionActive" = 1'
             );
 
             $samplesAfter = DB::table('scoring-actions')
