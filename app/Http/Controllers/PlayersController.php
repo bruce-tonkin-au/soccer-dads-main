@@ -222,12 +222,17 @@ class PlayersController extends Controller
             ->map(function ($action) {
                 $action->youtubeURL = null;
                 if ($action->gameYouTube && $action->gameYouTubeStart && $action->actionTime) {
-                    preg_match('/(?:youtu\.be\/|v=)([^&\s]+)/', $action->gameYouTube, $matches);
+                    preg_match('/(?:youtu\.be\/|v=)([^&?\s]+)/', $action->gameYouTube, $matches);
+                    $preRoll = 0;
+                    if (preg_match('/[?&]t=(\d+)/', $action->gameYouTube, $tMatches)) {
+                        $preRoll = (int) $tMatches[1];
+                    }
                     if (!empty($matches[1])) {
-                        $start    = strtotime($action->gameYouTubeStart);
-                        $actionTs = strtotime($action->actionTime);
-                        if ($start && $actionTs && $actionTs > $start) {
-                            $action->youtubeURL = 'https://www.youtube.com/watch?v=' . $matches[1] . '&t=' . ($actionTs - $start) . 's';
+                        $start    = \Carbon\Carbon::parse($action->gameYouTubeStart)->timestamp;
+                        $actionTs = \Carbon\Carbon::parse($action->actionTime)->timestamp;
+                        if ($start && $actionTs) {
+                            $t = $preRoll + abs($actionTs - $start);
+                            $action->youtubeURL = 'https://www.youtube.com/watch?v=' . $matches[1] . '&t=' . $t;
                         }
                     }
                 }

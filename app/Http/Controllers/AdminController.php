@@ -344,7 +344,9 @@ class AdminController extends Controller
             'gameRound'          => $request->input('gameRound'),
             'gameDate'           => $request->input('gameDate'),
             'gameYouTube'        => $request->input('gameYouTube'),
-            'gameYouTubeStart'   => $request->input('gameYouTubeStart') ?: null,
+            'gameYouTubeStart'   => $request->input('gameYouTubeStart')
+                ? \Carbon\Carbon::parse($request->input('gameYouTubeStart'), 'Australia/Adelaide')->utc()->format('Y-m-d H:i:s')
+                : null,
             'gameVisible'        => $request->input('gameVisible', 1),
             'gameCode'           => $gameCode,
             'gameBibsMemberID'   => $request->input('gameBibsMemberID') ?: null,

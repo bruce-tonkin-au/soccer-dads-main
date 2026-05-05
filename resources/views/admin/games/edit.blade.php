@@ -32,7 +32,8 @@
         </div>
         <div class="form-group">
             <label class="form-label">YouTube start time</label>
-            <input type="datetime-local" name="gameYouTubeStart" class="form-control" step="1" value="{{ $game->gameYouTubeStart ? \Carbon\Carbon::parse($game->gameYouTubeStart)->format('Y-m-d\TH:i:s') : '' }}">
+            <input type="datetime-local" name="gameYouTubeStart" class="form-control" step="1" value="{{ $game->gameYouTubeStart ? \Carbon\Carbon::parse($game->gameYouTubeStart, 'UTC')->setTimezone('Australia/Adelaide')->format('Y-m-d\TH:i:s') : '' }}">
+            <small style="color:#888; display:block; margin-top:4px;">Enter Adelaide time — stored internally as UTC.</small>
         </div>
         <div class="form-group">
             <label class="form-label">Visible</label>
