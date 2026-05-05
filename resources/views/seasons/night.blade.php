@@ -261,7 +261,6 @@
                         <th>Type</th>
                         <th>Player</th>
                         <th>Assist</th>
-                        <th>Time (debug)</th>
                         @if($youtubeID && $youtubeStart)
                         <th>Video</th>
                         @endif
@@ -305,7 +304,6 @@
                             {{ $action->assisterFirst }} {{ $action->assisterLast }}
                             @endif
                         </td>
-                        <td>{{ $action->actionTime }}</td>
                         @if($youtubeID && $youtubeStart)
                         <td>
                             @php
