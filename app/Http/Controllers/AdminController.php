@@ -94,6 +94,14 @@ class AdminController extends Controller
                 ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
                 ->get();
 
+            $notGoingRegistrations = DB::table('game-registrations as r')
+                ->join('members as m', 'r.memberID', '=', 'm.memberID')
+                ->where('r.gameID', $nextGame->gameID)
+                ->where('r.registrationStatus', 2)
+                ->orderBy('m.memberNameLast')
+                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
+                ->get();
+
             $recentGameIds = DB::table('games')
                 ->where('gameVisible', 1)
                 ->where('gameID', '<', $nextGame->gameID)
@@ -109,6 +117,7 @@ class AdminController extends Controller
             if ($recentGameIds->isNotEmpty()) {
                 $registeredIds = $registrations->pluck('memberID')
                     ->merge($benchRegistrations->pluck('memberID'))
+                    ->merge($notGoingRegistrations->pluck('memberID'))
                     ->unique();
 
                 $recentUnregistered = DB::table('results as r')
@@ -122,14 +131,6 @@ class AdminController extends Controller
                     ->distinct()
                     ->get();
             }
-
-            $notGoingRegistrations = DB::table('game-registrations as r')
-                ->join('members as m', 'r.memberID', '=', 'm.memberID')
-                ->where('r.gameID', $nextGame->gameID)
-                ->where('r.registrationStatus', 2)
-                ->orderBy('m.memberNameLast')
-                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
-                ->get();
         }
 
         return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'benchRegistrations', 'recentUnregistered', 'notGoingRegistrations'));
@@ -556,6 +557,39 @@ class AdminController extends Controller
             ]);
 
         return redirect('/admin')->with('success', 'Player moved to reserves bench.');
+    }
+
+    public function registerPlayer($gameID, $memberID)
+    {
+        $existing = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('memberID', $memberID)
+            ->first();
+
+        if ($existing) {
+            DB::table('game-registrations')
+                ->where('gameID', $gameID)
+                ->where('memberID', $memberID)
+                ->update([
+                    'registrationStatus' => 1,
+                    'registrationBench'  => 0,
+                    'registrationEdited' => now(),
+                ]);
+        } else {
+            DB::table('game-registrations')->insert([
+                'gameID'              => $gameID,
+                'memberID'            => $memberID,
+                'registrationStatus'  => 1,
+                'registrationBench'   => 0,
+                'registrationCreated' => now(),
+                'registrationEdited'  => now(),
+            ]);
+        }
+
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+        return redirect('/admin')->with('success', 'Player registered.');
     }
 
     public function ratings()

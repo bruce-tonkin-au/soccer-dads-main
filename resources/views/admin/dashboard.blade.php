@@ -43,13 +43,12 @@
             </a>
         </div>
     </div>
-    @if($registrations && $registrations->count() > 0)
-    <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
-        <i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>Registered — {{ $registrations->count() }}/{{ $stats['players'] }}
+    <p id="registered-label" style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;{{ (!$registrations || $registrations->count() === 0) ? ' display:none;' : '' }}">
+        <i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>Registered — <span id="registered-count">{{ $registrations ? $registrations->count() : 0 }}</span>/{{ $stats['players'] }}
     </p>
-    <div style="display:flex; flex-wrap:wrap; gap:8px;">
-        @foreach($registrations as $r)
-        <div style="display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;">
+    <div style="display:flex; flex-wrap:wrap; gap:8px;" id="registered-list">
+        @foreach($registrations ?? [] as $r)
+        <div style="display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;" data-player-chip>
             <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#262c39; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
             <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/demote/{{ $r->memberID }}" style="margin:0;">
                 @csrf
@@ -60,7 +59,6 @@
         </div>
         @endforeach
     </div>
-    @endif
 
     @if($benchRegistrations && $benchRegistrations->count() > 0)
     <div style="margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid #eee;">
@@ -85,28 +83,48 @@
     @endif
 
     @if($recentUnregistered && $recentUnregistered->count() > 0)
-    <div style="margin-top:1rem;">
+    <div style="margin-top:1rem;" id="not-yet-registered-section" data-player-section>
         <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">Not yet registered — played recently</p>
-        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;" id="not-yet-registered-list">
             @foreach($recentUnregistered as $r)
-            <a href="/admin/players/{{ $r->memberID }}/edit" style="background:transparent; border:1.5px dashed #ccc; border-radius:20px; padding:5px 13px; font-size:13px; color:#aaa; text-decoration:none;">
-                {{ $r->memberNameFirst }} {{ $r->memberNameLast }}
-            </a>
+            <div style="display:inline-flex; align-items:center; gap:2px; background:transparent; border:1.5px dashed #ccc; border-radius:20px; padding:4px 4px 4px 13px; font-size:13px; color:#aaa;" data-player-chip>
+                <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#aaa; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
+                <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/register/{{ $r->memberID }}" style="margin:0;"
+                      class="js-register-form"
+                      data-game-id="{{ $nextGame->gameID }}"
+                      data-member-id="{{ $r->memberID }}"
+                      data-player-name="{{ $r->memberNameFirst }} {{ $r->memberNameLast }}">
+                    @csrf
+                    <button type="submit" title="Register for game" style="background:none; border:none; cursor:pointer; color:#ccc; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#7bba56'" onmouseout="this.style.color='#ccc'">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </form>
+            </div>
             @endforeach
         </div>
     </div>
     @endif
 
     @if($notGoingRegistrations && $notGoingRegistrations->count() > 0)
-    <div style="margin-top:1rem;">
+    <div style="margin-top:1rem;" id="not-going-section" data-player-section>
         <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
             <i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i>Not going
         </p>
-        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; flex-wrap:wrap; gap:8px;" id="not-going-list">
             @foreach($notGoingRegistrations as $r)
-            <a href="/admin/players/{{ $r->memberID }}/edit" style="background:#fff3f3; border:1.5px dashed #e24b4a; border-radius:20px; padding:5px 13px; font-size:13px; color:#e24b4a; text-decoration:none;">
-                {{ $r->memberNameFirst }} {{ $r->memberNameLast }}
-            </a>
+            <div style="display:inline-flex; align-items:center; gap:2px; background:#fff3f3; border:1.5px dashed #e24b4a; border-radius:20px; padding:4px 4px 4px 13px; font-size:13px; color:#e24b4a;" data-player-chip>
+                <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#e24b4a; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
+                <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/register/{{ $r->memberID }}" style="margin:0;"
+                      class="js-register-form"
+                      data-game-id="{{ $nextGame->gameID }}"
+                      data-member-id="{{ $r->memberID }}"
+                      data-player-name="{{ $r->memberNameFirst }} {{ $r->memberNameLast }}">
+                    @csrf
+                    <button type="submit" title="Register for game" style="background:none; border:none; cursor:pointer; color:#e24b4a; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#7bba56'" onmouseout="this.style.color='#e24b4a'">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </form>
+            </div>
             @endforeach
         </div>
     </div>
@@ -139,5 +157,79 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    document.querySelectorAll('.js-register-form').forEach(function (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const gameID = form.dataset.gameId;
+            const memberID = form.dataset.memberId;
+            const playerName = form.dataset.playerName;
+            const sourceChip = form.closest('[data-player-chip]');
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: '_token=' + encodeURIComponent(csrfToken),
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (!data.success) return;
+
+                // Remove the chip from its current section
+                const sourceSection = sourceChip.closest('[data-player-section]');
+                sourceChip.remove();
+                if (sourceSection && sourceSection.querySelector('[data-player-chip]') === null) {
+                    sourceSection.style.display = 'none';
+                }
+
+                // Build and insert a new chip in the registered list
+                const registeredList = document.getElementById('registered-list');
+                const newChip = document.createElement('div');
+                newChip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;';
+                newChip.setAttribute('data-player-chip', '');
+                newChip.innerHTML =
+                    '<a href="/admin/players/' + memberID + '/edit" style="color:#262c39; text-decoration:none;">' + playerName + '</a>' +
+                    '<form method="POST" action="/admin/registrations/' + gameID + '/demote/' + memberID + '" style="margin:0;">' +
+                    '<input type="hidden" name="_token" value="' + csrfToken + '">' +
+                    '<button type="submit" title="Move to bench" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" ' +
+                    'onmouseover="this.style.color=\'#e68a46\'" onmouseout="this.style.color=\'#aaa\'">' +
+                    '<i class="fa-solid fa-arrow-down"></i></button></form>';
+
+                // Insert sorted by last name
+                const lastName = playerName.split(' ').slice(-1)[0].toLowerCase();
+                const chips = Array.from(registeredList.querySelectorAll('[data-player-chip]'));
+                let inserted = false;
+                for (const chip of chips) {
+                    const chipName = chip.querySelector('a').textContent.trim();
+                    const chipLast = chipName.split(' ').slice(-1)[0].toLowerCase();
+                    if (lastName < chipLast) {
+                        registeredList.insertBefore(newChip, chip);
+                        inserted = true;
+                        break;
+                    }
+                }
+                if (!inserted) registeredList.appendChild(newChip);
+
+                // Show the registered label if it was hidden, and update count
+                const label = document.getElementById('registered-label');
+                if (label) label.style.display = '';
+                const countEl = document.getElementById('registered-count');
+                if (countEl) countEl.textContent = registeredList.querySelectorAll('[data-player-chip]').length;
+            });
+        });
+    });
+});
+</script>
+@endpush
 
 @endsection
