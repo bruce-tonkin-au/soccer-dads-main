@@ -21,11 +21,6 @@
     </div>
 </div>
 
-@if(session('success'))
-<div style="background:#f0fdf4; border:1px solid #7bba56; border-radius:8px; padding:12px 16px; margin-bottom:1.5rem; font-size:14px; color:#262c39;">
-    <i class="fa-solid fa-circle-check" style="color:#7bba56;"></i> {{ session('success') }}
-</div>
-@endif
 
 @if($nextGame)
 <div class="admin-card">
