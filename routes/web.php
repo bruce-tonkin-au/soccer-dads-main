@@ -40,6 +40,8 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/seasons/{seasonID}/games/{gameID}/edit', [AdminController::class, 'editGame']);
     Route::post('/seasons/{seasonID}/games/{gameID}/edit', [AdminController::class, 'updateGame']);
 
+    Route::post('/games/{gameID}/reset-night', [AdminController::class, 'resetNight']);
+
     Route::get('/teams/{gameID}', [AdminController::class, 'teams']);
     Route::post('/teams/{gameID}', [AdminController::class, 'saveTeams']);
     Route::post('/teams/{gameID}/bench/{memberID}', [AdminController::class, 'toggleBench']);

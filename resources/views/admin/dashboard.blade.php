@@ -82,6 +82,13 @@
     </div>
     @endif
 
+    <div style="margin-top:1rem; text-align:right;">
+        <form method="POST" action="/admin/games/{{ $nextGame->gameID }}/reset-night" style="display:inline;" onsubmit="return confirm('Reset the start time for this game night?')">
+            @csrf
+            <button type="submit" style="background:none; border:none; padding:0; font-size:11px; color:#ccc; cursor:pointer; text-decoration:underline;" onmouseover="this.style.color='#e24b4a'" onmouseout="this.style.color='#ccc'">reset night</button>
+        </form>
+    </div>
+
     <div style="margin-top:1rem;{{ (!$notGoingRegistrations || $notGoingRegistrations->count() === 0) ? ' display:none;' : '' }}" id="not-going-section" data-player-section>
         <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
             <i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i>Not going

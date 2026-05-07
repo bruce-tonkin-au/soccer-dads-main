@@ -586,6 +586,12 @@ class AdminController extends Controller
         return redirect('/admin')->with('success', 'Player registered.');
     }
 
+    public function resetNight($gameID)
+    {
+        DB::table('games')->where('gameID', $gameID)->update(['gameStartTime' => null]);
+        return redirect('/admin')->with('success', 'Game night start time has been reset.');
+    }
+
     public function ratings()
     {
         $ratings = DB::table('player-ratings as r')
