@@ -5,7 +5,7 @@
 <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem;">
     <div class="admin-card" style="text-align:center; margin-bottom:0;">
         <div style="font-size:36px; font-weight:700; color:#458bc8;">{{ $stats['players'] }}</div>
-        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Active players</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Players</div>
     </div>
     <div class="admin-card" style="text-align:center; margin-bottom:0;">
         <div style="font-size:36px; font-weight:700; color:#7bba56;">{{ $stats['seasons'] }}</div>
