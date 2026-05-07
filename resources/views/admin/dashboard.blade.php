@@ -50,37 +50,19 @@
         @foreach($registrations ?? [] as $r)
         <div style="display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;" data-player-chip>
             <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#262c39; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
-            <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/demote/{{ $r->memberID }}" style="margin:0;">
+            <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/demote/{{ $r->memberID }}" style="margin:0;"
+                  class="js-demote-form"
+                  data-game-id="{{ $nextGame->gameID }}"
+                  data-member-id="{{ $r->memberID }}"
+                  data-player-name="{{ $r->memberNameFirst }} {{ $r->memberNameLast }}">
                 @csrf
-                <button type="submit" title="Move to bench" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#e68a46'" onmouseout="this.style.color='#aaa'">
+                <button type="submit" title="Mark as not going" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#e24b4a'" onmouseout="this.style.color='#aaa'">
                     <i class="fa-solid fa-arrow-down"></i>
                 </button>
             </form>
         </div>
         @endforeach
     </div>
-
-    @if($benchRegistrations && $benchRegistrations->count() > 0)
-    <div style="margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid #eee;">
-        <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
-            <i class="fa-solid fa-clock" style="margin-right:4px;"></i>Reserves bench
-        </p>
-        <div style="display:flex; flex-wrap:wrap; gap:8px;">
-            @foreach($benchRegistrations as $i => $r)
-            <div style="display:inline-flex; align-items:center; gap:6px; background:#fff8ee; border:1px solid #f0d090; border-radius:20px; padding:4px 4px 4px 10px; font-size:13px; color:#262c39;">
-                <span style="font-size:11px; color:#e68a46; font-weight:600; min-width:20px;">{{ $i + 1 }}.</span>
-                <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#262c39; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
-                <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/promote/{{ $r->memberID }}" style="margin:0;">
-                    @csrf
-                    <button type="submit" title="Promote to active" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#7bba56'" onmouseout="this.style.color='#aaa'">
-                        <i class="fa-solid fa-arrow-up"></i>
-                    </button>
-                </form>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
 
     @if($recentUnregistered && $recentUnregistered->count() > 0)
     <div style="margin-top:1rem;" id="not-yet-registered-section" data-player-section>
@@ -105,13 +87,12 @@
     </div>
     @endif
 
-    @if($notGoingRegistrations && $notGoingRegistrations->count() > 0)
-    <div style="margin-top:1rem;" id="not-going-section" data-player-section>
+    <div style="margin-top:1rem;{{ (!$notGoingRegistrations || $notGoingRegistrations->count() === 0) ? ' display:none;' : '' }}" id="not-going-section" data-player-section>
         <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
             <i class="fa-solid fa-circle-xmark" style="margin-right:4px;"></i>Not going
         </p>
         <div style="display:flex; flex-wrap:wrap; gap:8px;" id="not-going-list">
-            @foreach($notGoingRegistrations as $r)
+            @foreach($notGoingRegistrations ?? [] as $r)
             <div style="display:inline-flex; align-items:center; gap:2px; background:#fff3f3; border:1.5px dashed #e24b4a; border-radius:20px; padding:4px 4px 4px 13px; font-size:13px; color:#e24b4a;" data-player-chip>
                 <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#e24b4a; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
                 <form method="POST" action="/admin/registrations/{{ $nextGame->gameID }}/register/{{ $r->memberID }}" style="margin:0;"
@@ -128,7 +109,6 @@
             @endforeach
         </div>
     </div>
-    @endif
 </div>
 @endif
 
@@ -160,75 +140,111 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-    document.querySelectorAll('.js-register-form').forEach(function (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+    function postAction(url) {
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: '_token=' + encodeURIComponent(csrfToken),
+        }).then(function (r) { return r.json(); });
+    }
 
-            const gameID = form.dataset.gameId;
-            const memberID = form.dataset.memberId;
-            const playerName = form.dataset.playerName;
-            const sourceChip = form.closest('[data-player-chip]');
+    function insertSorted(container, chip, playerName) {
+        var lastName = playerName.split(' ').slice(-1)[0].toLowerCase();
+        var chips = Array.from(container.querySelectorAll('[data-player-chip]'));
+        var inserted = false;
+        for (var i = 0; i < chips.length; i++) {
+            var chipLast = chips[i].querySelector('a').textContent.trim().split(' ').slice(-1)[0].toLowerCase();
+            if (lastName < chipLast) {
+                container.insertBefore(chip, chips[i]);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) container.appendChild(chip);
+    }
 
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: '_token=' + encodeURIComponent(csrfToken),
-            })
-            .then(function (res) { return res.json(); })
-            .then(function (data) {
-                if (!data.success) return;
+    function updateRegisteredCount() {
+        var list = document.getElementById('registered-list');
+        var countEl = document.getElementById('registered-count');
+        if (list && countEl) countEl.textContent = list.querySelectorAll('[data-player-chip]').length;
+    }
 
-                // Remove the chip from its current section
-                const sourceSection = sourceChip.closest('[data-player-section]');
-                sourceChip.remove();
-                if (sourceSection && sourceSection.querySelector('[data-player-chip]') === null) {
-                    sourceSection.style.display = 'none';
-                }
+    function makeRegisteredChip(gameID, memberID, playerName) {
+        var div = document.createElement('div');
+        div.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;';
+        div.setAttribute('data-player-chip', '');
+        div.innerHTML =
+            '<a href="/admin/players/' + memberID + '/edit" style="color:#262c39; text-decoration:none;">' + playerName + '</a>' +
+            '<form method="POST" action="/admin/registrations/' + gameID + '/demote/' + memberID + '" style="margin:0;"' +
+            ' class="js-demote-form" data-game-id="' + gameID + '" data-member-id="' + memberID + '" data-player-name="' + playerName + '">' +
+            '<input type="hidden" name="_token" value="' + csrfToken + '">' +
+            '<button type="submit" title="Mark as not going" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;"' +
+            ' onmouseover="this.style.color=\'#e24b4a\'" onmouseout="this.style.color=\'#aaa\'">' +
+            '<i class="fa-solid fa-arrow-down"></i></button></form>';
+        return div;
+    }
 
-                // Build and insert a new chip in the registered list
-                const registeredList = document.getElementById('registered-list');
-                const newChip = document.createElement('div');
-                newChip.style.cssText = 'display:inline-flex; align-items:center; gap:6px; background:#f4f4f4; border-radius:20px; padding:4px 4px 4px 14px; font-size:13px; color:#262c39;';
-                newChip.setAttribute('data-player-chip', '');
-                newChip.innerHTML =
-                    '<a href="/admin/players/' + memberID + '/edit" style="color:#262c39; text-decoration:none;">' + playerName + '</a>' +
-                    '<form method="POST" action="/admin/registrations/' + gameID + '/demote/' + memberID + '" style="margin:0;">' +
-                    '<input type="hidden" name="_token" value="' + csrfToken + '">' +
-                    '<button type="submit" title="Move to bench" style="background:none; border:none; cursor:pointer; color:#aaa; padding:4px 8px; font-size:12px; border-radius:12px;" ' +
-                    'onmouseover="this.style.color=\'#e68a46\'" onmouseout="this.style.color=\'#aaa\'">' +
-                    '<i class="fa-solid fa-arrow-down"></i></button></form>';
+    function makeNotGoingChip(gameID, memberID, playerName) {
+        var div = document.createElement('div');
+        div.style.cssText = 'display:inline-flex; align-items:center; gap:2px; background:#fff3f3; border:1.5px dashed #e24b4a; border-radius:20px; padding:4px 4px 4px 13px; font-size:13px; color:#e24b4a;';
+        div.setAttribute('data-player-chip', '');
+        div.innerHTML =
+            '<a href="/admin/players/' + memberID + '/edit" style="color:#e24b4a; text-decoration:none;">' + playerName + '</a>' +
+            '<form method="POST" action="/admin/registrations/' + gameID + '/register/' + memberID + '" style="margin:0;"' +
+            ' class="js-register-form" data-game-id="' + gameID + '" data-member-id="' + memberID + '" data-player-name="' + playerName + '">' +
+            '<input type="hidden" name="_token" value="' + csrfToken + '">' +
+            '<button type="submit" title="Register for game" style="background:none; border:none; cursor:pointer; color:#e24b4a; padding:4px 8px; font-size:12px; border-radius:12px;"' +
+            ' onmouseover="this.style.color=\'#7bba56\'" onmouseout="this.style.color=\'#e24b4a\'">' +
+            '<i class="fa-solid fa-arrow-up"></i></button></form>';
+        return div;
+    }
 
-                // Insert sorted by last name
-                const lastName = playerName.split(' ').slice(-1)[0].toLowerCase();
-                const chips = Array.from(registeredList.querySelectorAll('[data-player-chip]'));
-                let inserted = false;
-                for (const chip of chips) {
-                    const chipName = chip.querySelector('a').textContent.trim();
-                    const chipLast = chipName.split(' ').slice(-1)[0].toLowerCase();
-                    if (lastName < chipLast) {
-                        registeredList.insertBefore(newChip, chip);
-                        inserted = true;
-                        break;
-                    }
-                }
-                if (!inserted) registeredList.appendChild(newChip);
+    // Event delegation — catches both server-rendered and JS-created chips
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form.classList.contains('js-register-form') && !form.classList.contains('js-demote-form')) return;
+        e.preventDefault();
 
-                // Show the registered label if it was hidden, and update count
-                const label = document.getElementById('registered-label');
+        var gameID     = form.dataset.gameId;
+        var memberID   = form.dataset.memberId;
+        var playerName = form.dataset.playerName;
+        var sourceChip = form.closest('[data-player-chip]');
+
+        postAction(form.action).then(function (data) {
+            if (!data.success) return;
+
+            // Remove chip from its source section
+            var sourceSection = sourceChip.closest('[data-player-section]');
+            sourceChip.remove();
+            if (sourceSection && !sourceSection.querySelector('[data-player-chip]')) {
+                sourceSection.style.display = 'none';
+            }
+
+            if (form.classList.contains('js-register-form')) {
+                // ↑ Move to registered
+                var registeredList = document.getElementById('registered-list');
+                insertSorted(registeredList, makeRegisteredChip(gameID, memberID, playerName), playerName);
+                var label = document.getElementById('registered-label');
                 if (label) label.style.display = '';
-                const countEl = document.getElementById('registered-count');
-                if (countEl) countEl.textContent = registeredList.querySelectorAll('[data-player-chip]').length;
-            });
+                updateRegisteredCount();
+            } else {
+                // ↓ Move to not going
+                var notGoingSection = document.getElementById('not-going-section');
+                var notGoingList    = document.getElementById('not-going-list');
+                insertSorted(notGoingList, makeNotGoingChip(gameID, memberID, playerName), playerName);
+                if (notGoingSection) notGoingSection.style.display = '';
+                updateRegisteredCount();
+            }
         });
     });
-});
+}());
 </script>
 @endpush
 

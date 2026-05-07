@@ -71,7 +71,6 @@ class AdminController extends Controller
         }
 
         $registrations = null;
-        $benchRegistrations = null;
         $recentUnregistered = null;
         $notGoingRegistrations = null;
         if ($nextGame) {
@@ -79,18 +78,7 @@ class AdminController extends Controller
                 ->join('members as m', 'r.memberID', '=', 'm.memberID')
                 ->where('r.gameID', $nextGame->gameID)
                 ->where('r.registrationStatus', 1)
-                ->where('r.registrationBench', 0)
                 ->orderBy('m.memberNameLast')
-                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
-                ->get();
-
-            $benchRegistrations = DB::table('game-registrations as r')
-                ->join('members as m', 'r.memberID', '=', 'm.memberID')
-                ->where('r.gameID', $nextGame->gameID)
-                ->where('r.registrationStatus', 1)
-                ->where('r.registrationBench', 1)
-                ->orderBy('r.registrationCreated')
-                ->orderBy('r.registrationID')
                 ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
                 ->get();
 
@@ -116,7 +104,6 @@ class AdminController extends Controller
 
             if ($recentGameIds->isNotEmpty()) {
                 $registeredIds = $registrations->pluck('memberID')
-                    ->merge($benchRegistrations->pluck('memberID'))
                     ->merge($notGoingRegistrations->pluck('memberID'))
                     ->unique();
 
@@ -133,7 +120,7 @@ class AdminController extends Controller
             }
         }
 
-        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'benchRegistrations', 'recentUnregistered', 'notGoingRegistrations'));
+        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'recentUnregistered', 'notGoingRegistrations'));
     }
 
     // PLAYERS
@@ -550,13 +537,16 @@ class AdminController extends Controller
         DB::table('game-registrations')
             ->where('gameID', $gameID)
             ->where('memberID', $memberID)
-            ->where('registrationStatus', 1)
             ->update([
-                'registrationBench'  => 1,
+                'registrationStatus' => 2,
+                'registrationBench'  => 0,
                 'registrationEdited' => now(),
             ]);
 
-        return redirect('/admin')->with('success', 'Player moved to reserves bench.');
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+        return redirect('/admin')->with('success', 'Player marked as not going.');
     }
 
     public function registerPlayer($gameID, $memberID)
