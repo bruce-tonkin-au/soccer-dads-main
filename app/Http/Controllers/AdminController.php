@@ -466,6 +466,10 @@ class AdminController extends Controller
                 }
             }
 
+            // Weighting: peer reviews vs performance stats (must sum to 1.0)
+            $peerWeight        = 1.00;
+            $performanceWeight = 0.00;
+
             $performanceRating = $player->rating;
             if ($peer && $peer->ratingCount >= 1) {
                 $peerScore = min(99, round(
@@ -475,7 +479,7 @@ class AdminController extends Controller
                      ((float) $peer->avgDefending * 0.10) +
                      ((float) $peer->avgOverall * 0.10)) / 4 * 99
                 ));
-                $player->rating = min(99, round(($peerScore * 0.70) + ($performanceRating * 0.30)));
+                $player->rating = min(99, round(($peerScore * $peerWeight) + ($performanceRating * $performanceWeight)));
             } else {
                 $player->rating = $performanceRating;
             }
