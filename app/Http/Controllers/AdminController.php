@@ -60,12 +60,13 @@ class AdminController extends Controller
                 ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
                 ->where('g.gameVisible', 1)
                 ->where('g.gameSeasonID', $currentSeason->seasonID)
+                ->whereRaw('g."gameDate" >= CURRENT_DATE')
                 ->whereNotExists(function ($q) {
                     $q->select(DB::raw(1))->from('scoring')
                       ->whereColumn('scoring.gameID', 'g.gameID')
                       ->whereNotNull('scoring.scoringEnded');
                 })
-                ->orderBy('g.gameID', 'asc')
+                ->orderByRaw('g."gameDate" ASC, g."gameID" ASC')
                 ->select('g.*', 's.seasonName')
                 ->first();
         }
