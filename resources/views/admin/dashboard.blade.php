@@ -25,7 +25,7 @@
 @if($nextGame)
 <div class="admin-card">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
-        <h2 style="margin-bottom:0;">Next game — {{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }}</h2>
+        <h2 style="margin-bottom:0;">Next game — {{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }} – Game ID: {{ $nextGame->gameID }}</h2>
         <div style="display:flex; gap:8px;">
             <a href="/admin/teams/{{ $nextGame->gameID }}" class="btn btn-primary">
                 <i class="fa-solid fa-users"></i> Manage teams
