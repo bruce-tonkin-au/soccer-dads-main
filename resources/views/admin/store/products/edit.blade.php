@@ -1,0 +1,79 @@
+@extends('admin.layout')
+@section('title', 'Edit Product')
+
+@section('content')
+
+<div class="admin-card" style="max-width:600px;">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+        <a href="/admin/store/products" class="btn btn-secondary" style="padding:6px 12px;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <h2 style="margin-bottom:0;">Edit — {{ $product->productName }}</h2>
+    </div>
+
+    <div style="background:#f8f8f8; border-radius:8px; padding:12px 16px; margin-bottom:1.5rem; font-size:13px; color:#888;">
+        Slug: <strong style="color:#262c39;">{{ $product->productSlug }}</strong>
+        &nbsp;·&nbsp;
+        <a href="/store/{{ $product->productSlug }}" target="_blank" style="color:#458bc8; text-decoration:none;">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> View in store
+        </a>
+    </div>
+
+    <form method="POST" action="/admin/store/products/{{ $product->productID }}/edit">
+        @csrf
+
+        <div class="form-group">
+            <label class="form-label">Product name</label>
+            <input type="text" name="productName" class="form-control" value="{{ old('productName', $product->productName) }}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea name="productDescription" class="form-control" rows="4" style="resize:vertical;">{{ old('productDescription', $product->productDescription) }}</textarea>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div class="form-group">
+                <label class="form-label">Price ($)</label>
+                <input type="number" name="productPrice" class="form-control" value="{{ old('productPrice', $product->productPrice) }}" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Stock</label>
+                <input type="number" name="productStock" class="form-control" value="{{ old('productStock', $product->productStock) }}" min="0" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="url" name="productImage" class="form-control" value="{{ old('productImage', $product->productImage) }}" placeholder="https://…">
+        </div>
+
+        @if($product->productImage)
+        <div style="margin-bottom:1.25rem;">
+            <img src="{{ $product->productImage }}" alt="" style="width:120px; height:120px; object-fit:cover; border-radius:8px; border:1px solid #e8e8e8;">
+        </div>
+        @endif
+
+        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+            <input type="checkbox" name="productActive" id="productActive" value="1" style="width:18px; height:18px; cursor:pointer;" {{ old('productActive', $product->productActive) ? 'checked' : '' }}>
+            <label for="productActive" style="font-size:14px; color:#262c39; cursor:pointer; margin:0;">Active (visible in store)</label>
+        </div>
+
+        @if($errors->any())
+        <div class="alert alert-error">
+            @foreach($errors->all() as $error)
+            <div>{{ $error }}</div>
+            @endforeach
+        </div>
+        @endif
+
+        <div style="display:flex; gap:8px; margin-top:1rem;">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> Save changes
+            </button>
+            <a href="/admin/store/products" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@endsection

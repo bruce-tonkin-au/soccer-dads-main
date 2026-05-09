@@ -12,6 +12,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PlayerAuthController;
 use App\Http\Controllers\PlayerPortalController;
+use App\Http\Controllers\StoreController;
+use App\Http\Controllers\AdminStoreController;
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'showLogin']);
@@ -65,7 +67,23 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/seasons/{seasonID}/games/{gameID}/charge', [AdminController::class, 'processCharges']);
 
     Route::get('/finances', [AdminController::class, 'finances']);
+
+    // Store management
+    Route::get('/store/products', [AdminStoreController::class, 'products']);
+    Route::get('/store/products/create', [AdminStoreController::class, 'createProduct']);
+    Route::post('/store/products/create', [AdminStoreController::class, 'storeProduct']);
+    Route::get('/store/products/{productID}/edit', [AdminStoreController::class, 'editProduct']);
+    Route::post('/store/products/{productID}/edit', [AdminStoreController::class, 'updateProduct']);
+    Route::post('/store/products/{productID}/toggle', [AdminStoreController::class, 'toggleProduct']);
+
+    Route::get('/store/orders', [AdminStoreController::class, 'orders']);
+    Route::get('/store/orders/{orderID}/edit', [AdminStoreController::class, 'editOrder']);
+    Route::post('/store/orders/{orderID}/edit', [AdminStoreController::class, 'updateOrder']);
 });
+
+// Store
+Route::get('/store', [StoreController::class, 'index']);
+Route::get('/store/{productSlug}', [StoreController::class, 'show']);
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/players', [PlayersController::class, 'index']);
