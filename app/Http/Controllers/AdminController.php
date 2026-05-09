@@ -140,7 +140,10 @@ class AdminController extends Controller
             return $player;
         });
 
-        return view('admin.players.index', compact('players'));
+        $totalOwing = $players->where('balance', '<', 0)->sum('balance');
+        $totalOwed  = $players->where('balance', '>', 0)->sum('balance');
+
+        return view('admin.players.index', compact('players', 'totalOwing', 'totalOwed'));
     }
 
     public function createPlayer()

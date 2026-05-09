@@ -7,6 +7,17 @@
 
 @section('content')
 
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+    <div class="admin-card" style="text-align:center; margin-bottom:0;">
+        <div style="font-size:28px; font-weight:700; color:#e24b4a;">${{ number_format(abs($totalOwing), 2) }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Total owing</div>
+    </div>
+    <div class="admin-card" style="text-align:center; margin-bottom:0;">
+        <div style="font-size:28px; font-weight:700; color:#7bba56;">${{ number_format($totalOwed, 2) }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Total owed</div>
+    </div>
+</div>
+
 <div class="admin-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
         <h2 style="margin-bottom:0;">Players ({{ $players->count() }})</h2>
