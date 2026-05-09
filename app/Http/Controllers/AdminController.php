@@ -993,6 +993,12 @@ class AdminController extends Controller
 
     public function processCharges(Request $request, $seasonID, $gameID)
     {
+        $request->validate([
+            'charges'            => 'required|array|min:1',
+            'charges.*.memberID' => 'required|integer',
+            'charges.*.amount'   => 'required|numeric|min:0|max:50',
+        ]);
+
         $game = DB::table('games as g')
             ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('g.gameID', $gameID)
@@ -1008,19 +1014,28 @@ class AdminController extends Controller
             return redirect("/admin/seasons/{$seasonID}/games")->with('error', 'Charges have already been applied for this game night.');
         }
 
-        $charges = $this->buildCharges($game);
+        // Build canonical list for descriptions and memberID whitelist
+        $canonical = collect($this->buildCharges($game))->keyBy('memberID');
 
-        if (empty($charges)) {
+        if ($canonical->isEmpty()) {
             return redirect("/admin/seasons/{$seasonID}/games")->with('error', 'No players found to charge for this game night.');
         }
 
-        DB::transaction(function () use ($charges, $gameID) {
-            foreach ($charges as $charge) {
+        $posted = collect($request->input('charges'));
+
+        DB::transaction(function () use ($posted, $canonical, $gameID) {
+            foreach ($posted as $entry) {
+                $memberID = (int) $entry['memberID'];
+                if (!$canonical->has($memberID)) {
+                    continue; // ignore any memberIDs not in the canonical list
+                }
+                $amount      = (float) $entry['amount'];
+                $description = $canonical[$memberID]['description'];
                 DB::table('account')->insert([
-                    'memberID'       => $charge['memberID'],
-                    'accountValue'   => $charge['amount'],
+                    'memberID'       => $memberID,
+                    'accountValue'   => $amount > 0 ? -$amount : 0,
                     'gameID'         => $gameID,
-                    'accountComment' => $charge['description'],
+                    'accountComment' => $description,
                     'accountVisible' => 1,
                     'accountCreated' => now(),
                     'accountEdited'  => now(),
@@ -1028,7 +1043,7 @@ class AdminController extends Controller
             }
         });
 
-        $count = count($charges);
+        $count = $posted->count();
         return redirect("/admin/seasons/{$seasonID}/games")->with('success', "Charges applied: {$count} player" . ($count === 1 ? '' : 's') . " charged for Round {$game->gameRound}.");
     }
 

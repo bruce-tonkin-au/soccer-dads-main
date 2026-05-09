@@ -75,7 +75,7 @@
 
 {{-- Charge players modal --}}
 <div id="charge-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:16px; padding:2rem; max-width:540px; width:90%; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="background:#fff; border-radius:16px; padding:2rem; max-width:580px; width:90%; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
             <h2 style="font-size:18px; font-weight:700; color:#262c39; margin:0;" id="modal-title">Charge players</h2>
             <button id="modal-close" style="background:none; border:none; font-size:20px; color:#aaa; cursor:pointer; padding:4px;">×</button>
@@ -83,7 +83,8 @@
         <div id="modal-body" style="overflow-y:auto; flex:1;">
             <p style="color:#888; font-size:14px;">Loading…</p>
         </div>
-        <div id="modal-footer" style="margin-top:1.25rem; display:flex; gap:8px; justify-content:flex-end;">
+        <div id="modal-error" style="display:none; color:#e24b4a; font-size:13px; margin-top:10px; padding:8px 12px; background:#fff3f3; border-radius:6px; border:1px solid #fcc;"></div>
+        <div id="modal-footer" style="margin-top:1.25rem; display:flex; gap:8px; justify-content:flex-end; align-items:center;">
             <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
             <form id="charge-form" method="POST" style="display:none;">
                 @csrf
@@ -101,16 +102,78 @@
     var modal       = document.getElementById('charge-modal');
     var modalTitle  = document.getElementById('modal-title');
     var modalBody   = document.getElementById('modal-body');
+    var modalError  = document.getElementById('modal-error');
     var chargeForm  = document.getElementById('charge-form');
     var modalClose  = document.getElementById('modal-close');
     var modalCancel = document.getElementById('modal-cancel');
 
-    function openModal() { modal.style.display = 'flex'; }
-    function closeModal() { modal.style.display = 'none'; chargeForm.style.display = 'none'; }
+    function openModal()  { modal.style.display = 'flex'; }
+    function closeModal() { modal.style.display = 'none'; chargeForm.style.display = 'none'; hideError(); }
+    function showError(msg) { modalError.textContent = msg; modalError.style.display = 'block'; }
+    function hideError()    { modalError.style.display = 'none'; }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
 
     modalClose.addEventListener('click', closeModal);
     modalCancel.addEventListener('click', closeModal);
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+
+    // Intercept form submit: validate inputs, inject hidden fields, then submit
+    chargeForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideError();
+
+        var inputs = modalBody.querySelectorAll('.charge-amount-input');
+        var valid  = true;
+
+        inputs.forEach(function (input) {
+            var val = parseFloat(input.value);
+            if (isNaN(val) || val < 0 || val > 50) {
+                valid = false;
+                input.style.borderColor = '#e24b4a';
+                input.style.boxShadow   = '0 0 0 2px rgba(226,75,74,0.15)';
+            }
+            // re-apply correct border for valid fields (may have been reset from a prior attempt)
+            if (!isNaN(val) && val >= 0 && val <= 50) {
+                var isModified = input.value !== input.dataset.default;
+                input.style.borderColor = isModified ? '#458bc8' : '#e8e8e8';
+                input.style.boxShadow   = isModified ? '0 0 0 2px rgba(69,139,200,0.15)' : 'none';
+            }
+        });
+
+        if (!valid) {
+            showError('All amounts must be between $0.00 and $50.00.');
+            return;
+        }
+
+        // Remove any previously injected hidden inputs
+        chargeForm.querySelectorAll('.js-charge-hidden').forEach(function (el) { el.remove(); });
+
+        // Inject one pair of hidden inputs per player
+        inputs.forEach(function (input, i) {
+            var mId = document.createElement('input');
+            mId.type      = 'hidden';
+            mId.name      = 'charges[' + i + '][memberID]';
+            mId.value     = input.dataset.memberId;
+            mId.className = 'js-charge-hidden';
+            chargeForm.appendChild(mId);
+
+            var amt = document.createElement('input');
+            amt.type      = 'hidden';
+            amt.name      = 'charges[' + i + '][amount]';
+            amt.value     = parseFloat(input.value).toFixed(2);
+            amt.className = 'js-charge-hidden';
+            chargeForm.appendChild(amt);
+        });
+
+        chargeForm.submit();
+    });
 
     document.querySelectorAll('.js-charge-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -120,8 +183,9 @@
             var previewUrl = btn.dataset.previewUrl;
 
             modalTitle.textContent = 'Charge players — Round ' + round;
-            modalBody.innerHTML = '<p style="color:#888; font-size:14px;">Loading…</p>';
+            modalBody.innerHTML    = '<p style="color:#888; font-size:14px;">Loading…</p>';
             chargeForm.style.display = 'none';
+            hideError();
             openModal();
 
             fetch(previewUrl, {
@@ -130,7 +194,7 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (data.error) {
-                    modalBody.innerHTML = '<p style="color:#e24b4a; font-size:14px;">' + data.error + '</p>';
+                    modalBody.innerHTML = '<p style="color:#e24b4a; font-size:14px;">' + escapeHtml(data.error) + '</p>';
                     return;
                 }
 
@@ -140,26 +204,99 @@
                     return;
                 }
 
-                var html = '<p style="font-size:13px; color:#888; margin-bottom:12px;">Review charges below, then confirm to apply them.</p>';
-                html += '<table style="width:100%; border-collapse:collapse; font-size:14px;">';
-                html += '<thead><tr>';
-                html += '<th style="text-align:left; padding:6px 8px; background:#f8f8f8; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#262c39; border-bottom:1px solid #e8e8e8;">Player</th>';
-                html += '<th style="text-align:right; padding:6px 8px; background:#f8f8f8; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#262c39; border-bottom:1px solid #e8e8e8;">Amount</th>';
-                html += '<th style="text-align:left; padding:6px 8px; background:#f8f8f8; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#262c39; border-bottom:1px solid #e8e8e8;">Reason</th>';
-                html += '</tr></thead><tbody>';
+                // Build table with editable amount inputs
+                var table = document.createElement('table');
+                table.style.cssText = 'width:100%; border-collapse:collapse; font-size:14px;';
+
+                var thStyle = 'text-align:left; padding:6px 8px; background:#f8f8f8; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#262c39; border-bottom:1px solid #e8e8e8;';
+                table.innerHTML =
+                    '<thead><tr>' +
+                    '<th style="' + thStyle + '">Player</th>' +
+                    '<th style="' + thStyle + ' text-align:right; width:150px;">Amount</th>' +
+                    '<th style="' + thStyle + '">Reason</th>' +
+                    '</tr></thead>';
+
+                var tbody = document.createElement('tbody');
 
                 charges.forEach(function (c) {
-                    var amtDisplay = c.amount === 0 ? '$0.00' : '$' + Math.abs(c.amount).toFixed(2);
-                    var amtColor   = c.amount === 0 ? '#aaa' : '#262c39';
-                    html += '<tr>';
-                    html += '<td style="padding:8px; border-bottom:1px solid #f0f0f0; color:#262c39;">' + c.memberName + '</td>';
-                    html += '<td style="padding:8px; border-bottom:1px solid #f0f0f0; text-align:right; font-weight:600; color:' + amtColor + ';">' + amtDisplay + '</td>';
-                    html += '<td style="padding:8px; border-bottom:1px solid #f0f0f0; color:#888; font-size:13px;">' + c.reason + '</td>';
-                    html += '</tr>';
+                    var defaultAmt = Math.abs(c.amount).toFixed(2);
+                    var tr = document.createElement('tr');
+
+                    // Player name cell
+                    var tdName = document.createElement('td');
+                    tdName.style.cssText = 'padding:8px; border-bottom:1px solid #f0f0f0; color:#262c39;';
+                    tdName.textContent = c.memberName;
+
+                    // Amount cell — editable input + modified badge
+                    var tdAmt = document.createElement('td');
+                    tdAmt.style.cssText = 'padding:6px 8px; border-bottom:1px solid #f0f0f0;';
+
+                    var amtWrap = document.createElement('div');
+                    amtWrap.style.cssText = 'display:flex; align-items:center; gap:4px; justify-content:flex-end;';
+
+                    var dollar = document.createElement('span');
+                    dollar.textContent = '$';
+                    dollar.style.cssText = 'color:#aaa; font-size:13px;';
+
+                    var input = document.createElement('input');
+                    input.type              = 'number';
+                    input.min               = '0';
+                    input.max               = '50';
+                    input.step              = '0.50';
+                    input.value             = defaultAmt;
+                    input.dataset.default   = defaultAmt;
+                    input.dataset.memberId  = c.memberID;
+                    input.className         = 'charge-amount-input';
+                    input.style.cssText     = 'width:72px; border:1px solid #e8e8e8; border-radius:6px; padding:5px 8px; font-size:14px; font-weight:600; text-align:right; outline:none; transition:border-color 0.15s, box-shadow 0.15s;';
+
+                    var badge = document.createElement('span');
+                    badge.textContent   = 'edited';
+                    badge.style.cssText = 'display:none; font-size:11px; font-weight:600; color:#458bc8; white-space:nowrap;';
+
+                    input.addEventListener('input', function () {
+                        var val       = parseFloat(this.value);
+                        var modified  = this.value !== this.dataset.default;
+                        var outOfRange = isNaN(val) || val < 0 || val > 50;
+
+                        if (outOfRange) {
+                            this.style.borderColor = '#e24b4a';
+                            this.style.boxShadow   = '0 0 0 2px rgba(226,75,74,0.15)';
+                        } else if (modified) {
+                            this.style.borderColor = '#458bc8';
+                            this.style.boxShadow   = '0 0 0 2px rgba(69,139,200,0.15)';
+                        } else {
+                            this.style.borderColor = '#e8e8e8';
+                            this.style.boxShadow   = 'none';
+                        }
+                        badge.style.display = (modified && !outOfRange) ? 'inline' : 'none';
+                        hideError();
+                    });
+
+                    amtWrap.appendChild(dollar);
+                    amtWrap.appendChild(input);
+                    amtWrap.appendChild(badge);
+                    tdAmt.appendChild(amtWrap);
+
+                    // Reason cell
+                    var tdReason = document.createElement('td');
+                    tdReason.style.cssText = 'padding:8px; border-bottom:1px solid #f0f0f0; color:#888; font-size:13px;';
+                    tdReason.textContent = c.reason;
+
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdAmt);
+                    tr.appendChild(tdReason);
+                    tbody.appendChild(tr);
                 });
 
-                html += '</tbody></table>';
-                modalBody.innerHTML = html;
+                table.appendChild(tbody);
+
+                var intro = document.createElement('p');
+                intro.style.cssText = 'font-size:13px; color:#888; margin-bottom:12px;';
+                intro.textContent = 'Adjust amounts if needed, then confirm to apply charges.';
+
+                modalBody.innerHTML = '';
+                modalBody.appendChild(intro);
+                modalBody.appendChild(table);
 
                 chargeForm.action = '/admin/seasons/' + seasonID + '/games/' + gameID + '/charge';
                 chargeForm.style.display = 'block';
