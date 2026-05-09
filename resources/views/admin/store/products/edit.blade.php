@@ -44,6 +44,14 @@
         </div>
 
         <div class="form-group">
+            <label class="form-label">Slug</label>
+            <input type="text" name="productSlug" id="productSlug" class="form-control" value="{{ old('productSlug', $product->productSlug) }}" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" autocomplete="off">
+            <div style="margin-top:6px; font-size:12px; color:#aaa;">
+                soccerdads.com.au/store/<span id="slugPreview" style="color:#458bc8; font-weight:600;">{{ old('productSlug', $product->productSlug) }}</span>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="form-label">Image URL</label>
             <input type="url" name="productImage" class="form-control" value="{{ old('productImage', $product->productImage) }}" placeholder="https://…">
         </div>
@@ -75,5 +83,22 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+    const slugInput = document.getElementById('productSlug');
+    const slugPreview = document.getElementById('slugPreview');
+
+    slugInput.addEventListener('input', function () {
+        // Sanitise: lowercase, replace anything not a-z 0-9 with hyphen, collapse/trim hyphens
+        const sanitised = this.value
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        this.value = sanitised;
+        slugPreview.textContent = sanitised || '…';
+    });
+</script>
+@endpush
 
 @endsection

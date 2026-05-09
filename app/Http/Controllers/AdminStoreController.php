@@ -63,6 +63,15 @@ class AdminStoreController extends Controller
             'productName'  => 'required|string|max:255',
             'productPrice' => 'required|numeric|min:0',
             'productStock' => 'required|integer|min:0',
+            'productSlug'  => [
+                'required',
+                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
+                function ($attribute, $value, $fail) use ($productID) {
+                    if (DB::table('products')->where('productSlug', $value)->where('productID', '!=', $productID)->exists()) {
+                        $fail('This slug is already in use by another product.');
+                    }
+                },
+            ],
         ]);
 
         DB::table('products')->where('productID', $productID)->update([
@@ -72,6 +81,7 @@ class AdminStoreController extends Controller
             'productImage'       => $request->productImage ?: null,
             'productStock'       => $request->productStock,
             'productActive'      => $request->has('productActive') ? 1 : 0,
+            'productSlug'        => $request->productSlug,
             'updated_at'         => now(),
         ]);
 
