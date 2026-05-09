@@ -48,7 +48,7 @@
     .product-price {
         font-size: 32px;
         font-weight: 700;
-        color: #7bba56;
+        color: #888;
     }
     .product-description {
         font-size: 15px;
@@ -65,8 +65,8 @@
         border-radius: 20px;
     }
     .badge-instock {
-        background: #f0fdf4;
-        color: #7bba56;
+        background: #f4f4f4;
+        color: #888;
     }
     .badge-outofstock {
         background: #f4f4f4;
