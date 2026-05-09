@@ -941,4 +941,40 @@ class AdminController extends Controller
 
         return redirect("/admin/teams/{$gameID}")->with('success', 'Teams saved successfully!');
     }
+
+    // FINANCES
+    public function finances(Request $request)
+    {
+        $search = trim($request->input('search', ''));
+
+        $query = DB::table('account as a')
+            ->join('members as m', 'a.memberID', '=', 'm.memberID')
+            ->leftJoin('account-payments as ap', 'a.paymentID', '=', 'ap.paymentID')
+            ->where('a.accountVisible', 1)
+            ->orderBy('a.accountCreated', 'desc')
+            ->select(
+                'a.accountID',
+                'a.accountValue',
+                'a.accountComment',
+                'a.accountCreated',
+                'a.gameID',
+                'a.paymentID',
+                'm.memberID',
+                'm.memberNameFirst',
+                'm.memberNameLast',
+                'ap.paymentSource',
+                'ap.formPaymentType'
+            );
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER("m"."memberNameFirst") LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER("m"."memberNameLast") LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+
+        $transactions = $query->get();
+
+        return view('admin.finances', compact('transactions', 'search'));
+    }
 }

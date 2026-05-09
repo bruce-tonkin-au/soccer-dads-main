@@ -60,6 +60,8 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/messages/{messageCode}/edit', [AdminController::class, 'editMessage']);
     Route::post('/messages/{messageCode}/edit', [AdminController::class, 'updateMessage']);
     Route::get('/messages/{messageCode}/links', [AdminController::class, 'messageLinks']);
+
+    Route::get('/finances', [AdminController::class, 'finances']);
 });
 
 Route::get('/', [HomeController::class, 'index']);
