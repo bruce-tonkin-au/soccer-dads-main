@@ -61,7 +61,7 @@
     .product-card-price {
         font-size: 20px;
         font-weight: 700;
-        color: #7bba56;
+        color: #888;
     }
     .product-card-stock {
         font-size: 12px;
