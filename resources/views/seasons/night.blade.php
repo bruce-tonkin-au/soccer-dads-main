@@ -68,7 +68,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:6px;">
                         <span style="color:rgba(255,255,255,0.9);">
                             {{ $player->memberNameFirst }} {{ $player->memberNameLast }}
-                            <a href="/players/{{ $player->memberSlug }}" target="_blank" style="color:rgba(255,255,255,0.5); margin-left:4px; text-decoration:none; font-size:11px;" title="View profile">
+                            <a href="/players/{{ $player->memberSlug }}" style="color:rgba(255,255,255,0.5); margin-left:4px; text-decoration:none; font-size:11px;" title="View profile">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                         </span>
