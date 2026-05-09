@@ -1122,11 +1122,9 @@ class AdminController extends Controller
     }
 
     // FINANCES
-    public function finances(Request $request)
+    public function finances()
     {
-        $search = trim($request->input('search', ''));
-
-        $query = DB::table('account as a')
+        $transactions = DB::table('account as a')
             ->join('members as m', 'a.memberID', '=', 'm.memberID')
             ->leftJoin('account-payments as ap', 'a.paymentID', '=', 'ap.paymentID')
             ->where('a.accountVisible', 1)
@@ -1143,17 +1141,9 @@ class AdminController extends Controller
                 'm.memberNameLast',
                 'ap.paymentSource',
                 'ap.formPaymentType'
-            );
+            )
+            ->get();
 
-        if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->whereRaw('LOWER("m"."memberNameFirst") LIKE ?', ['%' . strtolower($search) . '%'])
-                  ->orWhereRaw('LOWER("m"."memberNameLast") LIKE ?', ['%' . strtolower($search) . '%']);
-            });
-        }
-
-        $transactions = $query->get();
-
-        return view('admin.finances', compact('transactions', 'search'));
+        return view('admin.finances', compact('transactions'));
     }
 }
