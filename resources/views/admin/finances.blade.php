@@ -127,6 +127,12 @@
                 } else {
                     $description = '—';
                 }
+
+                if (str_starts_with($description, 'Stripe top-up') ||
+                    str_starts_with($description, 'cs_live_') ||
+                    str_starts_with($description, 'cs_test_')) {
+                    $description = 'Account top-up';
+                }
             @endphp
             <tr>
                 <td>
