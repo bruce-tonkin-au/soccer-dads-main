@@ -83,6 +83,8 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
 
 // Store
 Route::get('/store', [StoreController::class, 'index']);
+Route::get('/store/order-complete', [StoreController::class, 'orderComplete']);
+Route::post('/store/{productSlug}/checkout', [StoreController::class, 'checkout']);
 Route::get('/store/{productSlug}', [StoreController::class, 'show']);
 
 Route::get('/', [HomeController::class, 'index']);

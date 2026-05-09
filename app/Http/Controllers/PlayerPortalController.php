@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Webhook;
+use App\Http\Controllers\StoreController;
 
 class PlayerPortalController extends Controller
 {
@@ -260,7 +261,13 @@ class PlayerPortalController extends Controller
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
             if ($session->payment_status === 'paid') {
-                $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->memberID);
+                if (($session->metadata->type ?? '') === 'store_purchase') {
+                    $productID = (int) ($session->metadata->productID ?? 0);
+                    $memberID  = !empty($session->metadata->memberID) ? (int) $session->metadata->memberID : null;
+                    StoreController::fulfillStoreOrder($session->id, $productID, $memberID);
+                } else {
+                    $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->memberID);
+                }
             }
         }
 

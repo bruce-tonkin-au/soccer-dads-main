@@ -72,18 +72,6 @@
         background: #f4f4f4;
         color: #aaa;
     }
-    .contact-cta {
-        background: #f8f8f8;
-        border-radius: 12px;
-        padding: 1.25rem;
-        font-size: 14px;
-        color: #555;
-        line-height: 1.6;
-    }
-    .contact-cta a {
-        color: #262c39;
-        font-weight: 600;
-    }
     @media (max-width: 700px) {
         .product-detail {
             grid-template-columns: 1fr;
@@ -131,10 +119,22 @@
             <p class="product-description">{{ $product->productDescription }}</p>
             @endif
 
-            <div class="contact-cta">
-                <i class="fa-solid fa-envelope" style="color:#7bba56;"></i>
-                &nbsp;To order, email us at <a href="mailto:admin@soccerdads.com.au">admin@soccerdads.com.au</a> or call <a href="tel:0428400013">0428 400 013</a>.
-            </div>
+            @if($product->productStock > 0)
+            <form method="POST" action="/store/{{ $product->productSlug }}/checkout">
+                @csrf
+                <button type="submit" style="width:100%; padding:14px 24px; background:#262c39; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:background 0.2s;">
+                    <i class="fa-brands fa-stripe-s"></i>
+                    Buy now — ${{ number_format($product->productPrice, 2) }}
+                </button>
+                <p style="font-size:12px; color:#aaa; text-align:center; margin-top:8px;">
+                    Secure checkout via Stripe
+                </p>
+            </form>
+            @else
+            <button disabled style="width:100%; padding:14px 24px; background:#e8e8e8; color:#aaa; border:none; border-radius:10px; font-size:16px; font-weight:700; cursor:not-allowed;">
+                Out of stock
+            </button>
+            @endif
 
             <a href="/store" style="color:#888; font-size:14px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-top:4px;">
                 <i class="fa-solid fa-arrow-left"></i> Back to store
