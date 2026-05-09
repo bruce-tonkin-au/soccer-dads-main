@@ -90,8 +90,8 @@
 @section('content')
 
 <div class="store-hero">
-    <h1>Soccer Dads Store</h1>
-    <p>Official club gear for players, families &amp; fans</p>
+    <h1>Store</h1>
+    <p>Official gear for players &amp; fans</p>
 </div>
 
 <div style="background:#f8f8f8; padding-bottom:4rem;">
