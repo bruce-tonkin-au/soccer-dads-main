@@ -61,6 +61,9 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/messages/{messageCode}/edit', [AdminController::class, 'updateMessage']);
     Route::get('/messages/{messageCode}/links', [AdminController::class, 'messageLinks']);
 
+    Route::get('/seasons/{seasonID}/games/{gameID}/preview-charges', [AdminController::class, 'previewCharges']);
+    Route::post('/seasons/{seasonID}/games/{gameID}/charge', [AdminController::class, 'processCharges']);
+
     Route::get('/finances', [AdminController::class, 'finances']);
 });
 

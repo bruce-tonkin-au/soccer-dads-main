@@ -242,7 +242,27 @@ class AdminController extends Controller
     {
         $season = DB::table('seasons')->where('seasonID', $seasonID)->firstOrFail();
         $games  = DB::table('games')->where('gameSeasonID', $seasonID)->orderBy('gameRound')->get();
-        return view('admin.games.index', compact('season', 'games'));
+
+        $chargeableIDs = $games->where('gameDate', '>=', '2026-05-01')->pluck('gameID');
+
+        $gamesWithTeams = $chargeableIDs->isNotEmpty()
+            ? DB::table('scoring-teams-players as stp')
+                ->join('scoring-teams as st', 'stp.teamID', '=', 'st.teamsID')
+                ->whereIn('st.gameID', $chargeableIDs)
+                ->where('stp.playerActive', 1)
+                ->distinct()
+                ->pluck('st.gameID')
+            : collect();
+
+        $chargedGameIDs = $chargeableIDs->isNotEmpty()
+            ? DB::table('account')
+                ->whereIn('gameID', $chargeableIDs)
+                ->whereNotNull('gameID')
+                ->distinct()
+                ->pluck('gameID')
+            : collect();
+
+        return view('admin.games.index', compact('season', 'games', 'gamesWithTeams', 'chargedGameIDs'));
     }
 
     public function createGame($seasonID)
@@ -940,6 +960,165 @@ class AdminController extends Controller
         }
 
         return redirect("/admin/teams/{$gameID}")->with('success', 'Teams saved successfully!');
+    }
+
+    // CHARGE PLAYERS
+    public function previewCharges($seasonID, $gameID)
+    {
+        $game = DB::table('games as g')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
+            ->where('g.gameID', $gameID)
+            ->where('g.gameDate', '>=', '2026-05-01')
+            ->select('g.*', 's.seasonName')
+            ->first();
+
+        if (!$game) {
+            return response()->json(['error' => 'Game not found or not eligible'], 404);
+        }
+
+        if (DB::table('account')->where('gameID', $gameID)->exists()) {
+            return response()->json(['error' => 'Charges have already been applied for this game night'], 422);
+        }
+
+        $charges = $this->buildCharges($game);
+
+        return response()->json([
+            'gameID'    => $gameID,
+            'seasonID'  => $seasonID,
+            'gameRound' => $game->gameRound,
+            'gameDate'  => $game->gameDate,
+            'charges'   => $charges,
+        ]);
+    }
+
+    public function processCharges(Request $request, $seasonID, $gameID)
+    {
+        $game = DB::table('games as g')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
+            ->where('g.gameID', $gameID)
+            ->where('g.gameDate', '>=', '2026-05-01')
+            ->select('g.*', 's.seasonName')
+            ->first();
+
+        if (!$game) {
+            return redirect("/admin/seasons/{$seasonID}/games")->with('error', 'Game not found or not eligible.');
+        }
+
+        if (DB::table('account')->where('gameID', $gameID)->exists()) {
+            return redirect("/admin/seasons/{$seasonID}/games")->with('error', 'Charges have already been applied for this game night.');
+        }
+
+        $charges = $this->buildCharges($game);
+
+        if (empty($charges)) {
+            return redirect("/admin/seasons/{$seasonID}/games")->with('error', 'No players found to charge for this game night.');
+        }
+
+        DB::transaction(function () use ($charges, $gameID) {
+            foreach ($charges as $charge) {
+                DB::table('account')->insert([
+                    'memberID'       => $charge['memberID'],
+                    'accountValue'   => $charge['amount'],
+                    'gameID'         => $gameID,
+                    'accountComment' => $charge['description'],
+                    'accountVisible' => 1,
+                    'accountCreated' => now(),
+                    'accountEdited'  => now(),
+                ]);
+            }
+        });
+
+        $count = count($charges);
+        return redirect("/admin/seasons/{$seasonID}/games")->with('success', "Charges applied: {$count} player" . ($count === 1 ? '' : 's') . " charged for Round {$game->gameRound}.");
+    }
+
+    private function buildCharges($game)
+    {
+        $gameID    = $game->gameID;
+        $gameDate  = $game->gameDate;
+        $round     = $game->gameRound;
+        $season    = $game->seasonName;
+
+        $playerMemberIDs = DB::table('scoring-teams-players as stp')
+            ->join('scoring-teams as st', 'stp.teamID', '=', 'st.teamsID')
+            ->where('st.gameID', $gameID)
+            ->where('stp.playerActive', 1)
+            ->distinct()
+            ->pluck('stp.memberID');
+
+        if ($playerMemberIDs->isEmpty()) {
+            return [];
+        }
+
+        $members = DB::table('members')
+            ->whereIn('memberID', $playerMemberIDs)
+            ->get(['memberID', 'memberNameFirst', 'memberNameLast', 'memberParent']);
+
+        // New players — no result in any game before this one
+        $newPlayerIDs = [];
+        foreach ($members as $member) {
+            $hasPlayedBefore = DB::table('results as r')
+                ->join('games as g', 'r.resultGameID', '=', 'g.gameID')
+                ->where('r.resultMemberID', $member->memberID)
+                ->where('r.resultActive', 1)
+                ->where('g.gameDate', '<', $gameDate)
+                ->exists();
+            if (!$hasPlayedBefore) {
+                $newPlayerIDs[] = $member->memberID;
+            }
+        }
+
+        // Family groups — group by root parent ID
+        // Players with memberParent = X share a group with X (and each other)
+        $familyGroups = [];
+        foreach ($members as $member) {
+            $groupKey = ($member->memberParent && $member->memberParent != 0)
+                ? $member->memberParent
+                : $member->memberID;
+            $familyGroups[$groupKey][] = $member->memberID;
+        }
+        $familyDiscountIDs = [];
+        foreach ($familyGroups as $groupMembers) {
+            if (count($groupMembers) >= 2) {
+                foreach ($groupMembers as $mID) {
+                    $familyDiscountIDs[] = $mID;
+                }
+            }
+        }
+
+        $baseDesc = "Game night fee — {$season}, Round {$round}";
+
+        $charges = [];
+        foreach ($members as $member) {
+            $isNew    = in_array($member->memberID, $newPlayerIDs);
+            $isFamily = in_array($member->memberID, $familyDiscountIDs);
+
+            if ($isNew) {
+                $amount      = 0;
+                $description = 'First night free';
+                $reason      = 'First night free';
+            } elseif ($isFamily) {
+                $amount      = -7.50;
+                $description = $baseDesc . ' (family)';
+                $reason      = 'Family discount — $7.50';
+            } else {
+                $amount      = -10.00;
+                $description = $baseDesc;
+                $reason      = 'Standard — $10.00';
+            }
+
+            $charges[] = [
+                'memberID'    => $member->memberID,
+                'memberName'  => $member->memberNameFirst . ' ' . $member->memberNameLast,
+                'amount'      => $amount,
+                'description' => $description,
+                'reason'      => $reason,
+            ];
+        }
+
+        usort($charges, fn($a, $b) => strcmp($a['memberName'], $b['memberName']));
+
+        return $charges;
     }
 
     // FINANCES
