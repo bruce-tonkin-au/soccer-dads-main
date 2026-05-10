@@ -105,7 +105,7 @@
         <div class="store-grid">
             @foreach($products as $product)
             <a href="/store/{{ $product->productSlug }}" class="product-card">
-                <img src="{{ $product->productImage }}" alt="{{ $product->productName }}">
+                <img src="{{ $product->displayImage }}" alt="{{ $product->productName }}">
                 <div class="product-card-body">
                     <div class="product-card-name">{{ $product->productName }}</div>
                     <div class="product-card-price">${{ number_format($product->productPrice, 2) }}</div>

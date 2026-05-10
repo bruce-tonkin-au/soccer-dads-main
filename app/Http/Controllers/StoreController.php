@@ -27,7 +27,21 @@ class StoreController extends Controller
 
     public function index()
     {
-        $products = static::availabilityQuery()->orderBy('productName')->get();
+        $products = static::availabilityQuery()
+            ->leftJoin('product_images as pi', function ($join) {
+                $join->on('pi.productID', '=', 'products.productID')
+                     ->where('pi.isPrimary', 1);
+            })
+            ->select('products.*', 'pi.imagePath as primaryImagePath')
+            ->orderBy('products.productName')
+            ->get()
+            ->map(function ($product) {
+                $product->displayImage = $product->primaryImagePath
+                    ? asset('storage/' . $product->primaryImagePath)
+                    : $product->productImage;
+                return $product;
+            });
+
         return view('store.index', compact('products'));
     }
 
