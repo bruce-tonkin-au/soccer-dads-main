@@ -30,8 +30,8 @@
             <tr>
                 <td>
                     <div style="display:flex; align-items:center; gap:12px;">
-                        @if($product->productImage)
-                        <img src="{{ $product->productImage }}" alt="" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #e8e8e8;">
+                        @if($product->displayImage)
+                        <img src="{{ $product->displayImage }}" alt="" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #e8e8e8;">
                         @else
                         <div style="width:40px; height:40px; background:#f4f4f4; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#ccc;">
                             <i class="fa-solid fa-image"></i>

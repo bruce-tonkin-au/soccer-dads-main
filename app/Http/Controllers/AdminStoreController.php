@@ -14,7 +14,21 @@ class AdminStoreController extends Controller
 
     public function products()
     {
-        $products = DB::table('products')->orderBy('productName')->get();
+        $products = DB::table('products')
+            ->leftJoin('product_images as pi', function ($join) {
+                $join->on('pi.productID', '=', 'products.productID')
+                     ->where('pi.isPrimary', 1);
+            })
+            ->select('products.*', 'pi.imagePath as primaryImagePath')
+            ->orderBy('products.productName')
+            ->get()
+            ->map(function ($product) {
+                $product->displayImage = $product->primaryImagePath
+                    ? asset('storage/' . $product->primaryImagePath)
+                    : $product->productImage;
+                return $product;
+            });
+
         return view('admin.store.products.index', compact('products'));
     }
 
