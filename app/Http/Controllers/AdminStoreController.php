@@ -84,17 +84,22 @@ class AdminStoreController extends Controller
         $existingCount = DB::table('product_images')->where('productID', $productID)->count();
         $maxOrder      = DB::table('product_images')->where('productID', $productID)->max('imageOrder') ?? -1;
 
-        $dir = Storage::disk('public')->path('products/' . $productID);
+        $file     = $request->file('image');
+        $ext      = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $filename = uniqid('img_', true) . '.' . $ext;
+        $dir      = Storage::disk('public')->path('products/' . $productID);
+
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
 
         try {
-            $path = $request->file('image')->store('products/' . $productID, 'public');
+            $path = $file->storeAs('products/' . $productID, $filename, 'public');
         } catch (\Throwable $e) {
             Log::error('Product image upload failed', [
                 'productID'    => $productID,
-                'file'         => $request->file('image')?->getClientOriginalName(),
+                'file'         => $file->getClientOriginalName(),
+                'filename'     => $filename,
                 'disk_root'    => Storage::disk('public')->path(''),
                 'dir'          => $dir,
                 'dir_exists'   => is_dir($dir),
@@ -105,10 +110,10 @@ class AdminStoreController extends Controller
         }
 
         if (!$path) {
-            $root = Storage::disk('public')->path('');
-            Log::error('Product image store() returned false', [
+            Log::error('Product image storeAs() returned false', [
                 'productID'    => $productID,
-                'disk_root'    => $root,
+                'filename'     => $filename,
+                'disk_root'    => Storage::disk('public')->path(''),
                 'dir'          => $dir,
                 'dir_exists'   => is_dir($dir),
                 'dir_writable' => is_writable($dir),
