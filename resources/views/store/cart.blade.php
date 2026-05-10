@@ -125,8 +125,8 @@
 
         @foreach($items as $item)
         <div class="cart-item">
-            @if($item->productImage)
-            <img src="{{ $item->productImage }}" alt="{{ $item->productName }}">
+            @if($item->displayImage)
+            <img src="{{ $item->displayImage }}" alt="{{ $item->productName }}">
             @else
             <div style="width:72px; height:72px; background:#f4f4f4; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#ccc; flex-shrink:0;">
                 <i class="fa-solid fa-image"></i>

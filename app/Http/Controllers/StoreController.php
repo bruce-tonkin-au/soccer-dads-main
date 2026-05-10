@@ -153,18 +153,26 @@ class StoreController extends Controller
             return view('store.cart', ['items' => collect(), 'total' => 0]);
         }
 
-        $productIDs = array_keys($cartData);
-        $products   = DB::table('products')->whereIn('productID', $productIDs)->get()->keyBy('productID');
+        $productIDs    = array_keys($cartData);
+        $products      = DB::table('products')->whereIn('productID', $productIDs)->get()->keyBy('productID');
+        $primaryImages = DB::table('product_images')
+            ->whereIn('productID', $productIDs)
+            ->where('isPrimary', 1)
+            ->get()
+            ->keyBy('productID');
 
-        $items = collect($cartData)->map(function ($item) use ($products) {
+        $items = collect($cartData)->map(function ($item) use ($products, $primaryImages) {
             $product = $products[$item['productID']] ?? null;
             if (!$product) return null;
+            $primaryImg = $primaryImages[$product->productID] ?? null;
             return (object) [
                 'productID'    => $product->productID,
                 'productSlug'  => $product->productSlug,
                 'productName'  => $product->productName,
                 'productPrice' => $product->productPrice,
-                'productImage' => $product->productImage,
+                'displayImage' => $primaryImg
+                    ? asset('storage/' . $primaryImg->imagePath)
+                    : $product->productImage,
                 'quantity'     => $item['quantity'],
                 'lineTotal'    => $product->productPrice * $item['quantity'],
             ];
