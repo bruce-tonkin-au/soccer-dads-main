@@ -75,6 +75,30 @@
             background: #f0f0f0;
             color: #262c39;
         }
+        .nav-cart-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-cart-badge {
+            position: absolute;
+            top: -7px;
+            right: -10px;
+            background: #e24b4a;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .nav-cart-label { display: none; }
 
         /* Buttons */
         .btn {
@@ -207,6 +231,7 @@
         text-align: center;
         border-radius: 8px;
     }
+    .nav-cart-label { display: inline; margin-left: 6px; }
     #footer-grid {
         grid-template-columns: 1fr 1fr !important;
     }
@@ -238,7 +263,20 @@
         <li><a href="/seasons">Seasons</a></li>
         <li><a href="/players">Players</a></li>
         <li><a href="/about">About</a></li>
+        <li><a href="/store">Store</a></li>
         <li><a href="/contact">Contact</a></li>
+        @php $cartCount = array_sum(array_column(session('store_cart', []), 'quantity')); @endphp
+        <li>
+            <a href="/store/cart">
+                <span class="nav-cart-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    @if($cartCount > 0)
+                    <span class="nav-cart-badge">{{ $cartCount }}</span>
+                    @endif
+                </span>
+                <span class="nav-cart-label">Cart</span>
+            </a>
+        </li>
         @if(session('player_id'))
             @php $navPlayer = DB::table('members')->where('memberID', session('player_id'))->value('memberNameFirst'); @endphp
             <li><a href="/portal" class="btn-nav"><i class="fa-solid fa-user"></i> {{ $navPlayer }}</a></li>
