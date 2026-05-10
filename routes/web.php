@@ -81,10 +81,14 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/store/orders/{orderID}/edit', [AdminStoreController::class, 'updateOrder']);
 });
 
-// Store
+// Store — specific routes before the {productSlug} wildcard
 Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/order-complete', [StoreController::class, 'orderComplete']);
+Route::get('/store/cart', [StoreController::class, 'viewCart']);
+Route::post('/store/cart/checkout', [StoreController::class, 'cartCheckout']);
+Route::post('/store/cart/remove', [StoreController::class, 'removeFromCart']);
 Route::post('/store/{productSlug}/checkout', [StoreController::class, 'checkout']);
+Route::post('/store/{productSlug}/add-to-cart', [StoreController::class, 'addToCart']);
 Route::get('/store/{productSlug}', [StoreController::class, 'show']);
 
 Route::get('/', [HomeController::class, 'index']);

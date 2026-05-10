@@ -24,9 +24,12 @@ class AdminStoreController extends Controller
     public function storeProduct(Request $request)
     {
         $request->validate([
-            'productName'  => 'required|string|max:255',
-            'productPrice' => 'required|numeric|min:0',
-            'productStock' => 'required|integer|min:0',
+            'productName'          => 'required|string|max:255',
+            'productPrice'         => 'required|numeric|min:0',
+            'productStock'         => 'required|integer|min:0',
+            'productMaxQuantity'   => 'required|integer|min:1',
+            'productAvailableFrom' => 'nullable|date',
+            'productAvailableTo'   => 'nullable|date|after_or_equal:productAvailableFrom',
         ]);
 
         $slug = Str::slug($request->productName);
@@ -37,15 +40,18 @@ class AdminStoreController extends Controller
         }
 
         DB::table('products')->insert([
-            'productName'        => $request->productName,
-            'productDescription' => $request->productDescription,
-            'productPrice'       => $request->productPrice,
-            'productImage'       => $request->productImage ?: null,
-            'productStock'       => $request->productStock,
-            'productActive'      => $request->has('productActive') ? 1 : 0,
-            'productSlug'        => $slug,
-            'created_at'         => now(),
-            'updated_at'         => now(),
+            'productName'          => $request->productName,
+            'productDescription'   => $request->productDescription,
+            'productPrice'         => $request->productPrice,
+            'productImage'         => $request->productImage ?: null,
+            'productStock'         => $request->productStock,
+            'productActive'        => $request->has('productActive') ? 1 : 0,
+            'productAvailableFrom' => $request->productAvailableFrom ? \Carbon\Carbon::parse($request->productAvailableFrom)->format('Y-m-d H:i:s') : null,
+            'productAvailableTo'   => $request->productAvailableTo   ? \Carbon\Carbon::parse($request->productAvailableTo)->format('Y-m-d H:i:s')   : null,
+            'productMaxQuantity'   => $request->productMaxQuantity,
+            'productSlug'          => $slug,
+            'created_at'           => now(),
+            'updated_at'           => now(),
         ]);
 
         return redirect('/admin/store/products')->with('success', 'Product created.');
@@ -60,10 +66,13 @@ class AdminStoreController extends Controller
     public function updateProduct(Request $request, int $productID)
     {
         $request->validate([
-            'productName'  => 'required|string|max:255',
-            'productPrice' => 'required|numeric|min:0',
-            'productStock' => 'required|integer|min:0',
-            'productSlug'  => [
+            'productName'          => 'required|string|max:255',
+            'productPrice'         => 'required|numeric|min:0',
+            'productStock'         => 'required|integer|min:0',
+            'productMaxQuantity'   => 'required|integer|min:1',
+            'productAvailableFrom' => 'nullable|date',
+            'productAvailableTo'   => 'nullable|date|after_or_equal:productAvailableFrom',
+            'productSlug'          => [
                 'required',
                 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
                 function ($attribute, $value, $fail) use ($productID) {
@@ -75,14 +84,17 @@ class AdminStoreController extends Controller
         ]);
 
         DB::table('products')->where('productID', $productID)->update([
-            'productName'        => $request->productName,
-            'productDescription' => $request->productDescription,
-            'productPrice'       => $request->productPrice,
-            'productImage'       => $request->productImage ?: null,
-            'productStock'       => $request->productStock,
-            'productActive'      => $request->has('productActive') ? 1 : 0,
-            'productSlug'        => $request->productSlug,
-            'updated_at'         => now(),
+            'productName'          => $request->productName,
+            'productDescription'   => $request->productDescription,
+            'productPrice'         => $request->productPrice,
+            'productImage'         => $request->productImage ?: null,
+            'productStock'         => $request->productStock,
+            'productActive'        => $request->has('productActive') ? 1 : 0,
+            'productAvailableFrom' => $request->productAvailableFrom ? \Carbon\Carbon::parse($request->productAvailableFrom)->format('Y-m-d H:i:s') : null,
+            'productAvailableTo'   => $request->productAvailableTo   ? \Carbon\Carbon::parse($request->productAvailableTo)->format('Y-m-d H:i:s')   : null,
+            'productMaxQuantity'   => $request->productMaxQuantity,
+            'productSlug'          => $request->productSlug,
+            'updated_at'           => now(),
         ]);
 
         return redirect('/admin/store/products')->with('success', 'Product updated.');

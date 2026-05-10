@@ -259,12 +259,18 @@ class PlayerPortalController extends Controller
         }
 
         if ($event->type === 'checkout.session.completed') {
-            $session = $event->data->object;
+            $session  = $event->data->object;
+            $type     = $session->metadata->type ?? '';
+            $memberID = !empty($session->metadata->memberID) ? (int) $session->metadata->memberID : null;
+
             if ($session->payment_status === 'paid') {
-                if (($session->metadata->type ?? '') === 'store_purchase') {
+                if ($type === 'store_cart') {
+                    $orderID = (int) ($session->metadata->orderID ?? 0);
+                    StoreController::fulfillCartOrder($session->id, $orderID, $memberID);
+                } elseif ($type === 'store_purchase') {
                     $productID = (int) ($session->metadata->productID ?? 0);
-                    $memberID  = !empty($session->metadata->memberID) ? (int) $session->metadata->memberID : null;
-                    StoreController::fulfillStoreOrder($session->id, $productID, $memberID);
+                    $quantity  = (int) ($session->metadata->quantity ?? 1);
+                    StoreController::fulfillStoreOrder($session->id, $productID, $memberID, $quantity);
                 } else {
                     $this->fulfillPayment($session->id, (float) ($session->amount_total / 100), $session->metadata->memberID);
                 }

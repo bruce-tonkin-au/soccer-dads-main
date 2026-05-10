@@ -12,14 +12,14 @@
     .confirm-icon {
         width: 72px;
         height: 72px;
-        background: #f0fdf4;
+        background: #f4f4f4;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
         font-size: 32px;
-        color: #7bba56;
+        color: #888;
     }
     .confirm-heading {
         font-size: 28px;
@@ -92,21 +92,26 @@
         <div class="order-summary">
             <div class="order-summary-label">Order summary</div>
 
-            @if($product)
+            @foreach($items as $item)
             <div class="order-row">
-                <span class="order-row-label">{{ $product->productName }}</span>
-                <span class="order-row-value">${{ number_format($product->productPrice, 2) }}</span>
+                <span class="order-row-label">
+                    {{ $item->productName }}
+                    @if($item->itemQuantity > 1)
+                    <span style="color:#aaa;"> × {{ $item->itemQuantity }}</span>
+                    @endif
+                </span>
+                <span class="order-row-value">${{ number_format($item->itemPrice * $item->itemQuantity, 2) }}</span>
             </div>
-            @endif
+            @endforeach
 
             @if($order)
             <div class="order-row">
                 <span class="order-row-label">Order #</span>
-                <span class="order-row-value" style="color:#aaa; font-size:13px;">#{{ $order->orderID }}</span>
+                <span style="color:#aaa; font-size:13px;">#{{ $order->orderID }}</span>
             </div>
             <div class="order-row">
                 <span class="order-row-label">Status</span>
-                <span style="background:#f0fdf4; color:#7bba56; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:700;">Paid</span>
+                <span style="background:#f4f4f4; color:#888; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:700;">Paid</span>
             </div>
             @endif
 

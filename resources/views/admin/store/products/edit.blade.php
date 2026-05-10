@@ -67,6 +67,30 @@
             <label for="productActive" style="font-size:14px; color:#262c39; cursor:pointer; margin:0;">Active (visible in store)</label>
         </div>
 
+        <div style="border-top:1px solid #e8e8e8; margin:1.5rem 0;"></div>
+        <h3 style="font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:1rem;">Availability</h3>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <div class="form-group">
+                <label class="form-label">Available from</label>
+                <input type="datetime-local" name="productAvailableFrom" class="form-control"
+                    value="{{ old('productAvailableFrom', $product->productAvailableFrom ? \Carbon\Carbon::parse($product->productAvailableFrom)->format('Y-m-d\TH:i') : '') }}">
+                <div style="font-size:11px; color:#aaa; margin-top:4px;">Leave blank to show immediately</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Available to</label>
+                <input type="datetime-local" name="productAvailableTo" class="form-control"
+                    value="{{ old('productAvailableTo', $product->productAvailableTo ? \Carbon\Carbon::parse($product->productAvailableTo)->format('Y-m-d\TH:i') : '') }}">
+                <div style="font-size:11px; color:#aaa; margin-top:4px;">Leave blank for no end date</div>
+            </div>
+        </div>
+
+        <div class="form-group" style="max-width:200px;">
+            <label class="form-label">Max quantity per order</label>
+            <input type="number" name="productMaxQuantity" class="form-control"
+                value="{{ old('productMaxQuantity', $product->productMaxQuantity ?? 1) }}" min="1" required>
+        </div>
+
         @if($errors->any())
         <div class="alert alert-error">
             @foreach($errors->all() as $error)
