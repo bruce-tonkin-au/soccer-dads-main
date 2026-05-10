@@ -176,13 +176,17 @@
             formData.append('image', file);
             formData.append('_token', CSRF);
             try {
-                const res  = await fetch(uploadUrl, { method: 'POST', body: formData });
+                const res  = await fetch(uploadUrl, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
                 const data = await res.json();
                 placeholder.remove();
+                if (!res.ok) {
+                    showError(`Failed to upload "${file.name}": ${data.error ?? data.message ?? res.status}`);
+                    continue;
+                }
                 appendImageCard(data.imageID, data.imageUrl, data.isPrimary);
             } catch (e) {
                 placeholder.remove();
-                showError(`Failed to upload "${file.name}".`);
+                showError(`Failed to upload "${file.name}": ${e.message}`);
             }
         }
     }
@@ -226,6 +230,7 @@
         const res  = await fetch(`/admin/store/products/${PRODUCT_ID}/images/${imageID}/delete`, {
             method: 'POST',
             body: new URLSearchParams({ _token: CSRF }),
+            headers: { 'Accept': 'application/json' },
         });
         const data = await res.json();
         if (data.success) {
@@ -248,6 +253,7 @@
         const res  = await fetch(`/admin/store/products/${PRODUCT_ID}/images/${imageID}/primary`, {
             method: 'POST',
             body: new URLSearchParams({ _token: CSRF }),
+            headers: { 'Accept': 'application/json' },
         });
         const data = await res.json();
         if (data.success) {
@@ -279,7 +285,7 @@
         const order = [...grid.querySelectorAll('.img-card')].map(c => c.dataset.id);
         const body  = new URLSearchParams({ _token: CSRF });
         order.forEach((id, i) => body.append(`order[${i}]`, id));
-        await fetch(reorderUrl, { method: 'POST', body });
+        await fetch(reorderUrl, { method: 'POST', body, headers: { 'Accept': 'application/json' } });
     }
 
     // ── Helpers ──────────────────────────────────────────────────

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -79,12 +80,43 @@ class AdminStoreController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
-        $product      = DB::table('products')->where('productID', $productID)->firstOrFail();
+        $product       = DB::table('products')->where('productID', $productID)->firstOrFail();
         $existingCount = DB::table('product_images')->where('productID', $productID)->count();
-        $maxOrder     = DB::table('product_images')->where('productID', $productID)->max('imageOrder') ?? -1;
+        $maxOrder      = DB::table('product_images')->where('productID', $productID)->max('imageOrder') ?? -1;
 
-        $path    = $request->file('image')->store('products/' . $productID, 'public');
-        $imageUrl = asset('storage/' . $path);
+        $dir = Storage::disk('public')->path('products/' . $productID);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        try {
+            $path = $request->file('image')->store('products/' . $productID, 'public');
+        } catch (\Throwable $e) {
+            Log::error('Product image upload failed', [
+                'productID'    => $productID,
+                'file'         => $request->file('image')?->getClientOriginalName(),
+                'disk_root'    => Storage::disk('public')->path(''),
+                'dir'          => $dir,
+                'dir_exists'   => is_dir($dir),
+                'dir_writable' => is_writable($dir),
+                'error'        => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Storage error: ' . $e->getMessage()], 500);
+        }
+
+        if (!$path) {
+            $root = Storage::disk('public')->path('');
+            Log::error('Product image store() returned false', [
+                'productID'    => $productID,
+                'disk_root'    => $root,
+                'dir'          => $dir,
+                'dir_exists'   => is_dir($dir),
+                'dir_writable' => is_writable($dir),
+            ]);
+            return response()->json(['error' => 'File could not be saved. Check storage path and permissions.'], 500);
+        }
+
+        $imageUrl  = asset('storage/' . $path);
         $isPrimary = $existingCount === 0;
 
         $imageID = DB::table('product_images')->insertGetId([
