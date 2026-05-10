@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminStoreController extends Controller
@@ -60,7 +61,107 @@ class AdminStoreController extends Controller
     public function editProduct(int $productID)
     {
         $product = DB::table('products')->where('productID', $productID)->firstOrFail();
-        return view('admin.store.products.edit', compact('product'));
+        $images  = DB::table('product_images')
+            ->where('productID', $productID)
+            ->orderBy('imageOrder')
+            ->get()
+            ->map(fn($img) => (object) array_merge((array) $img, [
+                'imageUrl' => asset('storage/' . $img->imagePath),
+            ]));
+        return view('admin.store.products.edit', compact('product', 'images'));
+    }
+
+    // IMAGE MANAGEMENT
+
+    public function uploadProductImage(Request $request, int $productID)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        $product      = DB::table('products')->where('productID', $productID)->firstOrFail();
+        $existingCount = DB::table('product_images')->where('productID', $productID)->count();
+        $maxOrder     = DB::table('product_images')->where('productID', $productID)->max('imageOrder') ?? -1;
+
+        $path    = $request->file('image')->store('products/' . $productID, 'public');
+        $imageUrl = asset('storage/' . $path);
+        $isPrimary = $existingCount === 0;
+
+        $imageID = DB::table('product_images')->insertGetId([
+            'productID'  => $productID,
+            'imagePath'  => $path,
+            'imageOrder' => $maxOrder + 1,
+            'imageAlt'   => null,
+            'isPrimary'  => $isPrimary ? 1 : 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        if ($isPrimary) {
+            DB::table('products')->where('productID', $productID)->update([
+                'productImage' => $imageUrl,
+                'updated_at'   => now(),
+            ]);
+        }
+
+        return response()->json([
+            'imageID'   => $imageID,
+            'imageUrl'  => $imageUrl,
+            'isPrimary' => $isPrimary,
+        ]);
+    }
+
+    public function deleteProductImage(Request $request, int $productID, int $imageID)
+    {
+        $image   = DB::table('product_images')->where('imageID', $imageID)->where('productID', $productID)->firstOrFail();
+        $product = DB::table('products')->where('productID', $productID)->firstOrFail();
+
+        Storage::disk('public')->delete($image->imagePath);
+        DB::table('product_images')->where('imageID', $imageID)->delete();
+
+        $newPrimaryUrl = null;
+        $newPrimaryID  = null;
+
+        if ($image->isPrimary) {
+            $next = DB::table('product_images')->where('productID', $productID)->orderBy('imageOrder')->first();
+            if ($next) {
+                $newPrimaryUrl = asset('storage/' . $next->imagePath);
+                $newPrimaryID  = $next->imageID;
+                DB::table('product_images')->where('imageID', $next->imageID)->update(['isPrimary' => 1, 'updated_at' => now()]);
+            }
+            DB::table('products')->where('productID', $productID)->update([
+                'productImage' => $newPrimaryUrl,
+                'updated_at'   => now(),
+            ]);
+        }
+
+        return response()->json(['success' => true, 'newPrimaryID' => $newPrimaryID]);
+    }
+
+    public function setPrimaryImage(Request $request, int $productID, int $imageID)
+    {
+        $image = DB::table('product_images')->where('imageID', $imageID)->where('productID', $productID)->firstOrFail();
+
+        DB::table('product_images')->where('productID', $productID)->update(['isPrimary' => 0, 'updated_at' => now()]);
+        DB::table('product_images')->where('imageID', $imageID)->update(['isPrimary' => 1, 'updated_at' => now()]);
+        DB::table('products')->where('productID', $productID)->update([
+            'productImage' => asset('storage/' . $image->imagePath),
+            'updated_at'   => now(),
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function reorderProductImages(Request $request, int $productID)
+    {
+        $order = $request->input('order', []);
+        foreach ($order as $idx => $imgID) {
+            DB::table('product_images')
+                ->where('imageID', $imgID)
+                ->where('productID', $productID)
+                ->update(['imageOrder' => $idx, 'updated_at' => now()]);
+        }
+        return response()->json(['success' => true]);
     }
 
     public function updateProduct(Request $request, int $productID)

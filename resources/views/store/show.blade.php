@@ -13,15 +13,50 @@
         align-items: start;
     }
     .product-image-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .gallery-main {
         border-radius: 16px;
         overflow: hidden;
         border: 1px solid #e8e8e8;
     }
-    .product-image-wrap img {
+    .gallery-main img {
         width: 100%;
         aspect-ratio: 1;
         object-fit: cover;
         display: block;
+        transition: opacity 0.15s;
+    }
+    .gallery-thumbs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .gallery-thumb {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        padding: 0;
+        cursor: pointer;
+        background: none;
+        flex-shrink: 0;
+        transition: border-color 0.15s;
+    }
+    .gallery-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .gallery-thumb.active {
+        border-color: #262c39;
+    }
+    .gallery-thumb:hover:not(.active) {
+        border-color: #ccc;
     }
     .product-info {
         display: flex;
@@ -131,7 +166,22 @@
 <div style="background:#f8f8f8; min-height:80vh; padding-bottom:4rem;">
     <div class="product-detail">
         <div class="product-image-wrap">
-            <img src="{{ $product->productImage }}" alt="{{ $product->productName }}">
+            <div class="gallery-main">
+                <img id="gallery-main-img"
+                     src="{{ $images->first()->imageUrl ?? $product->productImage }}"
+                     alt="{{ $images->first()->imageAlt ?? $product->productName }}">
+            </div>
+            @if($images->count() > 1)
+            <div class="gallery-thumbs">
+                @foreach($images as $img)
+                <button class="gallery-thumb {{ $loop->first ? 'active' : '' }}"
+                        onclick="switchGallery(this, '{{ $img->imageUrl }}', '{{ addslashes($img->imageAlt ?? $product->productName) }}')"
+                        type="button">
+                    <img src="{{ $img->imageUrl }}" alt="">
+                </button>
+                @endforeach
+            </div>
+            @endif
         </div>
 
         <div class="product-info">
@@ -209,18 +259,26 @@
     </div>
 </div>
 
-@if($product->productStock > 0 && min($product->productMaxQuantity, $product->productStock) > 1)
 @push('scripts')
 <script>
-    const qtyMain     = document.getElementById('qty-main');
-    const qtyBuynow   = document.getElementById('qty-buynow');
+    function switchGallery(thumb, src, alt) {
+        const img = document.getElementById('gallery-main-img');
+        img.style.opacity = '0';
+        setTimeout(() => { img.src = src; img.alt = alt; img.style.opacity = '1'; }, 120);
+        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+    }
+
+    @if($product->productStock > 0 && min($product->productMaxQuantity, $product->productStock) > 1)
+    const qtyMain      = document.getElementById('qty-main');
+    const qtyBuynow    = document.getElementById('qty-buynow');
     const qtyAddtocart = document.getElementById('qty-addtocart');
     qtyMain.addEventListener('input', function () {
         qtyBuynow.value    = this.value;
         qtyAddtocart.value = this.value;
     });
+    @endif
 </script>
 @endpush
-@endif
 
 @endsection

@@ -37,7 +37,25 @@ class StoreController extends Controller
             ->where('productSlug', $productSlug)
             ->firstOrFail();
 
-        return view('store.show', compact('product'));
+        $images = DB::table('product_images')
+            ->where('productID', $product->productID)
+            ->orderBy('imageOrder')
+            ->get()
+            ->map(fn($img) => (object) array_merge((array) $img, [
+                'imageUrl' => asset('storage/' . $img->imagePath),
+            ]));
+
+        // Fall back to the primary productImage URL if no uploaded images exist
+        if ($images->isEmpty() && $product->productImage) {
+            $images = collect([(object) [
+                'imageID'   => null,
+                'imageUrl'  => $product->productImage,
+                'imageAlt'  => null,
+                'isPrimary' => true,
+            ]]);
+        }
+
+        return view('store.show', compact('product', 'images'));
     }
 
     // ─── Direct (Buy now) checkout ─────────────────────────────────────────────

@@ -76,6 +76,12 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/store/products/{productID}/edit', [AdminStoreController::class, 'updateProduct']);
     Route::post('/store/products/{productID}/toggle', [AdminStoreController::class, 'toggleProduct']);
 
+    // Product image management
+    Route::post('/store/products/{productID}/images/upload', [AdminStoreController::class, 'uploadProductImage']);
+    Route::post('/store/products/{productID}/images/reorder', [AdminStoreController::class, 'reorderProductImages']);
+    Route::post('/store/products/{productID}/images/{imageID}/delete', [AdminStoreController::class, 'deleteProductImage']);
+    Route::post('/store/products/{productID}/images/{imageID}/primary', [AdminStoreController::class, 'setPrimaryImage']);
+
     Route::get('/store/orders', [AdminStoreController::class, 'orders']);
     Route::get('/store/orders/{orderID}/edit', [AdminStoreController::class, 'editOrder']);
     Route::post('/store/orders/{orderID}/edit', [AdminStoreController::class, 'updateOrder']);
