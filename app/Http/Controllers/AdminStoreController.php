@@ -127,7 +127,7 @@ class AdminStoreController extends Controller
             'isPrimary'  => $isPrimary ? 1 : 0,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ], 'imageID');
 
         if ($isPrimary) {
             DB::table('products')->where('productID', $productID)->update([

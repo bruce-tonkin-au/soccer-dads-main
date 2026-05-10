@@ -231,7 +231,7 @@ class StoreController extends Controller
             'orderNotes'      => null,
             'created_at'      => now(),
             'updated_at'      => now(),
-        ]);
+        ], 'orderID');
 
         foreach ($orderItemsData as $item) {
             DB::table('order_items')->insert([
@@ -329,7 +329,7 @@ class StoreController extends Controller
             'orderNotes'      => null,
             'created_at'      => now(),
             'updated_at'      => now(),
-        ]);
+        ], 'orderID');
 
         DB::table('order_items')->insert([
             'orderID'      => $orderID,
