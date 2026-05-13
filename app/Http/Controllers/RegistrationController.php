@@ -36,7 +36,9 @@ class RegistrationController extends Controller
         ]);
     }
 
-    private function promoteFromBench($gameID)
+    // Returns the promoted member object so the caller can send the email
+    // after the enclosing transaction commits. Never throws.
+    private function promoteFromBench(int $gameID): ?object
     {
         $firstBench = DB::table('game-registrations as r')
             ->join('members as m', 'r.memberID', '=', 'm.memberID')
@@ -48,7 +50,7 @@ class RegistrationController extends Controller
             ->select('r.*', 'm.memberEmail', 'm.memberNameFirst', 'm.memberCode')
             ->first();
 
-        if (!$firstBench) return;
+        if (!$firstBench) return null;
 
         DB::table('game-registrations')
             ->where('registrationID', $firstBench->registrationID)
@@ -65,18 +67,33 @@ class RegistrationController extends Controller
 
         $this->logEvent($gameID, $firstBench->memberID, 'bench_promoted', $seq);
 
-        if ($firstBench->memberEmail) {
-            try {
-                Mail::send('emails.bench-promotion', [
-                    'name' => $firstBench->memberNameFirst,
-                    'link' => url('/reg/' . $firstBench->memberCode),
-                ], function ($message) use ($firstBench) {
-                    $message->to($firstBench->memberEmail)
-                            ->subject("You're in! A spot has opened up for Soccer Dads");
-                });
-            } catch (\Throwable $e) {
-                \Log::warning('Bench promotion email failed', ['error' => $e->getMessage()]);
-            }
+        return $firstBench;
+    }
+
+    // Called after the transaction has committed so a mail failure cannot roll
+    // back the promotion. Logs but never throws.
+    private function sendBenchPromotionEmail(object $member): void
+    {
+        if (!$member->memberEmail) {
+            \Log::info('Skipped bench promotion email: no contact details', [
+                'memberID' => $member->memberID,
+            ]);
+            return;
+        }
+
+        try {
+            Mail::send('emails.bench-promotion', [
+                'name' => $member->memberNameFirst,
+                'link' => url('/reg/' . $member->memberCode),
+            ], function ($message) use ($member) {
+                $message->to($member->memberEmail)
+                        ->subject("You're in! A spot has opened up for Soccer Dads");
+            });
+        } catch (\Throwable $e) {
+            \Log::warning('Bench promotion email failed', [
+                'memberID' => $member->memberID,
+                'error'    => $e->getMessage(),
+            ]);
         }
     }
 
@@ -155,9 +172,10 @@ class RegistrationController extends Controller
         $childID     = $request->input('childID');
         $childStatus = $request->input('childStatus');
 
-        $benchMessage = null;
+        $benchMessage   = null;
+        $promotedMembers = [];
 
-        DB::transaction(function () use ($nextGame, $member, $status, $childID, $childStatus, &$benchMessage) {
+        DB::transaction(function () use ($nextGame, $member, $status, $childID, $childStatus, &$benchMessage, &$promotedMembers) {
             // Lock the game row to serialize concurrent registrations for this game.
             // Any other transaction attempting to register for the same game will block
             // here until this transaction commits, preventing the race condition where
@@ -253,7 +271,8 @@ class RegistrationController extends Controller
 
                     if ($status == 2 && $wasActive) {
                         $this->logEvent($nextGame->gameID, $member->memberID, 'deregistered');
-                        $this->promoteFromBench($nextGame->gameID);
+                        $promoted = $this->promoteFromBench($nextGame->gameID);
+                        if ($promoted) $promotedMembers[] = $promoted;
                     }
                 }
             }
@@ -349,11 +368,18 @@ class RegistrationController extends Controller
 
                     if ($childStatus == 2 && $childWasActive) {
                         $this->logEvent($nextGame->gameID, $childID, 'deregistered');
-                        $this->promoteFromBench($nextGame->gameID);
+                        $promoted = $this->promoteFromBench($nextGame->gameID);
+                        if ($promoted) $promotedMembers[] = $promoted;
                     }
                 }
             }
         });
+
+        // Send notifications after the transaction has committed so email failures
+        // cannot roll back the promotion.
+        foreach ($promotedMembers as $promoted) {
+            $this->sendBenchPromotionEmail($promoted);
+        }
 
         if ($benchMessage) {
             return redirect("/reg/{$memberCode}")->with('bench', $benchMessage);

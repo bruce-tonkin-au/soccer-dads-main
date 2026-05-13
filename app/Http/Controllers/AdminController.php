@@ -75,6 +75,7 @@ class AdminController extends Controller
                 ->join('members as m', 'r.memberID', '=', 'm.memberID')
                 ->where('r.gameID', $nextGame->gameID)
                 ->where('r.registrationStatus', 1)
+                ->where('r.registrationBench', 0)
                 ->orderBy('m.memberNameLast')
                 ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
                 ->get();
