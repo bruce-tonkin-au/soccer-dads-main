@@ -25,6 +25,17 @@ class RegistrationController extends Controller
             ->first();
     }
 
+    private function logEvent(int $gameID, int $memberID, string $eventType, ?int $sequence = null): void
+    {
+        DB::table('game-registration-events')->insert([
+            'gameID'               => $gameID,
+            'memberID'             => $memberID,
+            'eventType'            => $eventType,
+            'registrationSequence' => $sequence,
+            'created_at'           => now(),
+        ]);
+    }
+
     private function promoteFromBench($gameID)
     {
         $firstBench = DB::table('game-registrations as r')
@@ -45,6 +56,14 @@ class RegistrationController extends Controller
                 'registrationBench' => 0,
                 'registrationEdited' => now(),
             ]);
+
+        $seq = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('registrationStatus', 1)
+            ->where('registrationBench', 0)
+            ->count();
+
+        $this->logEvent($gameID, $firstBench->memberID, 'bench_promoted', $seq);
 
         if ($firstBench->memberEmail) {
             try {
@@ -136,173 +155,209 @@ class RegistrationController extends Controller
         $childID     = $request->input('childID');
         $childStatus = $request->input('childStatus');
 
-        if ($status !== null) {
-            $existing = DB::table('game-registrations')
-                ->where('gameID', $nextGame->gameID)
-                ->where('memberID', $member->memberID)
-                ->first();
+        $benchMessage = null;
 
-            $wasActive = $existing && $existing->registrationStatus == 1 && $existing->registrationBench == 0;
+        DB::transaction(function () use ($nextGame, $member, $status, $childID, $childStatus, &$benchMessage) {
+            // Lock the game row to serialize concurrent registrations for this game.
+            // Any other transaction attempting to register for the same game will block
+            // here until this transaction commits, preventing the race condition where
+            // two requests both read count=17 and both write as the 18th player.
+            DB::table('games')->where('gameID', $nextGame->gameID)->lockForUpdate()->first();
 
-            if ($status == 1) {
-                $alreadyActive = $existing && $existing->registrationStatus == 1 && $existing->registrationBench == 0;
+            // ── Player registration ───────────────────────────────────────────────
+            if ($status !== null) {
+                $existing = DB::table('game-registrations')
+                    ->where('gameID', $nextGame->gameID)
+                    ->where('memberID', $member->memberID)
+                    ->first();
 
-                if (!$alreadyActive) {
-                    $activeCount = DB::table('game-registrations')
+                $wasActive = $existing && $existing->registrationStatus == 1 && $existing->registrationBench == 0;
+
+                if ($status == 1) {
+                    $alreadyActive = $existing && $existing->registrationStatus == 1 && $existing->registrationBench == 0;
+
+                    if (!$alreadyActive) {
+                        $activeCount = DB::table('game-registrations')
+                            ->where('gameID', $nextGame->gameID)
+                            ->where('registrationStatus', 1)
+                            ->where('registrationBench', 0)
+                            ->count();
+
+                        if ($activeCount >= 18) {
+                            if ($existing) {
+                                DB::table('game-registrations')
+                                    ->where('registrationID', $existing->registrationID)
+                                    ->update([
+                                        'registrationStatus' => 1,
+                                        'registrationBench'  => 1,
+                                        'registrationEdited' => now(),
+                                    ]);
+                            } else {
+                                DB::table('game-registrations')->insert([
+                                    'gameID'              => $nextGame->gameID,
+                                    'memberID'            => $member->memberID,
+                                    'registrationStatus'  => 1,
+                                    'registrationBench'   => 1,
+                                    'registrationCreated' => now(),
+                                    'registrationEdited'  => now(),
+                                ]);
+                            }
+                            $this->logEvent($nextGame->gameID, $member->memberID, 'bench_added');
+                            $benchMessage = "You've been added to the reserves bench. You'll be automatically added to the game if a spot opens up.";
+                            return;
+                        }
+                    }
+
+                    if ($existing) {
+                        DB::table('game-registrations')
+                            ->where('registrationID', $existing->registrationID)
+                            ->update([
+                                'registrationStatus' => 1,
+                                'registrationBench'  => 0,
+                                'registrationEdited' => now(),
+                            ]);
+                    } else {
+                        DB::table('game-registrations')->insert([
+                            'gameID'              => $nextGame->gameID,
+                            'memberID'            => $member->memberID,
+                            'registrationStatus'  => 1,
+                            'registrationBench'   => 0,
+                            'registrationCreated' => now(),
+                            'registrationEdited'  => now(),
+                        ]);
+                    }
+
+                    $seq = DB::table('game-registrations')
                         ->where('gameID', $nextGame->gameID)
                         ->where('registrationStatus', 1)
                         ->where('registrationBench', 0)
                         ->count();
-
-                    if ($activeCount >= 18) {
-                        // Add to bench instead
-                        if ($existing) {
-                            DB::table('game-registrations')
-                                ->where('registrationID', $existing->registrationID)
-                                ->update([
-                                    'registrationStatus' => 1,
-                                    'registrationBench'  => 1,
-                                    'registrationEdited' => now(),
-                                ]);
-                        } else {
-                            DB::table('game-registrations')->insert([
-                                'gameID'              => $nextGame->gameID,
-                                'memberID'            => $member->memberID,
-                                'registrationStatus'  => 1,
-                                'registrationBench'   => 1,
-                                'registrationCreated' => now(),
-                                'registrationEdited'  => now(),
+                    $this->logEvent($nextGame->gameID, $member->memberID, 'registered', $seq);
+                } else {
+                    if ($existing) {
+                        DB::table('game-registrations')
+                            ->where('registrationID', $existing->registrationID)
+                            ->update([
+                                'registrationStatus' => $status,
+                                'registrationEdited' => now(),
                             ]);
-                        }
-                        return redirect("/reg/{$memberCode}")->with('bench', "You've been added to the reserves bench. You'll be automatically added to the game if a spot opens up.");
+                    } else {
+                        DB::table('game-registrations')->insert([
+                            'gameID'              => $nextGame->gameID,
+                            'memberID'            => $member->memberID,
+                            'registrationStatus'  => $status,
+                            'registrationCreated' => now(),
+                            'registrationEdited'  => now(),
+                        ]);
+                    }
+
+                    if ($status == 2 && $wasActive) {
+                        $this->logEvent($nextGame->gameID, $member->memberID, 'deregistered');
+                        $this->promoteFromBench($nextGame->gameID);
                     }
                 }
-
-                if ($existing) {
-                    DB::table('game-registrations')
-                        ->where('registrationID', $existing->registrationID)
-                        ->update([
-                            'registrationStatus' => 1,
-                            'registrationBench'  => 0,
-                            'registrationEdited' => now(),
-                        ]);
-                } else {
-                    DB::table('game-registrations')->insert([
-                        'gameID'              => $nextGame->gameID,
-                        'memberID'            => $member->memberID,
-                        'registrationStatus'  => 1,
-                        'registrationBench'   => 0,
-                        'registrationCreated' => now(),
-                        'registrationEdited'  => now(),
-                    ]);
-                }
-            } else {
-                if ($existing) {
-                    DB::table('game-registrations')
-                        ->where('registrationID', $existing->registrationID)
-                        ->update([
-                            'registrationStatus' => $status,
-                            'registrationEdited' => now(),
-                        ]);
-                } else {
-                    DB::table('game-registrations')->insert([
-                        'gameID'              => $nextGame->gameID,
-                        'memberID'            => $member->memberID,
-                        'registrationStatus'  => $status,
-                        'registrationCreated' => now(),
-                        'registrationEdited'  => now(),
-                    ]);
-                }
-
-                if ($status == 2 && $wasActive) {
-                    $this->promoteFromBench($nextGame->gameID);
-                }
             }
-        }
 
-        if ($childID && $childStatus !== null) {
-            $childExisting = DB::table('game-registrations')
-                ->where('gameID', $nextGame->gameID)
-                ->where('memberID', $childID)
-                ->first();
+            if ($benchMessage) return; // player was benched — skip child processing
 
-            $childWasActive = $childExisting && $childExisting->registrationStatus == 1 && $childExisting->registrationBench == 0;
+            // ── Child registration ────────────────────────────────────────────────
+            if ($childID && $childStatus !== null) {
+                $childExisting = DB::table('game-registrations')
+                    ->where('gameID', $nextGame->gameID)
+                    ->where('memberID', $childID)
+                    ->first();
 
-            if ($childStatus == 1) {
-                $childAlreadyActive = $childExisting && $childExisting->registrationStatus == 1 && $childExisting->registrationBench == 0;
+                $childWasActive = $childExisting && $childExisting->registrationStatus == 1 && $childExisting->registrationBench == 0;
 
-                if (!$childAlreadyActive) {
-                    $activeCount = DB::table('game-registrations')
+                if ($childStatus == 1) {
+                    $childAlreadyActive = $childExisting && $childExisting->registrationStatus == 1 && $childExisting->registrationBench == 0;
+
+                    if (!$childAlreadyActive) {
+                        $activeCount = DB::table('game-registrations')
+                            ->where('gameID', $nextGame->gameID)
+                            ->where('registrationStatus', 1)
+                            ->where('registrationBench', 0)
+                            ->count();
+
+                        if ($activeCount >= 18) {
+                            if ($childExisting) {
+                                DB::table('game-registrations')
+                                    ->where('registrationID', $childExisting->registrationID)
+                                    ->update([
+                                        'registrationStatus' => 1,
+                                        'registrationBench'  => 1,
+                                        'registrationEdited' => now(),
+                                    ]);
+                            } else {
+                                DB::table('game-registrations')->insert([
+                                    'gameID'              => $nextGame->gameID,
+                                    'memberID'            => $childID,
+                                    'registrationStatus'  => 1,
+                                    'registrationBench'   => 1,
+                                    'registrationCreated' => now(),
+                                    'registrationEdited'  => now(),
+                                ]);
+                            }
+                            $this->logEvent($nextGame->gameID, $childID, 'bench_added');
+                            $benchMessage = "Your child has been added to the reserves bench.";
+                            return;
+                        }
+                    }
+
+                    if ($childExisting) {
+                        DB::table('game-registrations')
+                            ->where('registrationID', $childExisting->registrationID)
+                            ->update([
+                                'registrationStatus' => 1,
+                                'registrationBench'  => 0,
+                                'registrationEdited' => now(),
+                            ]);
+                    } else {
+                        DB::table('game-registrations')->insert([
+                            'gameID'              => $nextGame->gameID,
+                            'memberID'            => $childID,
+                            'registrationStatus'  => 1,
+                            'registrationBench'   => 0,
+                            'registrationCreated' => now(),
+                            'registrationEdited'  => now(),
+                        ]);
+                    }
+
+                    $seq = DB::table('game-registrations')
                         ->where('gameID', $nextGame->gameID)
                         ->where('registrationStatus', 1)
                         ->where('registrationBench', 0)
                         ->count();
-
-                    if ($activeCount >= 18) {
-                        if ($childExisting) {
-                            DB::table('game-registrations')
-                                ->where('registrationID', $childExisting->registrationID)
-                                ->update([
-                                    'registrationStatus' => 1,
-                                    'registrationBench'  => 1,
-                                    'registrationEdited' => now(),
-                                ]);
-                        } else {
-                            DB::table('game-registrations')->insert([
-                                'gameID'              => $nextGame->gameID,
-                                'memberID'            => $childID,
-                                'registrationStatus'  => 1,
-                                'registrationBench'   => 1,
-                                'registrationCreated' => now(),
-                                'registrationEdited'  => now(),
+                    $this->logEvent($nextGame->gameID, $childID, 'registered', $seq);
+                } else {
+                    if ($childExisting) {
+                        DB::table('game-registrations')
+                            ->where('registrationID', $childExisting->registrationID)
+                            ->update([
+                                'registrationStatus' => $childStatus,
+                                'registrationEdited' => now(),
                             ]);
-                        }
-                        return redirect("/reg/{$memberCode}")->with('bench', "Your child has been added to the reserves bench.");
+                    } else {
+                        DB::table('game-registrations')->insert([
+                            'gameID'              => $nextGame->gameID,
+                            'memberID'            => $childID,
+                            'registrationStatus'  => $childStatus,
+                            'registrationCreated' => now(),
+                            'registrationEdited'  => now(),
+                        ]);
+                    }
+
+                    if ($childStatus == 2 && $childWasActive) {
+                        $this->logEvent($nextGame->gameID, $childID, 'deregistered');
+                        $this->promoteFromBench($nextGame->gameID);
                     }
                 }
-
-                if ($childExisting) {
-                    DB::table('game-registrations')
-                        ->where('registrationID', $childExisting->registrationID)
-                        ->update([
-                            'registrationStatus' => 1,
-                            'registrationBench'  => 0,
-                            'registrationEdited' => now(),
-                        ]);
-                } else {
-                    DB::table('game-registrations')->insert([
-                        'gameID'              => $nextGame->gameID,
-                        'memberID'            => $childID,
-                        'registrationStatus'  => 1,
-                        'registrationBench'   => 0,
-                        'registrationCreated' => now(),
-                        'registrationEdited'  => now(),
-                    ]);
-                }
-            } else {
-                if ($childExisting) {
-                    DB::table('game-registrations')
-                        ->where('registrationID', $childExisting->registrationID)
-                        ->update([
-                            'registrationStatus' => $childStatus,
-                            'registrationEdited' => now(),
-                        ]);
-                } else {
-                    DB::table('game-registrations')->insert([
-                        'gameID'              => $nextGame->gameID,
-                        'memberID'            => $childID,
-                        'registrationStatus'  => $childStatus,
-                        'registrationCreated' => now(),
-                        'registrationEdited'  => now(),
-                    ]);
-                }
-
-                if ($childStatus == 2 && $childWasActive) {
-                    $this->promoteFromBench($nextGame->gameID);
-                }
             }
-        }
+        });
 
+        if ($benchMessage) {
+            return redirect("/reg/{$memberCode}")->with('bench', $benchMessage);
+        }
         return redirect("/reg/{$memberCode}")->with('success', 'Registration updated!');
     }
 }

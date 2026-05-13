@@ -85,6 +85,9 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/store/orders', [AdminStoreController::class, 'orders']);
     Route::get('/store/orders/{orderID}/edit', [AdminStoreController::class, 'editOrder']);
     Route::post('/store/orders/{orderID}/edit', [AdminStoreController::class, 'updateOrder']);
+
+    Route::get('/registrations', [AdminController::class, 'registrations']);
+    Route::get('/registrations/{gameID}', [AdminController::class, 'registrations']);
 });
 
 // Store — specific routes before the {productSlug} wildcard

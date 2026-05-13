@@ -30,6 +30,9 @@
             <a href="/admin/teams/{{ $nextGame->gameID }}" class="btn btn-primary">
                 <i class="fa-solid fa-users"></i> Manage teams
             </a>
+            <a href="/admin/registrations/{{ $nextGame->gameID }}" class="btn btn-secondary">
+                <i class="fa-solid fa-list-check"></i> Registrations
+            </a>
             <a href="/admin/print/{{ $nextGame->gameID }}" target="_blank" class="btn btn-secondary">
                 <i class="fa-solid fa-print"></i> Print sheet
             </a>

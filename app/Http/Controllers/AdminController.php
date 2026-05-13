@@ -553,11 +553,31 @@ class AdminController extends Controller
                 'registrationEdited' => now(),
             ]);
 
+        $seq = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('registrationStatus', 1)
+            ->where('registrationBench', 0)
+            ->count();
+        DB::table('game-registration-events')->insert([
+            'gameID'               => $gameID,
+            'memberID'             => $memberID,
+            'eventType'            => 'bench_promoted',
+            'registrationSequence' => $seq,
+            'created_at'           => now(),
+        ]);
+
         return redirect('/admin')->with('success', 'Player promoted to active.');
     }
 
     public function demotePlayer($gameID, $memberID)
     {
+        $existing = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('memberID', $memberID)
+            ->first();
+
+        $wasActive = $existing && $existing->registrationStatus == 1 && $existing->registrationBench == 0;
+
         DB::table('game-registrations')
             ->where('gameID', $gameID)
             ->where('memberID', $memberID)
@@ -566,6 +586,16 @@ class AdminController extends Controller
                 'registrationBench'  => 0,
                 'registrationEdited' => now(),
             ]);
+
+        if ($wasActive) {
+            DB::table('game-registration-events')->insert([
+                'gameID'               => $gameID,
+                'memberID'             => $memberID,
+                'eventType'            => 'admin_deregistered',
+                'registrationSequence' => null,
+                'created_at'           => now(),
+            ]);
+        }
 
         if (request()->wantsJson()) {
             return response()->json(['success' => true]);
@@ -600,10 +630,100 @@ class AdminController extends Controller
             ]);
         }
 
+        $seq = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('registrationStatus', 1)
+            ->where('registrationBench', 0)
+            ->count();
+        DB::table('game-registration-events')->insert([
+            'gameID'               => $gameID,
+            'memberID'             => $memberID,
+            'eventType'            => 'admin_registered',
+            'registrationSequence' => $seq,
+            'created_at'           => now(),
+        ]);
+
         if (request()->wantsJson()) {
             return response()->json(['success' => true]);
         }
         return redirect('/admin')->with('success', 'Player registered.');
+    }
+
+    public function registrations($gameID = null)
+    {
+        $currentSeason = DB::table('seasons')
+            ->where('seasonVisible', 1)
+            ->orderBy('seasonID', 'desc')
+            ->first();
+
+        $nextGame = null;
+        if ($currentSeason) {
+            $nextGame = DB::table('games')
+                ->where('gameVisible', 1)
+                ->where('gameSeasonID', $currentSeason->seasonID)
+                ->where('gameDate', '>=', now()->toDateString())
+                ->orderBy('gameDate', 'asc')
+                ->orderBy('gameID', 'asc')
+                ->first();
+        }
+
+        $allGames = DB::table('games as g')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
+            ->where('g.gameVisible', 1)
+            ->orderBy('g.gameDate', 'desc')
+            ->orderBy('g.gameID', 'desc')
+            ->select('g.gameID', 'g.gameRound', 'g.gameDate', 's.seasonName')
+            ->get();
+
+        if (!$gameID) {
+            $gameID = $nextGame ? $nextGame->gameID : ($allGames->first() ? $allGames->first()->gameID : null);
+        }
+
+        if (!$gameID) abort(404);
+
+        $game = DB::table('games as g')
+            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
+            ->where('g.gameID', $gameID)
+            ->select('g.*', 's.seasonName')
+            ->firstOrFail();
+
+        // All registrations ordered by when they first registered
+        $registrations = DB::table('game-registrations as r')
+            ->join('members as m', 'r.memberID', '=', 'm.memberID')
+            ->where('r.gameID', $gameID)
+            ->orderBy('r.registrationCreated', 'asc')
+            ->orderBy('r.registrationID', 'asc')
+            ->select('r.*', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
+            ->get();
+
+        // Assign registration sequence: rank active registrations by registrationCreated
+        $activeSeq = 0;
+        $benchSeq  = 0;
+        $registrations = $registrations->map(function ($r) use (&$activeSeq, &$benchSeq) {
+            $r->activeSequence = null;
+            $r->benchSequence  = null;
+            if ($r->registrationStatus == 1 && $r->registrationBench == 0) {
+                $r->activeSequence = ++$activeSeq;
+            } elseif ($r->registrationStatus == 1 && $r->registrationBench == 1) {
+                $r->benchSequence = ++$benchSeq;
+            }
+            return $r;
+        });
+
+        // Event log for this game (from new events table)
+        $events = DB::table('game-registration-events as e')
+            ->join('members as m', 'e.memberID', '=', 'm.memberID')
+            ->where('e.gameID', $gameID)
+            ->orderBy('e.created_at', 'asc')
+            ->orderBy('e.eventID', 'asc')
+            ->select('e.*', 'm.memberNameFirst', 'm.memberNameLast')
+            ->get();
+
+        $isNextGame = $nextGame && $nextGame->gameID == $gameID;
+
+        return view('admin.registrations', compact(
+            'game', 'allGames', 'registrations', 'events', 'isNextGame', 'nextGame'
+        ));
     }
 
     public function resetNight($gameID)
