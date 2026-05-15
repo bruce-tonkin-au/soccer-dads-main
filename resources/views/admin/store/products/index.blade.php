@@ -1,7 +1,36 @@
 @extends('admin.layout')
 @section('title', 'Store — Products')
 
+@push('styles')
+<style>
+    .store-tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e8e8e8;
+        padding-bottom: 0;
+    }
+    .store-tab {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #888;
+        text-decoration: none;
+        border-radius: 8px 8px 0 0;
+        margin-bottom: -2px;
+        border-bottom: 2px solid transparent;
+    }
+    .store-tab:hover { color: #262c39; }
+    .store-tab.active { color: #262c39; border-bottom-color: #262c39; }
+</style>
+@endpush
+
 @section('content')
+
+<div class="store-tabs">
+    <a href="/admin/store/products" class="store-tab active">Products</a>
+    <a href="/admin/store/orders" class="store-tab">Orders</a>
+</div>
 
 <div class="admin-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">

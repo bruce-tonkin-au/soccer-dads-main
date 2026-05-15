@@ -3,21 +3,49 @@
 
 @push('styles')
 <style>
+    .store-tabs {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e8e8e8;
+        padding-bottom: 0;
+    }
+    .store-tab {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #888;
+        text-decoration: none;
+        border-radius: 8px 8px 0 0;
+        margin-bottom: -2px;
+        border-bottom: 2px solid transparent;
+    }
+    .store-tab:hover { color: #262c39; }
+    .store-tab.active { color: #262c39; border-bottom-color: #262c39; }
     .status-badge {
         padding: 2px 10px;
         border-radius: 20px;
         font-size: 12px;
         font-weight: 600;
         text-transform: capitalize;
+        white-space: nowrap;
     }
     .status-pending  { background:#fff8e6; color:#d4a017; }
     .status-paid     { background:#f0fdf4; color:#7bba56; }
     .status-shipped  { background:#e8f4ff; color:#458bc8; }
     .status-complete { background:#f0fdf4; color:#3a8c3f; }
+    .payment-pending { background:#fff8e6; color:#d4a017; }
+    .payment-paid    { background:#f0fdf4; color:#7bba56; }
+    .order-items-list { font-size: 13px; color: #555; line-height: 1.6; }
 </style>
 @endpush
 
 @section('content')
+
+<div class="store-tabs">
+    <a href="/admin/store/products" class="store-tab">Products</a>
+    <a href="/admin/store/orders" class="store-tab active">Orders</a>
+</div>
 
 <div class="admin-card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -31,29 +59,47 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Player</th>
-                <th>Total</th>
-                <th>Status</th>
+                <th>Customer</th>
+                <th>Items</th>
                 <th>Date</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach($orders as $order)
             <tr>
-                <td style="color:#aaa; font-size:13px;">#{{ $order->orderID }}</td>
-                <td style="font-weight:500;">
+                <td style="color:#aaa; font-size:13px; white-space:nowrap;">#{{ $order->orderID }}</td>
+                <td style="font-weight:500; white-space:nowrap;">
                     {{ trim($order->memberName) ?: 'Guest' }}
                 </td>
-                <td style="font-weight:600;">${{ number_format($order->orderTotal, 2) }}</td>
                 <td>
-                    <span class="status-badge status-{{ $order->orderStatus }}">{{ $order->orderStatus }}</span>
+                    <div class="order-items-list">
+                        @forelse($order->items as $item)
+                        <div>{{ $item->itemQuantity }} &times; {{ $item->productName }}</div>
+                        @empty
+                        <span style="color:#ccc;">—</span>
+                        @endforelse
+                    </div>
                 </td>
-                <td style="color:#aaa; font-size:13px;">
+                <td style="color:#aaa; font-size:13px; white-space:nowrap;">
                     {{ \Carbon\Carbon::parse($order->created_at)->format('d M Y') }}
                 </td>
+                <td style="font-weight:600; white-space:nowrap;">${{ number_format($order->orderTotal, 2) }}</td>
                 <td>
-                    <a href="/admin/store/orders/{{ $order->orderID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
+                    @if($order->orderStatus === 'pending')
+                    <span class="status-badge payment-pending">Pending</span>
+                    @else
+                    <span class="status-badge payment-paid">Paid</span>
+                    @endif
+                </td>
+                <td>
+                    <span class="status-badge status-{{ $order->orderStatus }}">{{ ucfirst($order->orderStatus) }}</span>
+                </td>
+                <td>
+                    <a href="/admin/store/orders/{{ $order->orderID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px; white-space:nowrap;">
                         <i class="fa-solid fa-pen"></i> Manage
                     </a>
                 </td>

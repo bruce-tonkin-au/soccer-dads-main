@@ -277,6 +277,19 @@ class AdminStoreController extends Controller
             ->orderBy('o.created_at', 'desc')
             ->get();
 
+        $orderIDs = $orders->pluck('orderID');
+        $allItems = DB::table('order_items as oi')
+            ->join('products as p', 'oi.productID', '=', 'p.productID')
+            ->select('oi.orderID', 'oi.itemQuantity', 'p.productName')
+            ->whereIn('oi.orderID', $orderIDs)
+            ->get()
+            ->groupBy('orderID');
+
+        $orders = $orders->map(function ($order) use ($allItems) {
+            $order->items = $allItems->get($order->orderID, collect());
+            return $order;
+        });
+
         return view('admin.store.orders.index', compact('orders'));
     }
 
