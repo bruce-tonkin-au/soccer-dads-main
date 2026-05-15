@@ -272,7 +272,7 @@ class AdminStoreController extends Controller
             ->leftJoin('members as m', 'o.memberID', '=', 'm.memberID')
             ->select(
                 'o.*',
-                DB::raw("CONCAT(COALESCE(m.memberNameFirst,''), ' ', COALESCE(m.memberNameLast,'')) as memberName")
+                DB::raw("CONCAT(COALESCE(m.\"memberNameFirst\",''), ' ', COALESCE(m.\"memberNameLast\",'')) as \"memberName\"")
             )
             ->orderBy('o.created_at', 'desc')
             ->get();
@@ -299,7 +299,7 @@ class AdminStoreController extends Controller
             ->leftJoin('members as m', 'o.memberID', '=', 'm.memberID')
             ->select(
                 'o.*',
-                DB::raw("CONCAT(COALESCE(m.memberNameFirst,''), ' ', COALESCE(m.memberNameLast,'')) as memberName")
+                DB::raw("CONCAT(COALESCE(m.\"memberNameFirst\",''), ' ', COALESCE(m.\"memberNameLast\",'')) as \"memberName\"")
             )
             ->where('o.orderID', $orderID)
             ->firstOrFail();
