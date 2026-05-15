@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 
@@ -433,6 +435,54 @@ class StoreController extends Controller
                 ->where('productID', $item->productID)
                 ->where('productStock', '>=', $item->itemQuantity)
                 ->decrement('productStock', $item->itemQuantity);
+        }
+
+        static::sendOrderConfirmationEmail($orderID, $memberID);
+    }
+
+    private static function sendOrderConfirmationEmail(int $orderID, ?int $memberID): void
+    {
+        $order = DB::table('orders')->where('orderID', $orderID)->first();
+        if (!$order) return;
+
+        $toEmail = null;
+        $toName  = null;
+
+        if ($memberID) {
+            $member  = DB::table('members')->where('memberID', $memberID)->first();
+            $toEmail = $member->memberEmail ?? null;
+            $toName  = $member->memberNameFirst ?? null;
+        }
+
+        // Guest email as fallback (or primary if no member)
+        if (!$toEmail && $order->orderEmail) {
+            $toEmail = $order->orderEmail;
+            $toName  = $order->orderName ?? null;
+        }
+
+        if (!$toEmail) return;
+
+        $items = DB::table('order_items as oi')
+            ->join('products as p', 'oi.productID', '=', 'p.productID')
+            ->select('oi.*', 'p.productName')
+            ->where('oi.orderID', $orderID)
+            ->get();
+
+        try {
+            Mail::send('emails.order-confirmation', [
+                'order'  => $order,
+                'items'  => $items,
+                'toName' => $toName,
+            ], function ($message) use ($toEmail, $order) {
+                $message->to($toEmail)
+                        ->subject('Order #' . $order->orderID . ' confirmed — Soccer Dads Store');
+            });
+        } catch (\Exception $e) {
+            Log::error('Order confirmation email failed', [
+                'orderID' => $orderID,
+                'email'   => $toEmail,
+                'error'   => $e->getMessage(),
+            ]);
         }
     }
 
