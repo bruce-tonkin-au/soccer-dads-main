@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
 
 class AdminStoreController extends Controller
 {
@@ -316,7 +318,7 @@ class AdminStoreController extends Controller
     public function updateOrder(Request $request, int $orderID)
     {
         $request->validate([
-            'orderStatus' => 'required|in:pending,paid,shipped,complete',
+            'orderStatus' => 'required|in:pending,paid,shipped,complete,refunded',
         ]);
 
         DB::table('orders')->where('orderID', $orderID)->update([
@@ -334,5 +336,52 @@ class AdminStoreController extends Controller
         DB::table('orders')->where('orderID', $orderID)->delete();
 
         return redirect('/admin/store/orders')->with('success', 'Order #' . $orderID . ' deleted.');
+    }
+
+    public function refundOrder(int $orderID)
+    {
+        $order = DB::table('orders')->where('orderID', $orderID)->firstOrFail();
+
+        if ($order->orderStatus === 'refunded') {
+            return back()->with('error', 'Order #' . $orderID . ' has already been refunded.');
+        }
+
+        if ($order->orderStatus === 'pending') {
+            return back()->with('error', 'Order #' . $orderID . ' has not been paid — there is nothing to refund.');
+        }
+
+        if (!$order->stripeSessionID) {
+            return back()->with('error', 'Order #' . $orderID . ' has no Stripe session on record. Issue the refund manually in your Stripe dashboard, then update the order status here.');
+        }
+
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+            $session = StripeSession::retrieve($order->stripeSessionID);
+
+            if (!$session->payment_intent) {
+                return back()->with('error', 'No payment intent found on the Stripe session. Issue the refund manually in your Stripe dashboard.');
+            }
+
+            \Stripe\Refund::create(['payment_intent' => $session->payment_intent]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            return back()->with('error', 'Stripe refund failed: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return back()->with('error', 'Refund failed: ' . $e->getMessage());
+        }
+
+        // Stripe confirmed — now update the order and restore stock
+        DB::table('orders')->where('orderID', $orderID)->update([
+            'orderStatus' => 'refunded',
+            'updated_at'  => now(),
+        ]);
+
+        $items = DB::table('order_items')->where('orderID', $orderID)->get();
+        foreach ($items as $item) {
+            DB::table('products')
+                ->where('productID', $item->productID)
+                ->increment('productStock', $item->itemQuantity);
+        }
+
+        return back()->with('success', 'Order #' . $orderID . ' has been refunded ($' . number_format($order->orderTotal, 2) . ') and stock restored.');
     }
 }

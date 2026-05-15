@@ -35,6 +35,7 @@
     .status-paid     { background:#f0fdf4; color:#7bba56; }
     .status-shipped  { background:#e8f4ff; color:#458bc8; }
     .status-complete { background:#f0fdf4; color:#3a8c3f; }
+    .status-refunded { background:#f4f4f4; color:#888; }
     .payment-pending { background:#fff8e6; color:#d4a017; }
     .payment-paid    { background:#f0fdf4; color:#7bba56; }
     .order-items-list { font-size: 13px; color: #555; line-height: 1.6; }

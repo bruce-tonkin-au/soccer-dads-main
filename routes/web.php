@@ -86,6 +86,7 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::get('/store/orders/{orderID}/edit', [AdminStoreController::class, 'editOrder']);
     Route::post('/store/orders/{orderID}/edit', [AdminStoreController::class, 'updateOrder']);
     Route::post('/store/orders/{orderID}/delete', [AdminStoreController::class, 'deleteOrder']);
+    Route::post('/store/orders/{orderID}/refund', [AdminStoreController::class, 'refundOrder']);
 
     Route::get('/registrations', [AdminController::class, 'registrations']);
     Route::get('/registrations/{gameID}', [AdminController::class, 'registrations']);

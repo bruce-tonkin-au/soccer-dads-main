@@ -33,6 +33,7 @@
     .status-paid     { background:#f0fdf4; color:#7bba56; }
     .status-shipped  { background:#e8f4ff; color:#458bc8; }
     .status-complete { background:#f0fdf4; color:#3a8c3f; }
+    .status-refunded { background:#f4f4f4; color:#888; }
     .detail-row { display:flex; gap:1rem; margin-bottom:0.6rem; font-size:14px; }
     .detail-label { color:#888; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; min-width:160px; padding-top:2px; }
     .detail-value { color:#262c39; }
@@ -160,7 +161,7 @@
             <div class="form-group">
                 <label class="form-label">Status</label>
                 <select name="orderStatus" class="form-control" style="max-width:240px;">
-                    @foreach(['pending','paid','shipped','complete'] as $status)
+                    @foreach(['pending','paid','shipped','complete','refunded'] as $status)
                     <option value="{{ $status }}" {{ $order->orderStatus === $status ? 'selected' : '' }}>
                         {{ ucfirst($status) }}
                     </option>
@@ -179,11 +180,34 @@
 
     <div class="admin-card" style="border-color:#fde8e8;">
         <h2 style="color:#e24b4a;">Danger zone</h2>
-        <p style="font-size:14px; color:#888; margin-bottom:1rem;">Permanently delete this order and all its line items. This cannot be undone.</p>
+
+        @if($order->orderStatus !== 'refunded' && $order->orderStatus !== 'pending')
+        <div style="margin-bottom:1.25rem; padding-bottom:1.25rem; border-bottom:1px solid #fde8e8;">
+            <p style="font-size:14px; color:#555; margin-bottom:0.75rem; font-weight:600;">Cancel &amp; Refund</p>
+            <p style="font-size:13px; color:#888; margin-bottom:0.75rem;">
+                Issue a full refund of <strong>${{ number_format($order->orderTotal, 2) }}</strong> via Stripe,
+                update order status to Refunded, and restore stock levels.
+            </p>
+            <form method="POST" action="/admin/store/orders/{{ $order->orderID }}/refund"
+                  onsubmit="return confirm('Refund order #{{ $order->orderID }}?\n\nFull refund: ${{ number_format($order->orderTotal, 2) }}\nOrder status → Refunded\nStock levels will be restored\n\nThis will charge back via Stripe and cannot be undone.')">
+                @csrf
+                <button type="submit" class="btn btn-danger" style="padding:8px 16px; font-size:13px; background:#e24b4a;">
+                    <i class="fa-solid fa-rotate-left"></i> Cancel &amp; Refund
+                </button>
+            </form>
+        </div>
+        @elseif($order->orderStatus === 'refunded')
+        <p style="font-size:13px; color:#aaa; margin-bottom:1.25rem; padding-bottom:1.25rem; border-bottom:1px solid #fde8e8;">
+            <i class="fa-solid fa-circle-check"></i> This order has already been refunded.
+        </p>
+        @endif
+
+        <p style="font-size:14px; color:#555; margin-bottom:0.75rem; font-weight:600;">Delete order</p>
+        <p style="font-size:13px; color:#888; margin-bottom:0.75rem;">Permanently remove this order and all its line items. Stock is not restored. This cannot be undone.</p>
         <form method="POST" action="/admin/store/orders/{{ $order->orderID }}/delete"
               onsubmit="return confirm('Delete order #{{ $order->orderID }} and all its line items? This cannot be undone.')">
             @csrf
-            <button type="submit" class="btn btn-danger" style="padding:8px 16px; font-size:13px;">
+            <button type="submit" class="btn btn-danger" style="padding:8px 16px; font-size:13px; background:#888;">
                 <i class="fa-solid fa-trash"></i> Delete order
             </button>
         </form>
