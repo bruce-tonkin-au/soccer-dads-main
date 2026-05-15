@@ -228,6 +228,37 @@
                 <form id="form-buynow" method="POST" action="/store/{{ $product->productSlug }}/checkout">
                     @csrf
                     <input type="hidden" name="quantity" id="qty-buynow" value="1">
+
+                    @if(!session('player_id'))
+                    <div style="background:#f8f8f8; border:1px solid #e8e8e8; border-radius:10px; padding:1rem; margin-bottom:8px;">
+                        <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#888; margin-bottom:10px;">Your details</p>
+
+                        <div style="margin-bottom:8px;">
+                            <input type="text" name="guestName" placeholder="Full name *"
+                                   value="{{ old('guestName') }}"
+                                   style="width:100%; border:1px solid {{ $errors->has('guestName') ? '#e24b4a' : '#e8e8e8' }}; border-radius:8px; padding:9px 12px; font-size:14px; color:#262c39; outline:none;">
+                            @error('guestName')
+                            <p style="color:#e24b4a; font-size:12px; margin-top:4px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div style="margin-bottom:8px;">
+                            <input type="email" name="guestEmail" placeholder="Email address *"
+                                   value="{{ old('guestEmail') }}"
+                                   style="width:100%; border:1px solid {{ $errors->has('guestEmail') ? '#e24b4a' : '#e8e8e8' }}; border-radius:8px; padding:9px 12px; font-size:14px; color:#262c39; outline:none;">
+                            @error('guestEmail')
+                            <p style="color:#e24b4a; font-size:12px; margin-top:4px;">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <input type="tel" name="guestPhone" placeholder="Phone (optional)"
+                                   value="{{ old('guestPhone') }}"
+                                   style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:9px 12px; font-size:14px; color:#262c39; outline:none;">
+                        </div>
+                    </div>
+                    @endif
+
                     <button type="submit" class="btn-buynow">
                         <i class="fa-brands fa-stripe-s"></i>
                         Buy now — ${{ number_format($product->productPrice, 2) }}

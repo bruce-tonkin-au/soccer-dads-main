@@ -84,12 +84,55 @@ class StoreController extends Controller
             return back()->with('error', 'Sorry, this product is out of stock.');
         }
 
-        $maxQty   = min($product->productMaxQuantity, $product->productStock);
-        $quantity = max(1, min((int) $request->input('quantity', 1), $maxQty));
+        $maxQty    = min($product->productMaxQuantity, $product->productStock);
+        $quantity  = max(1, min((int) $request->input('quantity', 1), $maxQty));
+        $memberID  = session('player_id');
+
+        // Resolve customer details
+        $orderName     = null;
+        $orderEmail    = null;
+        $orderPhone    = null;
+        $customerEmail = null;
+
+        if ($memberID) {
+            $member        = DB::table('members')->where('memberID', $memberID)->first();
+            $customerEmail = $member->memberEmail ?? null;
+        } else {
+            $request->validate([
+                'guestName'  => 'required|string|max:255',
+                'guestEmail' => 'required|email|max:255',
+                'guestPhone' => 'nullable|string|max:50',
+            ]);
+            $orderName     = trim($request->input('guestName'));
+            $orderEmail    = trim($request->input('guestEmail'));
+            $orderPhone    = trim($request->input('guestPhone', '')) ?: null;
+            $customerEmail = $orderEmail;
+        }
+
+        // Pre-create pending order so we have an ID for Stripe metadata
+        $orderID = DB::table('orders')->insertGetId([
+            'memberID'    => $memberID,
+            'orderStatus' => 'pending',
+            'orderTotal'  => $product->productPrice * $quantity,
+            'orderName'   => $orderName,
+            'orderEmail'  => $orderEmail,
+            'orderPhone'  => $orderPhone,
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ], 'orderID');
+
+        DB::table('order_items')->insert([
+            'orderID'      => $orderID,
+            'productID'    => $product->productID,
+            'itemQuantity' => $quantity,
+            'itemPrice'    => $product->productPrice,
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
 
         Stripe::setApiKey(config('services.stripe.secret'));
 
-        $session = StripeSession::create([
+        $sessionParams = [
             'payment_method_types' => ['card'],
             'line_items' => [[
                 'price_data' => [
@@ -106,11 +149,21 @@ class StoreController extends Controller
             'success_url' => url('/store/order-complete?session_id={CHECKOUT_SESSION_ID}'),
             'cancel_url'  => url('/store/' . $productSlug),
             'metadata'    => [
-                'type'      => 'store_purchase',
-                'productID' => $product->productID,
-                'memberID'  => session('player_id') ?: '',
-                'quantity'  => $quantity,
+                'type'     => 'store_purchase',
+                'orderID'  => $orderID,
+                'memberID' => $memberID ?: '',
             ],
+        ];
+
+        if ($customerEmail) {
+            $sessionParams['customer_email'] = $customerEmail;
+        }
+
+        $session = StripeSession::create($sessionParams);
+
+        DB::table('orders')->where('orderID', $orderID)->update([
+            'stripeSessionID' => $session->id,
+            'updated_at'      => now(),
         ]);
 
         return redirect($session->url);
@@ -192,12 +245,35 @@ class StoreController extends Controller
         return back();
     }
 
-    public function cartCheckout()
+    public function cartCheckout(Request $request)
     {
         $cartData = session('store_cart', []);
 
         if (empty($cartData)) {
             return redirect('/store/cart')->with('error', 'Your cart is empty.');
+        }
+
+        $memberID = session('player_id');
+
+        // Resolve customer details
+        $orderName     = null;
+        $orderEmail    = null;
+        $orderPhone    = null;
+        $customerEmail = null;
+
+        if ($memberID) {
+            $member        = DB::table('members')->where('memberID', $memberID)->first();
+            $customerEmail = $member->memberEmail ?? null;
+        } else {
+            $request->validate([
+                'guestName'  => 'required|string|max:255',
+                'guestEmail' => 'required|email|max:255',
+                'guestPhone' => 'nullable|string|max:50',
+            ]);
+            $orderName     = trim($request->input('guestName'));
+            $orderEmail    = trim($request->input('guestEmail'));
+            $orderPhone    = trim($request->input('guestPhone', '')) ?: null;
+            $customerEmail = $orderEmail;
         }
 
         $productIDs = array_keys($cartData);
@@ -242,13 +318,14 @@ class StoreController extends Controller
             return redirect('/store/cart')->with('error', 'No valid items in cart.');
         }
 
-        $memberID = session('player_id');
-
         // Pre-create a pending order so we have an ID to pass to Stripe
         $orderID = DB::table('orders')->insertGetId([
             'memberID'        => $memberID,
             'orderStatus'     => 'pending',
             'orderTotal'      => $orderTotal,
+            'orderName'       => $orderName,
+            'orderEmail'      => $orderEmail,
+            'orderPhone'      => $orderPhone,
             'stripeSessionID' => null,
             'orderNotes'      => null,
             'created_at'      => now(),
@@ -268,7 +345,7 @@ class StoreController extends Controller
 
         Stripe::setApiKey(config('services.stripe.secret'));
 
-        $session = StripeSession::create([
+        $sessionParams = [
             'payment_method_types' => ['card'],
             'line_items'  => $lineItems,
             'mode'        => 'payment',
@@ -279,9 +356,14 @@ class StoreController extends Controller
                 'orderID'  => $orderID,
                 'memberID' => $memberID ?: '',
             ],
-        ]);
+        ];
 
-        // Attach the session ID to the order for idempotency
+        if ($customerEmail) {
+            $sessionParams['customer_email'] = $customerEmail;
+        }
+
+        $session = StripeSession::create($sessionParams);
+
         DB::table('orders')->where('orderID', $orderID)->update([
             'stripeSessionID' => $session->id,
             'updated_at'      => now(),
@@ -310,16 +392,13 @@ class StoreController extends Controller
         }
 
         $memberID = !empty($session->metadata->memberID) ? (int) $session->metadata->memberID : null;
-        $type     = $session->metadata->type ?? 'store_purchase';
+        $orderID  = (int) ($session->metadata->orderID ?? 0);
 
-        if ($type === 'store_cart') {
-            $orderID = (int) ($session->metadata->orderID ?? 0);
-            static::fulfillCartOrder($session->id, $orderID, $memberID);
+        if ($session->metadata->type === 'store_cart') {
+            static::fulfillOrder($session->id, $orderID, $memberID);
             session()->forget('store_cart');
         } else {
-            $productID = (int) ($session->metadata->productID ?? 0);
-            $quantity  = (int) ($session->metadata->quantity ?? 1);
-            static::fulfillStoreOrder($session->id, $productID, $memberID, $quantity);
+            static::fulfillOrder($session->id, $orderID, $memberID);
         }
 
         $order = DB::table('orders')->where('stripeSessionID', $session->id)->first();
@@ -336,39 +415,7 @@ class StoreController extends Controller
 
     // ─── Fulfillment ───────────────────────────────────────────────────────────
 
-    public static function fulfillStoreOrder(string $sessionId, int $productID, ?int $memberID, int $quantity = 1): void
-    {
-        if (DB::table('orders')->where('stripeSessionID', $sessionId)->exists()) return;
-
-        $product = DB::table('products')->where('productID', $productID)->first();
-        if (!$product) return;
-
-        $orderID = DB::table('orders')->insertGetId([
-            'memberID'        => $memberID,
-            'orderStatus'     => 'paid',
-            'orderTotal'      => $product->productPrice * $quantity,
-            'stripeSessionID' => $sessionId,
-            'orderNotes'      => null,
-            'created_at'      => now(),
-            'updated_at'      => now(),
-        ], 'orderID');
-
-        DB::table('order_items')->insert([
-            'orderID'      => $orderID,
-            'productID'    => $productID,
-            'itemQuantity' => $quantity,
-            'itemPrice'    => $product->productPrice,
-            'created_at'   => now(),
-            'updated_at'   => now(),
-        ]);
-
-        DB::table('products')
-            ->where('productID', $productID)
-            ->where('productStock', '>=', $quantity)
-            ->decrement('productStock', $quantity);
-    }
-
-    public static function fulfillCartOrder(string $sessionId, int $orderID, ?int $memberID): void
+    public static function fulfillOrder(string $sessionId, int $orderID, ?int $memberID): void
     {
         $order = DB::table('orders')->where('orderID', $orderID)->first();
         if (!$order || $order->orderStatus === 'paid') return;
@@ -387,5 +434,16 @@ class StoreController extends Controller
                 ->where('productStock', '>=', $item->itemQuantity)
                 ->decrement('productStock', $item->itemQuantity);
         }
+    }
+
+    // Keep these as aliases so any existing webhook/external callers don't break
+    public static function fulfillStoreOrder(string $sessionId, int $orderID, ?int $memberID): void
+    {
+        static::fulfillOrder($sessionId, $orderID, $memberID);
+    }
+
+    public static function fulfillCartOrder(string $sessionId, int $orderID, ?int $memberID): void
+    {
+        static::fulfillOrder($sessionId, $orderID, $memberID);
     }
 }

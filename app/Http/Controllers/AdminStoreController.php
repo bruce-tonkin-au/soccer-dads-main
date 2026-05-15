@@ -327,4 +327,12 @@ class AdminStoreController extends Controller
 
         return redirect('/admin/store/orders')->with('success', 'Order updated.');
     }
+
+    public function deleteOrder(int $orderID)
+    {
+        DB::table('order_items')->where('orderID', $orderID)->delete();
+        DB::table('orders')->where('orderID', $orderID)->delete();
+
+        return redirect('/admin/store/orders')->with('success', 'Order #' . $orderID . ' deleted.');
+    }
 }

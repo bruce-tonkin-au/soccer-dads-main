@@ -73,7 +73,14 @@
             <tr>
                 <td style="color:#aaa; font-size:13px; white-space:nowrap;">#{{ $order->orderID }}</td>
                 <td style="font-weight:500; white-space:nowrap;">
-                    {{ trim($order->memberName) ?: 'Guest' }}
+                    @if(trim($order->memberName))
+                        {{ trim($order->memberName) }}
+                    @elseif($order->orderName)
+                        {{ $order->orderName }}
+                        <div style="font-size:11px; color:#aaa;">Guest</div>
+                    @else
+                        <span style="color:#aaa;">Guest</span>
+                    @endif
                 </td>
                 <td>
                     <div class="order-items-list">

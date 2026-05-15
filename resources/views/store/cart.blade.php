@@ -159,6 +159,37 @@
 
         <form method="POST" action="/store/cart/checkout">
             @csrf
+
+            @if(!session('player_id'))
+            <div style="background:#f8f8f8; border:1px solid #e8e8e8; border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#888; margin-bottom:12px;">Your details</p>
+
+                <div style="margin-bottom:10px;">
+                    <input type="text" name="guestName" placeholder="Full name *"
+                           value="{{ old('guestName') }}"
+                           style="width:100%; border:1px solid {{ $errors->has('guestName') ? '#e24b4a' : '#e8e8e8' }}; border-radius:8px; padding:10px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @error('guestName')
+                    <p style="color:#e24b4a; font-size:13px; margin-top:4px;">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div style="margin-bottom:10px;">
+                    <input type="email" name="guestEmail" placeholder="Email address *"
+                           value="{{ old('guestEmail') }}"
+                           style="width:100%; border:1px solid {{ $errors->has('guestEmail') ? '#e24b4a' : '#e8e8e8' }}; border-radius:8px; padding:10px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @error('guestEmail')
+                    <p style="color:#e24b4a; font-size:13px; margin-top:4px;">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <input type="tel" name="guestPhone" placeholder="Phone (optional)"
+                           value="{{ old('guestPhone') }}"
+                           style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:10px 14px; font-size:15px; color:#262c39; outline:none;">
+                </div>
+            </div>
+            @endif
+
             <button type="submit" class="btn-checkout">
                 <i class="fa-brands fa-stripe-s"></i> Checkout — ${{ number_format($total, 2) }}
             </button>

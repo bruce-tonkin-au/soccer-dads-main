@@ -90,11 +90,11 @@
 
     <div class="admin-card">
         <h2>Customer</h2>
+        @if($order->memberID && trim($order->memberName))
         <div class="detail-row">
             <div class="detail-label">Name</div>
-            <div class="detail-value">{{ trim($order->memberName) ?: 'Guest (no member linked)' }}</div>
+            <div class="detail-value">{{ trim($order->memberName) }}</div>
         </div>
-        @if($order->memberID)
         <div class="detail-row">
             <div class="detail-label">Member ID</div>
             <div class="detail-value">#{{ $order->memberID }}</div>
@@ -102,6 +102,28 @@
         <a href="/admin/players/{{ $order->memberID }}/edit" class="btn btn-secondary" style="margin-top:8px; padding:6px 14px; font-size:13px;">
             <i class="fa-solid fa-user"></i> View player
         </a>
+        @elseif($order->orderName || $order->orderEmail)
+        <div class="detail-row">
+            <div class="detail-label">Name</div>
+            <div class="detail-value">{{ $order->orderName ?: '—' }}</div>
+        </div>
+        @if($order->orderEmail)
+        <div class="detail-row">
+            <div class="detail-label">Email</div>
+            <div class="detail-value">
+                <a href="mailto:{{ $order->orderEmail }}" style="color:#458bc8;">{{ $order->orderEmail }}</a>
+            </div>
+        </div>
+        @endif
+        @if($order->orderPhone)
+        <div class="detail-row">
+            <div class="detail-label">Phone</div>
+            <div class="detail-value">{{ $order->orderPhone }}</div>
+        </div>
+        @endif
+        <p style="font-size:12px; color:#aaa; margin-top:8px;">Guest order — not linked to a member account.</p>
+        @else
+        <p style="font-size:14px; color:#aaa;">Guest order — no customer details recorded.</p>
         @endif
     </div>
 
@@ -151,6 +173,18 @@
             </div>
             <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-floppy-disk"></i> Save changes
+            </button>
+        </form>
+    </div>
+
+    <div class="admin-card" style="border-color:#fde8e8;">
+        <h2 style="color:#e24b4a;">Danger zone</h2>
+        <p style="font-size:14px; color:#888; margin-bottom:1rem;">Permanently delete this order and all its line items. This cannot be undone.</p>
+        <form method="POST" action="/admin/store/orders/{{ $order->orderID }}/delete"
+              onsubmit="return confirm('Delete order #{{ $order->orderID }} and all its line items? This cannot be undone.')">
+            @csrf
+            <button type="submit" class="btn btn-danger" style="padding:8px 16px; font-size:13px;">
+                <i class="fa-solid fa-trash"></i> Delete order
             </button>
         </form>
     </div>
