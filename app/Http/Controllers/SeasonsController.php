@@ -329,13 +329,14 @@ class SeasonsController extends Controller
             $homeGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamHome)->where('actionGoal', 1)->count();
             $awayGoals = $actions->where('scoringID', $row->scoringID)->where('teamID', $row->scoringTeamAway)->where('actionGoal', 1)->count();
             return (object)[
-                'scoringRound' => $row->scoringRound,
-                'scoringGame'  => $row->scoringGame,
-                'scoringEnded' => $row->scoringEnded,
-                'homeTeam'     => array_merge($teams[$row->scoringTeamHome] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamHome]),
-                'awayTeam'     => array_merge($teams[$row->scoringTeamAway] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamAway]),
-                'homeGoals'    => $homeGoals,
-                'awayGoals'    => $awayGoals,
+                'scoringRound'   => $row->scoringRound,
+                'scoringGame'    => $row->scoringGame,
+                'scoringEnded'   => $row->scoringEnded,
+                'scoringStarted' => $row->scoringStarted,
+                'homeTeam'       => array_merge($teams[$row->scoringTeamHome] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamHome]),
+                'awayTeam'       => array_merge($teams[$row->scoringTeamAway] ?? ['name' => 'Unknown', 'color' => '#aaa'], ['id' => $row->scoringTeamAway]),
+                'homeGoals'      => $homeGoals,
+                'awayGoals'      => $awayGoals,
             ];
         });
 

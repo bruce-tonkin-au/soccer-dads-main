@@ -118,10 +118,12 @@
                     <tr style="border-bottom:1px solid #f0f0f0;">
                         <td style="padding:10px 16px; font-weight:500; color:#262c39;">{{ $round }}</td>
                         @for($g = 1; $g <= 3; $g++)
-                        @php $game = $games->firstWhere('scoringGame', $g); @endphp
+                        @php $gameRow = $games->firstWhere('scoringGame', $g); @endphp
                         <td style="padding:10px 16px; text-align:center; white-space:nowrap;">
-                            @if($game)
-                            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{{ $game->homeTeam['color'] }}; margin-right:4px;"></span>{{ $game->homeTeam['name'] }} <strong>{{ $game->homeGoals }}</strong> – <strong>{{ $game->awayGoals }}</strong> {{ $game->awayTeam['name'] }}<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{{ $game->awayTeam['color'] }}; margin-left:4px;"></span>
+                            @if($gameRow)
+                            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{{ $gameRow->homeTeam['color'] }}; margin-right:4px;"></span>{{ $gameRow->homeTeam['name'] }} <strong>{{ $gameRow->homeGoals }}</strong> – <strong>{{ $gameRow->awayGoals }}</strong> {{ $gameRow->awayTeam['name'] }}<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{{ $gameRow->awayTeam['color'] }}; margin-left:4px;"></span>@if($youtubeID && $youtubeStart && $gameRow->scoringStarted)
+                            @php $t = max(0, $youtubeOffset + (int) \Carbon\Carbon::parse($youtubeStart)->diffInSeconds(\Carbon\Carbon::parse($gameRow->scoringStarted))); @endphp
+                            <a href="https://www.youtube.com/watch?v={{ $youtubeID }}&t={{ $t }}" target="_blank" title="Watch on YouTube" style="color:#e24b4a; font-size:12px; text-decoration:none; margin-left:6px;"><i class="fa-brands fa-youtube"></i></a>@endif
                             @endif
                         </td>
                         @endfor
