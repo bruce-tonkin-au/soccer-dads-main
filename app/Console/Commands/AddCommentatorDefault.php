@@ -19,11 +19,11 @@ class AddCommentatorDefault extends Command
         if ($exists) {
             $this->info('Column commentatorDefault already exists — skipping ALTER TABLE.');
         } else {
-            DB::statement('ALTER TABLE commentators ADD COLUMN commentatorDefault integer DEFAULT 0');
+            DB::statement('ALTER TABLE commentators ADD COLUMN "commentatorDefault" integer DEFAULT 0');
             $this->info('Column commentatorDefault added successfully.');
         }
 
-        $affected = DB::update('UPDATE commentators SET commentatorDefault = 1 WHERE commentatorID = 6');
+        $affected = DB::update('UPDATE commentators SET "commentatorDefault" = 1 WHERE "commentatorID" = 6');
 
         if ($affected) {
             $this->info('commentatorID 6 set as default.');
