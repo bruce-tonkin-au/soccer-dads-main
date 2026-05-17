@@ -302,7 +302,7 @@ class AdminController extends Controller
             'teamCID'              => null,
             'settingsPointsWin'    => 2,
             'settingsPointsDraw'   => 1,
-            'commentatorID'        => 1,
+            'commentatorID'        => Commentator::where('commentatorDefault', 1)->value('commentatorID') ?? Commentator::orderBy('commentatorID')->value('commentatorID'),
             'settingsActive'       => 1,
             'settingsVisible'      => 1,
         ]);
@@ -1313,10 +1313,16 @@ class AdminController extends Controller
             'commentatorFacts'        => ['nullable'],
             'commentatorActive'       => ['nullable', 'boolean'],
             'commentatorVisible'      => ['nullable', 'boolean'],
+            'commentatorDefault'      => ['nullable', 'boolean'],
         ]);
 
         $data['commentatorActive']  = $request->boolean('commentatorActive');
         $data['commentatorVisible'] = $request->boolean('commentatorVisible');
+        $data['commentatorDefault'] = $request->boolean('commentatorDefault');
+
+        if ($data['commentatorDefault']) {
+            Commentator::query()->update(['commentatorDefault' => 0]);
+        }
 
         Commentator::create($data);
 
@@ -1344,10 +1350,16 @@ class AdminController extends Controller
             'commentatorFacts'        => ['nullable'],
             'commentatorActive'       => ['nullable', 'boolean'],
             'commentatorVisible'      => ['nullable', 'boolean'],
+            'commentatorDefault'      => ['nullable', 'boolean'],
         ]);
 
         $data['commentatorActive']  = $request->boolean('commentatorActive');
         $data['commentatorVisible'] = $request->boolean('commentatorVisible');
+        $data['commentatorDefault'] = $request->boolean('commentatorDefault');
+
+        if ($data['commentatorDefault']) {
+            Commentator::where('commentatorID', '!=', $commentatorID)->update(['commentatorDefault' => 0]);
+        }
 
         $commentator->update($data);
 

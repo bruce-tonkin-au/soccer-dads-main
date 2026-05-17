@@ -76,6 +76,11 @@
                 <input type="checkbox" name="commentatorVisible" value="1" {{ old('commentatorVisible', $commentator->commentatorVisible) ? 'checked' : '' }} style="width:16px; height:16px;">
                 <span>Visible</span>
             </label>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:14px;">
+                <input type="hidden" name="commentatorDefault" value="0">
+                <input type="checkbox" name="commentatorDefault" value="1" {{ old('commentatorDefault', $commentator->commentatorDefault) ? 'checked' : '' }} style="width:16px; height:16px;">
+                <span>Set as default</span>
+            </label>
         </div>
 
         <div style="display:flex; gap:8px;">

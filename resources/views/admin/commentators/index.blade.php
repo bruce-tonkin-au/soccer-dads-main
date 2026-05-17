@@ -15,6 +15,7 @@
                 <th>Name</th>
                 <th>Age</th>
                 <th>ElevenLabs Voice ID</th>
+                <th>Default</th>
                 <th>Active</th>
                 <th>Visible</th>
                 <th></th>
@@ -30,6 +31,13 @@
                     <code style="background:#f4f4f4; padding:2px 8px; border-radius:4px; font-size:12px;">{{ Str::limit($commentator->commentatorElevenLabsID, 20) }}</code>
                     @else
                     <span style="color:#aaa;">—</span>
+                    @endif
+                </td>
+                <td>
+                    @if($commentator->commentatorDefault)
+                    <span style="background:#fef9ec; color:#e68a46; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600;">Default</span>
+                    @else
+                    <span style="color:#ddd;">—</span>
                     @endif
                 </td>
                 <td>
@@ -54,7 +62,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="6" style="text-align:center; color:#aaa; padding:2rem;">No commentators yet.</td>
+                <td colspan="7" style="text-align:center; color:#aaa; padding:2rem;">No commentators yet.</td>
             </tr>
             @endforelse
         </tbody>

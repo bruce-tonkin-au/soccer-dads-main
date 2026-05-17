@@ -22,10 +22,12 @@ class Commentator extends Model
         'commentatorFacts',
         'commentatorActive',
         'commentatorVisible',
+        'commentatorDefault',
     ];
 
     protected $casts = [
         'commentatorActive'  => 'boolean',
         'commentatorVisible' => 'boolean',
+        'commentatorDefault' => 'boolean',
     ];
 }
