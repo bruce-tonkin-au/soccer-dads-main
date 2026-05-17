@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\Commentator;
 
@@ -1337,32 +1338,38 @@ class AdminController extends Controller
 
     public function updateCommentator(Request $request, $commentatorID)
     {
-        $commentator = Commentator::findOrFail($commentatorID);
+        Log::info('updateCommentator called', ['commentatorID' => $commentatorID, 'input' => $request->all()]);
+        try {
+            $commentator = Commentator::findOrFail($commentatorID);
 
-        $data = $request->validate([
-            'commentatorNameFirst'    => ['required', 'max:32'],
-            'commentatorNameLast'     => ['required', 'max:32'],
-            'commentatorAge'          => ['nullable', 'max:2'],
-            'commentatorElevenLabsID' => ['nullable', 'max:32'],
-            'commentatorAccent'       => ['nullable'],
-            'commentatorBackground'   => ['nullable'],
-            'commentatorStyle'        => ['nullable'],
-            'commentatorFacts'        => ['nullable'],
-            'commentatorActive'       => ['nullable', 'boolean'],
-            'commentatorVisible'      => ['nullable', 'boolean'],
-            'commentatorDefault'      => ['nullable', 'boolean'],
-        ]);
+            $data = $request->validate([
+                'commentatorNameFirst'    => ['required', 'max:32'],
+                'commentatorNameLast'     => ['required', 'max:32'],
+                'commentatorAge'          => ['nullable', 'max:2'],
+                'commentatorElevenLabsID' => ['nullable', 'max:32'],
+                'commentatorAccent'       => ['nullable'],
+                'commentatorBackground'   => ['nullable'],
+                'commentatorStyle'        => ['nullable'],
+                'commentatorFacts'        => ['nullable'],
+                'commentatorActive'       => ['nullable', 'boolean'],
+                'commentatorVisible'      => ['nullable', 'boolean'],
+                'commentatorDefault'      => ['nullable', 'boolean'],
+            ]);
 
-        $data['commentatorActive']  = $request->boolean('commentatorActive');
-        $data['commentatorVisible'] = $request->boolean('commentatorVisible');
-        $data['commentatorDefault'] = $request->boolean('commentatorDefault');
+            $data['commentatorActive']  = $request->boolean('commentatorActive');
+            $data['commentatorVisible'] = $request->boolean('commentatorVisible');
+            $data['commentatorDefault'] = $request->boolean('commentatorDefault');
 
-        if ($data['commentatorDefault']) {
-            Commentator::where('commentatorID', '!=', $commentatorID)->update(['commentatorDefault' => 0]);
+            if ($data['commentatorDefault']) {
+                Commentator::where('commentatorID', '!=', $commentatorID)->update(['commentatorDefault' => 0]);
+            }
+
+            $commentator->update($data);
+
+            return redirect('/admin/commentators')->with('success', 'Commentator updated.');
+        } catch (\Throwable $e) {
+            Log::error('updateCommentator failed: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            throw $e;
         }
-
-        $commentator->update($data);
-
-        return redirect('/admin/commentators')->with('success', 'Commentator updated.');
     }
 }
