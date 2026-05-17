@@ -54,6 +54,7 @@
     <a href="/admin/finances">Finances</a>
     <a href="/admin/store/products">Store</a>
     <a href="/admin/registrations">Registrations</a>
+    <a href="/admin/commentators">Commentators</a>
     <form method="POST" action="/admin/logout" style="margin-left:auto;">
         @csrf
         <button type="submit" style="background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:14px;">

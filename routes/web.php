@@ -90,6 +90,12 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
 
     Route::get('/registrations', [AdminController::class, 'registrations']);
     Route::get('/registrations/{gameID}', [AdminController::class, 'registrations']);
+
+    Route::get('/commentators', [AdminController::class, 'commentators']);
+    Route::get('/commentators/create', [AdminController::class, 'createCommentator']);
+    Route::post('/commentators/create', [AdminController::class, 'storeCommentator']);
+    Route::get('/commentators/{commentatorID}/edit', [AdminController::class, 'editCommentator']);
+    Route::post('/commentators/{commentatorID}/edit', [AdminController::class, 'updateCommentator']);
 });
 
 // Store — specific routes before the {productSlug} wildcard

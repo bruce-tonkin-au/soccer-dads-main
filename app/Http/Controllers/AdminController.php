@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\Commentator;
 
 class AdminController extends Controller
 {
@@ -1284,5 +1285,72 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.finances', compact('transactions'));
+    }
+
+    // COMMENTATORS
+
+    public function commentators()
+    {
+        $commentators = Commentator::orderBy('commentatorNameFirst')->get();
+        return view('admin.commentators.index', compact('commentators'));
+    }
+
+    public function createCommentator()
+    {
+        return view('admin.commentators.create');
+    }
+
+    public function storeCommentator(Request $request)
+    {
+        $data = $request->validate([
+            'commentatorNameFirst'    => ['required', 'max:32'],
+            'commentatorNameLast'     => ['required', 'max:32'],
+            'commentatorAge'          => ['nullable', 'max:2'],
+            'commentatorElevenLabsID' => ['nullable', 'max:32'],
+            'commentatorAccent'       => ['nullable'],
+            'commentatorBackground'   => ['nullable'],
+            'commentatorStyle'        => ['nullable'],
+            'commentatorFacts'        => ['nullable'],
+            'commentatorActive'       => ['nullable', 'boolean'],
+            'commentatorVisible'      => ['nullable', 'boolean'],
+        ]);
+
+        $data['commentatorActive']  = $request->boolean('commentatorActive');
+        $data['commentatorVisible'] = $request->boolean('commentatorVisible');
+
+        Commentator::create($data);
+
+        return redirect('/admin/commentators')->with('success', 'Commentator created.');
+    }
+
+    public function editCommentator($commentatorID)
+    {
+        $commentator = Commentator::findOrFail($commentatorID);
+        return view('admin.commentators.edit', compact('commentator'));
+    }
+
+    public function updateCommentator(Request $request, $commentatorID)
+    {
+        $commentator = Commentator::findOrFail($commentatorID);
+
+        $data = $request->validate([
+            'commentatorNameFirst'    => ['required', 'max:32'],
+            'commentatorNameLast'     => ['required', 'max:32'],
+            'commentatorAge'          => ['nullable', 'max:2'],
+            'commentatorElevenLabsID' => ['nullable', 'max:32'],
+            'commentatorAccent'       => ['nullable'],
+            'commentatorBackground'   => ['nullable'],
+            'commentatorStyle'        => ['nullable'],
+            'commentatorFacts'        => ['nullable'],
+            'commentatorActive'       => ['nullable', 'boolean'],
+            'commentatorVisible'      => ['nullable', 'boolean'],
+        ]);
+
+        $data['commentatorActive']  = $request->boolean('commentatorActive');
+        $data['commentatorVisible'] = $request->boolean('commentatorVisible');
+
+        $commentator->update($data);
+
+        return redirect('/admin/commentators')->with('success', 'Commentator updated.');
     }
 }
