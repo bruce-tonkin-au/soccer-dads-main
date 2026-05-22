@@ -20,6 +20,9 @@ class PlayersController extends Controller
             ->whereIn('memberID', $memberIDs)
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->select('memberID', DB::raw('count(*) as total'))
             ->groupBy('memberID')
             ->pluck('total', 'memberID');
@@ -28,6 +31,9 @@ class PlayersController extends Controller
             ->whereIn('secondID', $memberIDs)
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->select('secondID', DB::raw('count(*) as total'))
             ->groupBy('secondID')
             ->pluck('total', 'secondID');
@@ -76,12 +82,18 @@ class PlayersController extends Controller
             ->where('memberID', $member->memberID)
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->count();
 
         $assists = DB::table('scoring-actions')
             ->where('secondID', $member->memberID)
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->count();
 
         $gamesPlayed = DB::table('results')
@@ -108,6 +120,9 @@ class PlayersController extends Controller
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
             ->whereIn('teamID', [1, 2, 3])
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->select('teamID', DB::raw('count(*) as total'))
             ->groupBy('teamID')
             ->pluck('total', 'teamID');
@@ -119,6 +134,7 @@ class PlayersController extends Controller
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
             ->where('g.gameVisible', 1)
+            ->where('g.is_test', false)
             ->select('s.seasonID', DB::raw('count(*) as goals'))
             ->groupBy('s.seasonID')
             ->get();
@@ -130,6 +146,7 @@ class PlayersController extends Controller
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
             ->where('g.gameVisible', 1)
+            ->where('g.is_test', false)
             ->select('s.seasonID', DB::raw('count(*) as assists'))
             ->groupBy('s.seasonID')
             ->get();
@@ -202,6 +219,7 @@ class PlayersController extends Controller
             ->where('a.memberID', $member->memberID)
             ->where('a.actionActive', 1)
             ->where('g.gameVisible', 1)
+            ->where('g.is_test', false)
             ->select(
                 'a.actionID',
                 'a.typeID',
@@ -264,12 +282,18 @@ class PlayersController extends Controller
             ->where('memberID', $member->memberID)
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->count();
 
         $assists = DB::table('scoring-actions')
             ->where('secondID', $member->memberID)
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->count();
 
         $games = DB::table('results')
@@ -287,6 +311,9 @@ class PlayersController extends Controller
             ->where('memberID', $member->memberID)
             ->where('typeID', 3)
             ->where('actionActive', 1)
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->count();
         $defending = $games > 0 ? min(99, max(1, round(($saves / $games) * 20))) : 1;
 
@@ -297,6 +324,9 @@ class PlayersController extends Controller
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
             ->whereIn('teamID', [1, 2, 3])
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->select('teamID', DB::raw('count(*) as total'))
             ->groupBy('teamID')
             ->orderByDesc('total')

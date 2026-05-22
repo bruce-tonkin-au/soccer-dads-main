@@ -30,6 +30,9 @@ class SeasonsController extends Controller
             ->whereIn('s.gameID', $allGameIDs)
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
+            ->whereNotIn('a.gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->select('s.gameID')
             ->get()
             ->groupBy('gameID');
@@ -111,6 +114,9 @@ class SeasonsController extends Controller
             ->whereIn('s.gameID', $gameIDs)
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
+            ->whereNotIn('a.gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->get();
 
         $totalGoals = $allActions->count();
@@ -122,6 +128,9 @@ class SeasonsController extends Controller
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
             ->whereNotNull('a.memberID')
+            ->whereNotIn('a.gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->select('m.memberNameFirst', 'm.memberNameLast', DB::raw('count(*) as goals'))
             ->groupBy('a.memberID', 'm.memberNameFirst', 'm.memberNameLast')
             ->orderByDesc('goals')
@@ -140,6 +149,9 @@ class SeasonsController extends Controller
                 ->whereIn('scoringID', $scoringIDs)
                 ->where('actionGoal', 1)
                 ->where('actionActive', 1)
+                ->whereNotIn('gameID', function($q) {
+                    $q->select('gameID')->from('games')->where('is_test', true);
+                })
                 ->get();
 
             $teams = [
@@ -236,6 +248,9 @@ class SeasonsController extends Controller
             ->leftJoin('members as m2', 'a.secondID', '=', 'm2.memberID')
             ->whereIn('a.scoringID', $scoringIDs)
             ->where('a.actionActive', 1)
+            ->whereNotIn('a.gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->orderBy('a.actionTime', 'asc')
             ->select(
                 'a.*',
@@ -269,6 +284,9 @@ class SeasonsController extends Controller
             ->whereIn('s.gameID', $previousGames)
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
+            ->whereNotIn('a.gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->get();
 
         $seasonGoals = $seasonActions->groupBy('memberID')
@@ -284,6 +302,9 @@ class SeasonsController extends Controller
             ->where('actionGoal', 1)
             ->where('actionActive', 1)
             ->whereNotNull('memberID')
+            ->whereNotIn('gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->get();
 
         $allTimeGoals = $allTimeActions->groupBy('memberID')
@@ -317,6 +338,9 @@ class SeasonsController extends Controller
             ->whereIn('s.gameID', $ytdGameIDs)
             ->where('a.actionGoal', 1)
             ->where('a.actionActive', 1)
+            ->whereNotIn('a.gameID', function($q) {
+                $q->select('gameID')->from('games')->where('is_test', true);
+            })
             ->get();
 
         $ytdGoals = $ytdActions->groupBy('memberID')->map(fn($g) => $g->count());

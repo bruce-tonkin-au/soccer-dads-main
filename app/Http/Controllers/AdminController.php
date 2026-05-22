@@ -48,7 +48,7 @@ class AdminController extends Controller
             'players' => DB::table('members')->count(),
             'seasons' => DB::table('seasons')->where('seasonVisible', 1)->count(),
             'games'   => DB::table('games')->where('gameVisible', 1)->count(),
-            'goals'   => DB::table('scoring-actions')->where('actionGoal', 1)->where('actionActive', 1)->count(),
+            'goals'   => DB::table('scoring-actions')->where('actionGoal', 1)->where('actionActive', 1)->whereNotIn('gameID', fn($q) => $q->select('gameID')->from('games')->where('is_test', true))->count(),
         ];
 
         $currentSeason = DB::table('seasons')
@@ -394,6 +394,9 @@ class AdminController extends Controller
                 ->where('memberID', $player->memberID)
                 ->where('actionGoal', 1)
                 ->where('actionActive', 1)
+                ->whereNotIn('gameID', function($q) {
+                    $q->select('gameID')->from('games')->where('is_test', true);
+                })
                 ->count();
             $games = DB::table('results')
                 ->where('resultMemberID', $player->memberID)
@@ -461,16 +464,25 @@ class AdminController extends Controller
                     ->where('memberID', $player->memberID)
                     ->where('actionGoal', 1)
                     ->where('actionActive', 1)
+                    ->whereNotIn('gameID', function($q) {
+                        $q->select('gameID')->from('games')->where('is_test', true);
+                    })
                     ->count();
                 $assists = DB::table('scoring-actions')
                     ->where('secondID', $player->memberID)
                     ->where('actionGoal', 1)
                     ->where('actionActive', 1)
+                    ->whereNotIn('gameID', function($q) {
+                        $q->select('gameID')->from('games')->where('is_test', true);
+                    })
                     ->count();
                 $saves = DB::table('scoring-actions')
                     ->where('memberID', $player->memberID)
                     ->where('typeID', 3)
                     ->where('actionActive', 1)
+                    ->whereNotIn('gameID', function($q) {
+                        $q->select('gameID')->from('games')->where('is_test', true);
+                    })
                     ->count();
                 $games = DB::table('results')
                     ->where('resultMemberID', $player->memberID)

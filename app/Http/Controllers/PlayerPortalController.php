@@ -163,6 +163,7 @@ class PlayerPortalController extends Controller
             ->where('a.memberID', $player->memberID)
             ->where('a.actionActive', 1)
             ->where('a.actionGoal', 1)
+            ->where('g.is_test', false)
             ->orderBy('a.actionTime', 'desc')
             ->select(
                 'a.*',
