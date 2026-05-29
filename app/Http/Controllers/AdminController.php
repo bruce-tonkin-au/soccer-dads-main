@@ -146,7 +146,10 @@ class AdminController extends Controller
         $totalOwing = $players->where('balance', '<', 0)->sum('balance');
         $totalOwed  = $players->where('balance', '>', 0)->sum('balance');
 
-        return view('admin.players.index', compact('players', 'totalOwing', 'totalOwed'));
+        $claimedCount   = $players->where('memberClaimed', true)->count();
+        $unclaimedCount = $players->count() - $claimedCount;
+
+        return view('admin.players.index', compact('players', 'totalOwing', 'totalOwed', 'claimedCount', 'unclaimedCount'));
     }
 
     public function createPlayer()

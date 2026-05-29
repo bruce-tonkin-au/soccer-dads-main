@@ -14,6 +14,7 @@ use App\Http\Controllers\PlayerAuthController;
 use App\Http\Controllers\PlayerPortalController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AdminStoreController;
+use App\Http\Controllers\ClaimController;
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'showLogin']);
@@ -114,6 +115,9 @@ Route::get('/players/{memberSlug}', [PlayersController::class, 'show']);
 Route::get('/players/{memberSlug}/card', [PlayersController::class, 'card']);
 Route::get('/reg/{memberCode}', [RegistrationController::class, 'show'])->where('memberCode', '[^.]+');
 Route::post('/reg/{memberCode}', [RegistrationController::class, 'update'])->where('memberCode', '[^.]+');
+Route::get('/claim/{memberCode}', [ClaimController::class, 'show'])->where('memberCode', '[^./]+');
+Route::post('/claim/{memberCode}', [ClaimController::class, 'store'])->where('memberCode', '[^./]+');
+Route::get('/claim/{memberCode}/welcome', [ClaimController::class, 'welcome'])->where('memberCode', '[^./]+');
 Route::get('/seasons', [SeasonsController::class, 'index']);
 Route::get('/seasons/{seasonKey}', [SeasonsController::class, 'show']);
 Route::get('/seasons/{seasonKey}/{gameRound}', [SeasonsController::class, 'night']);

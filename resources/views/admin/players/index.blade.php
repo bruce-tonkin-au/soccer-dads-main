@@ -7,7 +7,7 @@
 
 @section('content')
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
     <div class="admin-card" style="text-align:center; margin-bottom:0;">
         <div style="font-size:28px; font-weight:700; color:#e24b4a;">${{ number_format(abs($totalOwing), 2) }}</div>
         <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Total owing</div>
@@ -15,6 +15,14 @@
     <div class="admin-card" style="text-align:center; margin-bottom:0;">
         <div style="font-size:28px; font-weight:700; color:#7bba56;">${{ number_format($totalOwed, 2) }}</div>
         <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Total owed</div>
+    </div>
+    <div class="admin-card" style="text-align:center; margin-bottom:0;">
+        <div style="font-size:28px; font-weight:700; color:#7bba56;">{{ $claimedCount }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Claimed accounts</div>
+    </div>
+    <div class="admin-card" style="text-align:center; margin-bottom:0;">
+        <div style="font-size:28px; font-weight:700; color:#e68a46;">{{ $unclaimedCount }}</div>
+        <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-top:4px;">Unclaimed</div>
     </div>
 </div>
 
@@ -34,6 +42,7 @@
                 <th>Mobile</th>
                 <th>Balance</th>
                 <th>Status</th>
+                <th>Claimed</th>
                 <th></th>
             </tr>
         </thead>
@@ -54,7 +63,26 @@
                     <span style="background:#f4f4f4; color:#aaa; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600;">Inactive</span>
                     @endif
                 </td>
-                <td>
+                <td data-order="{{ $player->memberClaimed ? 1 : 0 }}">
+                    @if($player->memberClaimed)
+                    <span title="Claimed {{ $player->memberClaimedAt ? \Carbon\Carbon::parse($player->memberClaimedAt)->format('j M Y') : '' }}" style="background:#f0fdf4; color:#7bba56; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600;">
+                        <i class="fa-solid fa-circle-check"></i> Yes
+                    </span>
+                    @else
+                    <span style="background:#fff8ee; color:#e68a46; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600;">
+                        <i class="fa-solid fa-clock"></i> No
+                    </span>
+                    @endif
+                </td>
+                <td style="white-space:nowrap;">
+                    @unless($player->memberClaimed)
+                    <button type="button"
+                            class="btn btn-secondary copy-claim-link"
+                            data-url="{{ url('/claim/' . $player->memberCode) }}"
+                            style="padding:6px 12px; font-size:13px;">
+                        <i class="fa-solid fa-link"></i> Copy claim link
+                    </button>
+                    @endunless
                     <a href="/admin/players/{{ $player->memberID }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-pen"></i> Edit
                     </a>
@@ -75,6 +103,29 @@
         new DataTable('#players-table', {
             pageLength: 25,
             columnDefs: [{ orderable: false, targets: -1 }]
+        });
+
+        document.body.addEventListener('click', function (e) {
+            const btn = e.target.closest('.copy-claim-link');
+            if (!btn) return;
+            const url = btn.dataset.url;
+            const original = btn.innerHTML;
+            const restore = () => { btn.innerHTML = original; };
+
+            const onSuccess = () => {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(restore, 1500);
+            };
+            const onFail = () => {
+                window.prompt('Copy this claim link:', url);
+                restore();
+            };
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(onSuccess).catch(onFail);
+            } else {
+                onFail();
+            }
         });
     });
 </script>
