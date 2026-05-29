@@ -58,6 +58,57 @@ class StoreController extends Controller
         Cookie::queue(Cookie::forget(self::CART_COOKIE));
     }
 
+    /**
+     * Render the cart view from an in-hand cart array.
+     * Shared by viewCart() and the post-add response so addToCart can
+     * render the cart in the same response that queues the Set-Cookie,
+     * without relying on a roundtrip to re-read it.
+     */
+    private function renderCartView(Request $request, array $cartData, ?string $cartAdded = null)
+    {
+        $member = session('player_id')
+            ? DB::table('members')->where('memberID', session('player_id'))->first()
+            : null;
+
+        if (empty($cartData)) {
+            return view('store.cart', [
+                'items'     => collect(),
+                'total'     => 0,
+                'member'    => $member,
+                'cartAdded' => $cartAdded,
+            ]);
+        }
+
+        $productIDs    = array_keys($cartData);
+        $products      = DB::table('products')->whereIn('productID', $productIDs)->get()->keyBy('productID');
+        $primaryImages = DB::table('product_images')
+            ->whereIn('productID', $productIDs)
+            ->where('isPrimary', 1)
+            ->get()
+            ->keyBy('productID');
+
+        $items = collect($cartData)->map(function ($item) use ($products, $primaryImages) {
+            $product = $products[$item['productID']] ?? null;
+            if (!$product) return null;
+            $primaryImg = $primaryImages[$product->productID] ?? null;
+            return (object) [
+                'productID'    => $product->productID,
+                'productSlug'  => $product->productSlug,
+                'productName'  => $product->productName,
+                'productPrice' => $product->productPrice,
+                'displayImage' => $primaryImg
+                    ? asset('storage/' . $primaryImg->imagePath)
+                    : $product->productImage,
+                'quantity'     => $item['quantity'],
+                'lineTotal'    => $product->productPrice * $item['quantity'],
+            ];
+        })->filter()->values();
+
+        $total = $items->sum('lineTotal');
+
+        return view('store.cart', compact('items', 'total', 'member', 'cartAdded'));
+    }
+
     // ─── Helpers ───────────────────────────────────────────────────────────────
 
     private static function availabilityQuery()
@@ -266,7 +317,11 @@ class StoreController extends Controller
             'storage'   => $isGuest ? 'cookie' : 'session',
         ]);
 
-        return redirect('/store/cart')->with('cart_added', $product->productName);
+        // Render the cart directly in this response. For guests this
+        // bundles the Set-Cookie header with the cart HTML in one trip
+        // so the browser shows the populated cart even on installs where
+        // a follow-up redirect would have raced the cookie write.
+        return $this->renderCartView($request, $cart, $product->productName);
     }
 
     public function viewCart(Request $request)
@@ -279,42 +334,7 @@ class StoreController extends Controller
             'cart'    => $cartData,
         ]);
 
-        $member = session('player_id')
-            ? DB::table('members')->where('memberID', session('player_id'))->first()
-            : null;
-
-        if (empty($cartData)) {
-            return view('store.cart', ['items' => collect(), 'total' => 0, 'member' => $member]);
-        }
-
-        $productIDs    = array_keys($cartData);
-        $products      = DB::table('products')->whereIn('productID', $productIDs)->get()->keyBy('productID');
-        $primaryImages = DB::table('product_images')
-            ->whereIn('productID', $productIDs)
-            ->where('isPrimary', 1)
-            ->get()
-            ->keyBy('productID');
-
-        $items = collect($cartData)->map(function ($item) use ($products, $primaryImages) {
-            $product = $products[$item['productID']] ?? null;
-            if (!$product) return null;
-            $primaryImg = $primaryImages[$product->productID] ?? null;
-            return (object) [
-                'productID'    => $product->productID,
-                'productSlug'  => $product->productSlug,
-                'productName'  => $product->productName,
-                'productPrice' => $product->productPrice,
-                'displayImage' => $primaryImg
-                    ? asset('storage/' . $primaryImg->imagePath)
-                    : $product->productImage,
-                'quantity'     => $item['quantity'],
-                'lineTotal'    => $product->productPrice * $item['quantity'],
-            ];
-        })->filter()->values();
-
-        $total = $items->sum('lineTotal');
-
-        return view('store.cart', compact('items', 'total', 'member'));
+        return $this->renderCartView($request, $cartData);
     }
 
     public function removeFromCart(Request $request)

@@ -113,6 +113,12 @@
         </div>
         @endif
 
+        @if(!empty($cartAdded ?? null))
+        <div style="background:#f0fdf4; border:1px solid #7bba56; color:#262c39; padding:12px 16px; border-radius:8px; font-size:14px; margin-bottom:1rem;">
+            <i class="fa-solid fa-circle-check" style="color:#7bba56;"></i> Added <strong>{{ $cartAdded }}</strong> to your cart.
+        </div>
+        @endif
+
         @if($items->isEmpty())
         <div style="text-align:center; padding:4rem 0; color:#aaa;">
             <i class="fa-solid fa-cart-shopping" style="font-size:48px; margin-bottom:1rem; display:block;"></i>
