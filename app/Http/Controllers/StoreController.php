@@ -317,11 +317,13 @@ class StoreController extends Controller
             'storage'   => $isGuest ? 'cookie' : 'session',
         ]);
 
-        // Render the cart directly in this response. For guests this
-        // bundles the Set-Cookie header with the cart HTML in one trip
-        // so the browser shows the populated cart even on installs where
-        // a follow-up redirect would have raced the cookie write.
-        return $this->renderCartView($request, $cart, $product->productName);
+        // Redirect so the address bar reads /store/cart. The cookie
+        // queued by writeCart() is delivered in this response's
+        // Set-Cookie header and the browser processes it before
+        // following the redirect. The cart_added flash works for
+        // members; for guests the populated cart itself is the visual
+        // confirmation.
+        return redirect('/store/cart')->with('cart_added', $product->productName);
     }
 
     public function viewCart(Request $request)
@@ -334,7 +336,7 @@ class StoreController extends Controller
             'cart'    => $cartData,
         ]);
 
-        return $this->renderCartView($request, $cartData);
+        return $this->renderCartView($request, $cartData, session('cart_added'));
     }
 
     public function removeFromCart(Request $request)
@@ -348,9 +350,20 @@ class StoreController extends Controller
 
     public function cartCheckout(Request $request)
     {
+        $isGuest  = !session('player_id');
         $cartData = $this->readCart($request);
 
+        Log::info('cartCheckout:start', [
+            'guest'        => $isGuest,
+            'storage'      => $isGuest ? 'cookie' : 'session',
+            'cart'         => $cartData,
+            'has_guestName'  => $request->filled('guestName'),
+            'has_guestEmail' => $request->filled('guestEmail'),
+            'has_guestPhone' => $request->filled('guestPhone'),
+        ]);
+
         if (empty($cartData)) {
+            Log::warning('cartCheckout:empty-cart', ['guest' => $isGuest]);
             return redirect('/store/cart')->with('error', 'Your cart is empty.');
         }
 
@@ -366,15 +379,28 @@ class StoreController extends Controller
             $member        = DB::table('members')->where('memberID', $memberID)->first();
             $customerEmail = $member->memberEmail ?? null;
         } else {
-            $request->validate([
-                'guestName'  => 'required|string|max:255',
-                'guestEmail' => 'required|email|max:255',
-                'guestPhone' => 'nullable|string|max:50',
-            ]);
+            try {
+                $validated = $request->validate([
+                    'guestName'  => 'required|string|max:255',
+                    'guestEmail' => 'required|email|max:255',
+                    'guestPhone' => 'nullable|string|max:50',
+                ]);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                Log::warning('cartCheckout:guest-validation-failed', [
+                    'errors' => $e->errors(),
+                    'inputs' => $request->only(['guestName', 'guestEmail', 'guestPhone']),
+                ]);
+                throw $e;
+            }
             $orderName     = trim($request->input('guestName'));
             $orderEmail    = trim($request->input('guestEmail'));
             $orderPhone    = trim($request->input('guestPhone', '')) ?: null;
             $customerEmail = $orderEmail;
+            Log::info('cartCheckout:guest-resolved', [
+                'name'  => $orderName,
+                'email' => $orderEmail,
+                'phone' => $orderPhone,
+            ]);
         }
 
         $productIDs = array_keys($cartData);
@@ -416,8 +442,17 @@ class StoreController extends Controller
         }
 
         if (empty($lineItems)) {
+            Log::warning('cartCheckout:no-line-items', [
+                'cart'      => $cartData,
+                'productIDsFound' => $products->keys()->all(),
+            ]);
             return redirect('/store/cart')->with('error', 'No valid items in cart.');
         }
+
+        Log::info('cartCheckout:lineItems-built', [
+            'count' => count($lineItems),
+            'total' => $orderTotal,
+        ]);
 
         // Pre-create a pending order so we have an ID to pass to Stripe
         $orderID = DB::table('orders')->insertGetId([
@@ -463,11 +498,24 @@ class StoreController extends Controller
             $sessionParams['customer_email'] = $customerEmail;
         }
 
-        $session = StripeSession::create($sessionParams);
+        try {
+            $session = StripeSession::create($sessionParams);
+        } catch (\Throwable $e) {
+            Log::error('cartCheckout:stripe-failed', [
+                'orderID' => $orderID,
+                'error'   => $e->getMessage(),
+            ]);
+            return redirect('/store/cart')->with('error', 'Could not start checkout. Please try again or contact us.');
+        }
 
         DB::table('orders')->where('orderID', $orderID)->update([
             'stripeSessionID' => $session->id,
             'updated_at'      => now(),
+        ]);
+
+        Log::info('cartCheckout:redirecting-to-stripe', [
+            'orderID'         => $orderID,
+            'stripeSessionID' => $session->id,
         ]);
 
         return redirect($session->url);
