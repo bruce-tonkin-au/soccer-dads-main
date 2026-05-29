@@ -160,6 +160,22 @@
         <form method="POST" action="/store/cart/checkout">
             @csrf
 
+            @if(session('player_id') && !empty($member))
+            <div style="background:#f8f8f8; border:1px solid #e8e8e8; border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
+                <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#888; margin-bottom:12px;">Your details</p>
+                <div style="font-size:15px; color:#262c39; font-weight:600;">{{ $member->memberNameFirst }} {{ $member->memberNameLast }}</div>
+                <div style="font-size:14px; color:#555; margin-top:4px;">
+                    <i class="fa-solid fa-envelope" style="color:#888; font-size:12px; margin-right:4px;"></i> {{ $member->memberEmail ?: '—' }}
+                </div>
+                @if($member->memberPhoneMobile)
+                <div style="font-size:14px; color:#555; margin-top:4px;">
+                    <i class="fa-solid fa-phone" style="color:#888; font-size:12px; margin-right:4px;"></i> {{ $member->memberPhoneMobile }}
+                </div>
+                @endif
+                <p style="font-size:12px; color:#aaa; margin-top:10px;">Using your member details. <a href="/portal/profile" style="color:#458bc8; text-decoration:none;">Update profile</a></p>
+            </div>
+            @endif
+
             @if(!session('player_id'))
             <div style="background:#f8f8f8; border:1px solid #e8e8e8; border-radius:12px; padding:1.25rem; margin-bottom:1rem;">
                 <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#888; margin-bottom:12px;">Your details</p>

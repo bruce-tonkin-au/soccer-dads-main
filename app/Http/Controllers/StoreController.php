@@ -204,8 +204,12 @@ class StoreController extends Controller
     {
         $cartData = session('store_cart', []);
 
+        $member = session('player_id')
+            ? DB::table('members')->where('memberID', session('player_id'))->first()
+            : null;
+
         if (empty($cartData)) {
-            return view('store.cart', ['items' => collect(), 'total' => 0]);
+            return view('store.cart', ['items' => collect(), 'total' => 0, 'member' => $member]);
         }
 
         $productIDs    = array_keys($cartData);
@@ -235,7 +239,7 @@ class StoreController extends Controller
 
         $total = $items->sum('lineTotal');
 
-        return view('store.cart', compact('items', 'total'));
+        return view('store.cart', compact('items', 'total', 'member'));
     }
 
     public function removeFromCart(Request $request)

@@ -117,7 +117,7 @@
         outline: none;
     }
     .qty-input:focus { border-color: #458bc8; }
-    .btn-buynow {
+    .btn-addtocart-primary {
         width: 100%;
         padding: 14px 24px;
         background: #262c39;
@@ -133,24 +133,7 @@
         gap: 10px;
         transition: background 0.2s;
     }
-    .btn-buynow:hover { background: #1a1f2a; }
-    .btn-addtocart {
-        width: 100%;
-        padding: 12px 24px;
-        background: #fff;
-        color: #262c39;
-        border: 1.5px solid #262c39;
-        border-radius: 10px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        transition: background 0.2s;
-    }
-    .btn-addtocart:hover { background: #f4f4f4; }
+    .btn-addtocart-primary:hover { background: #1a1f2a; }
     @media (max-width: 700px) {
         .product-detail {
             grid-template-columns: 1fr;
@@ -224,55 +207,13 @@
             </div>
             @endif
 
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                <form id="form-buynow" method="POST" action="/store/{{ $product->productSlug }}/checkout">
-                    @csrf
-                    <input type="hidden" name="quantity" id="qty-buynow" value="1">
-
-                    @if(!session('player_id'))
-                    <div style="background:#f8f8f8; border:1px solid #e8e8e8; border-radius:10px; padding:1rem; margin-bottom:8px;">
-                        <p style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#888; margin-bottom:10px;">Your details</p>
-
-                        <div style="margin-bottom:8px;">
-                            <input type="text" name="guestName" placeholder="Full name *"
-                                   value="{{ old('guestName') }}"
-                                   style="width:100%; border:1px solid {{ $errors->has('guestName') ? '#e24b4a' : '#e8e8e8' }}; border-radius:8px; padding:9px 12px; font-size:14px; color:#262c39; outline:none;">
-                            @error('guestName')
-                            <p style="color:#e24b4a; font-size:12px; margin-top:4px;">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div style="margin-bottom:8px;">
-                            <input type="email" name="guestEmail" placeholder="Email address *"
-                                   value="{{ old('guestEmail') }}"
-                                   style="width:100%; border:1px solid {{ $errors->has('guestEmail') ? '#e24b4a' : '#e8e8e8' }}; border-radius:8px; padding:9px 12px; font-size:14px; color:#262c39; outline:none;">
-                            @error('guestEmail')
-                            <p style="color:#e24b4a; font-size:12px; margin-top:4px;">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <input type="tel" name="guestPhone" placeholder="Phone (optional)"
-                                   value="{{ old('guestPhone') }}"
-                                   style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:9px 12px; font-size:14px; color:#262c39; outline:none;">
-                        </div>
-                    </div>
-                    @endif
-
-                    <button type="submit" class="btn-buynow">
-                        <i class="fa-brands fa-stripe-s"></i>
-                        Buy now — ${{ number_format($product->productPrice, 2) }}
-                    </button>
-                </form>
-
-                <form id="form-addtocart" method="POST" action="/store/{{ $product->productSlug }}/add-to-cart">
-                    @csrf
-                    <input type="hidden" name="quantity" id="qty-addtocart" value="1">
-                    <button type="submit" class="btn-addtocart">
-                        <i class="fa-solid fa-cart-plus"></i> Add to cart
-                    </button>
-                </form>
-            </div>
+            <form id="form-addtocart" method="POST" action="/store/{{ $product->productSlug }}/add-to-cart">
+                @csrf
+                <input type="hidden" name="quantity" id="qty-addtocart" value="1">
+                <button type="submit" class="btn-addtocart-primary">
+                    <i class="fa-solid fa-cart-plus"></i> Add to cart
+                </button>
+            </form>
 
             <p style="font-size:12px; color:#aaa; text-align:center; margin-top:-4px;">
                 Secure checkout via Stripe
@@ -302,10 +243,8 @@
 
     @if($product->productStock > 0 && min($product->productMaxQuantity, $product->productStock) > 1)
     const qtyMain      = document.getElementById('qty-main');
-    const qtyBuynow    = document.getElementById('qty-buynow');
     const qtyAddtocart = document.getElementById('qty-addtocart');
     qtyMain.addEventListener('input', function () {
-        qtyBuynow.value    = this.value;
         qtyAddtocart.value = this.value;
     });
     @endif
