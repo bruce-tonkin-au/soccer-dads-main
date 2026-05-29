@@ -86,7 +86,136 @@ class PlayerPortalController extends Controller
             )
             ->get();
 
-        return view('player.portal', compact('player', 'nextGame', 'registration', 'balance', 'child', 'childRegistration', 'transactions'));
+        $emergencyContacts = DB::table('emergency_contacts')
+            ->where('memberID', $player->memberID)
+            ->orderByDesc('contactPrimary')
+            ->orderBy('contactID')
+            ->get();
+
+        return view('player.portal', compact('player', 'nextGame', 'registration', 'balance', 'child', 'childRegistration', 'transactions', 'emergencyContacts'));
+    }
+
+    public function storeContact(Request $request)
+    {
+        $player = $this->getPlayer();
+
+        $validated = $request->validate([
+            'contactName'         => 'required|string|max:100',
+            'contactRelationship' => 'nullable|string|max:100',
+            'contactPhone'        => 'required|string|max:50',
+            'contactEmail'        => 'nullable|email|max:255',
+            'contactPrimary'      => 'nullable|boolean',
+        ]);
+
+        $makePrimary = (bool) ($validated['contactPrimary'] ?? false);
+        $hasPrimary  = DB::table('emergency_contacts')
+            ->where('memberID', $player->memberID)
+            ->where('contactPrimary', true)
+            ->exists();
+
+        DB::transaction(function () use ($player, $validated, $makePrimary, $hasPrimary) {
+            if ($makePrimary) {
+                DB::table('emergency_contacts')
+                    ->where('memberID', $player->memberID)
+                    ->update(['contactPrimary' => false, 'updated_at' => now()]);
+            }
+            DB::table('emergency_contacts')->insert([
+                'memberID'            => $player->memberID,
+                'contactName'         => $validated['contactName'],
+                'contactRelationship' => $validated['contactRelationship'] ?? null,
+                'contactPhone'        => $validated['contactPhone'],
+                'contactEmail'        => $validated['contactEmail'] ?? null,
+                'contactPrimary'      => $makePrimary || !$hasPrimary,
+                'created_at'          => now(),
+                'updated_at'          => now(),
+            ]);
+        });
+
+        return back()->with('contact_success', 'Emergency contact added.');
+    }
+
+    public function updateContact(Request $request, int $contactID)
+    {
+        $player  = $this->getPlayer();
+        $contact = DB::table('emergency_contacts')
+            ->where('contactID', $contactID)
+            ->where('memberID', $player->memberID)
+            ->first();
+        if (!$contact) abort(404);
+
+        $validated = $request->validate([
+            'contactName'         => 'required|string|max:100',
+            'contactRelationship' => 'nullable|string|max:100',
+            'contactPhone'        => 'required|string|max:50',
+            'contactEmail'        => 'nullable|email|max:255',
+        ]);
+
+        DB::table('emergency_contacts')
+            ->where('contactID', $contactID)
+            ->update([
+                'contactName'         => $validated['contactName'],
+                'contactRelationship' => $validated['contactRelationship'] ?? null,
+                'contactPhone'        => $validated['contactPhone'],
+                'contactEmail'        => $validated['contactEmail'] ?? null,
+                'updated_at'          => now(),
+            ]);
+
+        return back()->with('contact_success', 'Contact updated.');
+    }
+
+    public function deleteContact(int $contactID)
+    {
+        $player  = $this->getPlayer();
+        $contact = DB::table('emergency_contacts')
+            ->where('contactID', $contactID)
+            ->where('memberID', $player->memberID)
+            ->first();
+        if (!$contact) abort(404);
+
+        $total = DB::table('emergency_contacts')
+            ->where('memberID', $player->memberID)
+            ->count();
+        if ($total <= 2) {
+            return back()->with('contact_error', 'You need to keep at least two emergency contacts.');
+        }
+
+        DB::transaction(function () use ($player, $contact) {
+            DB::table('emergency_contacts')->where('contactID', $contact->contactID)->delete();
+            if ($contact->contactPrimary) {
+                $next = DB::table('emergency_contacts')
+                    ->where('memberID', $player->memberID)
+                    ->orderBy('contactID')
+                    ->first();
+                if ($next) {
+                    DB::table('emergency_contacts')
+                        ->where('contactID', $next->contactID)
+                        ->update(['contactPrimary' => true, 'updated_at' => now()]);
+                }
+            }
+        });
+
+        return back()->with('contact_success', 'Contact removed.');
+    }
+
+    public function setPrimaryContact(int $contactID)
+    {
+        $player  = $this->getPlayer();
+        $contact = DB::table('emergency_contacts')
+            ->where('contactID', $contactID)
+            ->where('memberID', $player->memberID)
+            ->first();
+        if (!$contact) abort(404);
+
+        DB::transaction(function () use ($player, $contactID) {
+            DB::table('emergency_contacts')
+                ->where('memberID', $player->memberID)
+                ->update(['contactPrimary' => false, 'updated_at' => now()]);
+            DB::table('emergency_contacts')
+                ->where('contactID', $contactID)
+                ->update(['contactPrimary' => true, 'updated_at' => now()]);
+        });
+
+        return back()->with('contact_success', 'Primary contact updated.');
     }
 
     public function profile()

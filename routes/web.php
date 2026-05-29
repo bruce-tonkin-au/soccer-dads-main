@@ -148,6 +148,10 @@ Route::middleware('player.auth')->group(function () {
     Route::get('/portal/topup/success', [PlayerPortalController::class, 'paymentSuccess']);
     Route::get('/portal/topup/cancel', [PlayerPortalController::class, 'paymentCancel']);
     Route::post('/portal/birthday', [PlayerPortalController::class, 'saveBirthday']);
+    Route::post('/portal/contacts', [PlayerPortalController::class, 'storeContact']);
+    Route::post('/portal/contacts/{contactID}', [PlayerPortalController::class, 'updateContact']);
+    Route::post('/portal/contacts/{contactID}/delete', [PlayerPortalController::class, 'deleteContact']);
+    Route::post('/portal/contacts/{contactID}/primary', [PlayerPortalController::class, 'setPrimaryContact']);
 });
 
 Route::get('/topup/{memberCode}', [PlayerPortalController::class, 'publicTopup']);

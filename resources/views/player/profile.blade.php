@@ -118,23 +118,7 @@
                         <option value="ZW" {{ ($player->memberCountry ?? '') == 'ZW' ? 'selected' : '' }}>🇿🇼 Zimbabwe</option>
                     </select>
                 </div>
-                {{-- Profile photo --}}
-                <div style="margin-bottom:1.5rem;">
-                    <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:8px;">Profile photo</label>
-                    @if($player->memberPhoto)
-                    <div style="margin-bottom:8px;">
-                        <img src="{{ Storage::url($player->memberPhoto) }}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #e8e8e8;">
-                    </div>
-                    @else
-                    <div style="width:80px; height:80px; border-radius:50%; background:#f4f4f4; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
-                        <i class="fa-solid fa-user-large" style="font-size:32px; color:#ccc;"></i>
-                    </div>
-                    @endif
-                    <input type="file" name="photo" accept="image/*" style="font-size:14px; color:#444;">
-                    <div style="font-size:12px; color:#aaa; margin-top:4px; line-height:1.6;">
-                        JPG or PNG. <strong style="color:#888;">Best size: 400×400px square.</strong> Your face should be centred. Used on your public player profile.
-                    </div>
-                </div>
+                {{-- Profile photo — temporarily hidden --}}
 
                 {{-- FIFA card photo --}}
                 <div style="margin-bottom:2rem;">
