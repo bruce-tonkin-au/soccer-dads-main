@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Webhook;
@@ -86,11 +87,13 @@ class PlayerPortalController extends Controller
             )
             ->get();
 
-        $emergencyContacts = DB::table('emergency_contacts')
-            ->where('memberID', $player->memberID)
-            ->orderByDesc('contactPrimary')
-            ->orderBy('contactID')
-            ->get();
+        $emergencyContacts = Schema::hasTable('emergency_contacts')
+            ? DB::table('emergency_contacts')
+                ->where('memberID', $player->memberID)
+                ->orderByDesc('contactPrimary')
+                ->orderBy('contactID')
+                ->get()
+            : collect();
 
         return view('player.portal', compact('player', 'nextGame', 'registration', 'balance', 'child', 'childRegistration', 'transactions', 'emergencyContacts'));
     }
