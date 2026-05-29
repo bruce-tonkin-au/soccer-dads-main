@@ -52,13 +52,35 @@
             </div>
 
             <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">Email address</label>
+                <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">
+                    Email address
+                    @if($member->memberEmail)
+                        <span style="float:right; font-weight:500; text-transform:none; letter-spacing:0; color:#7bba56; font-size:11px;">
+                            <i class="fa-solid fa-circle-check"></i> Currently on file
+                        </span>
+                    @else
+                        <span style="float:right; font-weight:500; text-transform:none; letter-spacing:0; color:#e68a46; font-size:11px;">
+                            <i class="fa-solid fa-circle-exclamation"></i> Not on file — please add
+                        </span>
+                    @endif
+                </label>
                 <input type="email" name="email" value="{{ old('email', $member->memberEmail) }}" required
                     style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
             </div>
 
             <div style="margin-bottom:1rem;">
-                <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">Mobile</label>
+                <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">
+                    Mobile
+                    @if($member->memberPhoneMobile)
+                        <span style="float:right; font-weight:500; text-transform:none; letter-spacing:0; color:#7bba56; font-size:11px;">
+                            <i class="fa-solid fa-circle-check"></i> Currently on file
+                        </span>
+                    @else
+                        <span style="float:right; font-weight:500; text-transform:none; letter-spacing:0; color:#e68a46; font-size:11px;">
+                            <i class="fa-solid fa-circle-exclamation"></i> Not on file — please add
+                        </span>
+                    @endif
+                </label>
                 <input type="tel" name="mobile" value="{{ old('mobile', $member->memberPhoneMobile) }}" required placeholder="e.g. 0412 345 678"
                     style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
             </div>
