@@ -175,34 +175,60 @@ class StoreController extends Controller
 
     public function addToCart(Request $request, string $productSlug)
     {
+        Log::info('addToCart:start', [
+            'slug'        => $productSlug,
+            'quantity_in' => $request->input('quantity'),
+            'session_id'  => $request->session()->getId(),
+            'cart_pre'    => $request->session()->get('store_cart', []),
+        ]);
+
         $product = static::availabilityQuery()
             ->where('productSlug', $productSlug)
-            ->firstOrFail();
+            ->first();
 
-        if ($product->productStock <= 0) {
+        if (!$product) {
+            Log::warning('addToCart:product-not-found', ['slug' => $productSlug]);
+            return back()->with('error', 'Sorry, that product is unavailable.');
+        }
+
+        if ((int) $product->productStock <= 0) {
+            Log::info('addToCart:out-of-stock', ['productID' => $product->productID]);
             return back()->with('error', 'Sorry, this product is out of stock.');
         }
 
-        $maxQty   = min($product->productMaxQuantity, $product->productStock);
+        $maxQty   = max(1, min((int) $product->productMaxQuantity ?: 1, (int) $product->productStock));
         $quantity = max(1, min((int) $request->input('quantity', 1), $maxQty));
 
-        $cart = session('store_cart', []);
-        $cart[$product->productID] = [
-            'productID'    => $product->productID,
+        $cart = $request->session()->get('store_cart', []);
+        $cart[(int) $product->productID] = [
+            'productID'    => (int) $product->productID,
             'productSlug'  => $product->productSlug,
             'productName'  => $product->productName,
             'productPrice' => $product->productPrice,
             'productImage' => $product->productImage,
             'quantity'     => $quantity,
         ];
-        session(['store_cart' => $cart]);
+        $request->session()->put('store_cart', $cart);
+        $request->session()->save();
 
-        return redirect('/store/cart');
+        Log::info('addToCart:success', [
+            'productID'   => $product->productID,
+            'quantity'    => $quantity,
+            'cart_post'   => $cart,
+            'session_id'  => $request->session()->getId(),
+        ]);
+
+        return redirect('/store/cart')->with('cart_added', $product->productName);
     }
 
-    public function viewCart()
+    public function viewCart(Request $request)
     {
-        $cartData = session('store_cart', []);
+        $cartData = $request->session()->get('store_cart', []);
+
+        Log::info('viewCart:read', [
+            'session_id' => $request->session()->getId(),
+            'cart'       => $cartData,
+        ]);
 
         $member = session('player_id')
             ? DB::table('members')->where('memberID', session('player_id'))->first()
