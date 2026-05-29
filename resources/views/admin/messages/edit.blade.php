@@ -158,7 +158,9 @@
         syncContent();
     }
     function insertMergeVar(name) {
-        const placeholder = '{{ "{{" }}' + name + '{{ "}}" }}';
+        const ob = String.fromCharCode(123, 123);
+        const cb = String.fromCharCode(125, 125);
+        const placeholder = ob + name + cb;
         const editor = document.getElementById('editor-content');
         editor.focus();
         const sel = window.getSelection();
