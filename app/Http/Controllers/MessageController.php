@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Support\MessageMerge;
 
 class MessageController extends Controller
 {
@@ -82,6 +83,9 @@ class MessageController extends Controller
 
         $needsPeerReview = !$lastRating ||
             \Carbon\Carbon::parse($lastRating->created_at)->diffInDays(now()) > 14;
+
+        $message->messageBody    = MessageMerge::render($message->messageBody, $member);
+        $message->messageSubject = MessageMerge::render($message->messageSubject, $member);
 
         return view('message', compact(
             'message', 'member', 'nextGame', 'registration',

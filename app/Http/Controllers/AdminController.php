@@ -822,7 +822,14 @@ class AdminController extends Controller
 
     public function createMessage()
     {
-        return view('admin.messages.create');
+        $mergeVariables = \App\Support\MessageMerge::variables();
+        $samplePlayer   = DB::table('members')
+            ->where('memberActive', 1)
+            ->whereNull('memberParent')
+            ->orderBy('memberID')
+            ->first();
+        $sampleValues = $samplePlayer ? \App\Support\MessageMerge::valuesFor($samplePlayer) : [];
+        return view('admin.messages.create', compact('mergeVariables', 'sampleValues', 'samplePlayer'));
     }
 
     public function storeMessage(Request $request)
@@ -842,7 +849,14 @@ class AdminController extends Controller
     public function editMessage($messageCode)
     {
         $message = DB::table('messages')->where('messageCode', $messageCode)->firstOrFail();
-        return view('admin.messages.edit', compact('message'));
+        $mergeVariables = \App\Support\MessageMerge::variables();
+        $samplePlayer   = DB::table('members')
+            ->where('memberActive', 1)
+            ->whereNull('memberParent')
+            ->orderBy('memberID')
+            ->first();
+        $sampleValues = $samplePlayer ? \App\Support\MessageMerge::valuesFor($samplePlayer) : [];
+        return view('admin.messages.edit', compact('message', 'mergeVariables', 'sampleValues', 'samplePlayer'));
     }
 
     public function updateMessage(Request $request, $messageCode)
