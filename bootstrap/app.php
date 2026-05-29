@@ -25,6 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 | SymfonyRequest::HEADER_X_FORWARDED_PROTO
                 | SymfonyRequest::HEADER_X_FORWARDED_AWS_ELB,
         );
+        $middleware->encryptCookies(except: [
+            'guest_cart_token',
+        ]);
         $middleware->validateCsrfTokens(except: [
             'stripe/webhook',
         ]);

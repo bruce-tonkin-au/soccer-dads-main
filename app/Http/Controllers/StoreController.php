@@ -7,55 +7,132 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 
 class StoreController extends Controller
 {
-    private const CART_COOKIE     = 'store_cart';
-    private const CART_COOKIE_TTL = 120; // minutes
+    private const CART_SESSION_KEY     = 'store_cart';
+    private const GUEST_TOKEN_COOKIE   = 'guest_cart_token';
+    private const CART_TTL_MINUTES     = 120;
 
     /**
-     * Read the cart. Logged-in members use the session (works fine).
-     * Guests use an encrypted cookie because their session cookie has
-     * been observed not to round-trip on this deployment, producing a
-     * fresh session ID on every request.
+     * Return the guest's cart token, optionally minting a new one.
+     * Token is a 32-char alphanumeric string stored in a plain
+     * (unencrypted, in the EncryptCookies except: list) cookie so
+     * it survives the encryption pipeline regardless of where the
+     * deployment is sitting behind a proxy.
+     */
+    private function guestCartToken(Request $request, bool $createIfMissing = false): ?string
+    {
+        $token = $request->cookie(self::GUEST_TOKEN_COOKIE);
+        if (is_string($token) && strlen($token) === 32 && ctype_alnum($token)) {
+            return $token;
+        }
+        if (!$createIfMissing) return null;
+
+        $token = Str::random(32);
+        // Cookie attributes: same TTL as the cart row, root path, no
+        // explicit domain (browser scopes to request host), Secure off
+        // (works on http and https), HttpOnly on, SameSite=lax.
+        Cookie::queue(Cookie::make(
+            self::GUEST_TOKEN_COOKIE,
+            $token,
+            self::CART_TTL_MINUTES,
+            '/',     // path
+            null,    // domain
+            false,   // secure
+            true,    // httpOnly
+            false,   // raw
+            'lax',   // sameSite
+        ));
+        return $token;
+    }
+
+    /**
+     * Read the cart. Logged-in members use the session (works on this
+     * deployment). Guests use a server-side guest_carts row keyed by a
+     * plain token cookie — cookie-based JSON storage was observed to
+     * lose data across redirects.
      */
     private function readCart(Request $request): array
     {
         if (session('player_id')) {
-            return $request->session()->get(self::CART_COOKIE, []);
+            return $request->session()->get(self::CART_SESSION_KEY, []);
         }
-        $raw = $request->cookie(self::CART_COOKIE);
-        if (!$raw) return [];
-        $decoded = is_array($raw) ? $raw : json_decode($raw, true);
-        return is_array($decoded) ? $decoded : [];
+
+        $token = $this->guestCartToken($request);
+        if (!$token) return [];
+
+        try {
+            $row = DB::table('guest_carts')
+                ->where('cart_token', $token)
+                ->first();
+        } catch (\Throwable $e) {
+            Log::error('readCart:guest_carts-lookup-failed', ['error' => $e->getMessage()]);
+            return [];
+        }
+
+        if (!$row) return [];
+        if ($row->expires_at && now()->greaterThan($row->expires_at)) {
+            DB::table('guest_carts')->where('id', $row->id)->delete();
+            return [];
+        }
+
+        $data = json_decode($row->cart_data, true);
+        return is_array($data) ? $data : [];
     }
 
-    /**
-     * Persist the cart for the current request mode.
-     * For members the session is saved synchronously; for guests we
-     * queue an encrypted cookie via Laravel's cookie response stack.
-     */
+    /** Persist the cart for the current request mode. */
     private function writeCart(Request $request, array $cart): void
     {
         if (session('player_id')) {
-            $request->session()->put(self::CART_COOKIE, $cart);
+            $request->session()->put(self::CART_SESSION_KEY, $cart);
             $request->session()->save();
             return;
         }
-        Cookie::queue(self::CART_COOKIE, json_encode($cart), self::CART_COOKIE_TTL);
+
+        $token     = $this->guestCartToken($request, true);
+        $expiresAt = now()->addMinutes(self::CART_TTL_MINUTES);
+        $payload   = json_encode($cart);
+
+        try {
+            $existing = DB::table('guest_carts')->where('cart_token', $token)->first();
+            if ($existing) {
+                DB::table('guest_carts')->where('id', $existing->id)->update([
+                    'cart_data'  => $payload,
+                    'expires_at' => $expiresAt,
+                    'updated_at' => now(),
+                ]);
+            } else {
+                DB::table('guest_carts')->insert([
+                    'cart_token' => $token,
+                    'cart_data'  => $payload,
+                    'expires_at' => $expiresAt,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            Log::error('writeCart:guest_carts-write-failed', ['error' => $e->getMessage()]);
+        }
     }
 
     /** Clear the cart for the current request mode. */
     private function forgetCart(Request $request): void
     {
         if (session('player_id')) {
-            $request->session()->forget(self::CART_COOKIE);
+            $request->session()->forget(self::CART_SESSION_KEY);
             $request->session()->save();
             return;
         }
-        Cookie::queue(Cookie::forget(self::CART_COOKIE));
+
+        $token = $this->guestCartToken($request);
+        if ($token) {
+            DB::table('guest_carts')->where('cart_token', $token)->delete();
+        }
+        Cookie::queue(Cookie::forget(self::GUEST_TOKEN_COOKIE));
     }
 
     /**
@@ -278,7 +355,7 @@ class StoreController extends Controller
             'slug'        => $productSlug,
             'quantity_in' => $request->input('quantity'),
             'guest'       => $isGuest,
-            'storage'     => $isGuest ? 'cookie' : 'session',
+            'storage'     => $isGuest ? 'guest_carts' : 'session',
             'cart_pre'    => $this->readCart($request),
         ]);
 
@@ -314,7 +391,7 @@ class StoreController extends Controller
             'productID' => $product->productID,
             'quantity'  => $quantity,
             'cart_post' => $cart,
-            'storage'   => $isGuest ? 'cookie' : 'session',
+            'storage'   => $isGuest ? 'guest_carts' : 'session',
         ]);
 
         // Redirect so the address bar reads /store/cart. The cookie
@@ -332,7 +409,7 @@ class StoreController extends Controller
 
         Log::info('viewCart:read', [
             'guest'   => !session('player_id'),
-            'storage' => session('player_id') ? 'session' : 'cookie',
+            'storage' => session('player_id') ? 'session' : 'guest_carts',
             'cart'    => $cartData,
         ]);
 
@@ -355,7 +432,7 @@ class StoreController extends Controller
 
         Log::info('cartCheckout:start', [
             'guest'        => $isGuest,
-            'storage'      => $isGuest ? 'cookie' : 'session',
+            'storage'      => $isGuest ? 'guest_carts' : 'session',
             'cart'         => $cartData,
             'has_guestName'  => $request->filled('guestName'),
             'has_guestEmail' => $request->filled('guestEmail'),
