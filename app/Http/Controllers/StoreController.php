@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -11,6 +12,52 @@ use Stripe\Checkout\Session as StripeSession;
 
 class StoreController extends Controller
 {
+    private const CART_COOKIE     = 'store_cart';
+    private const CART_COOKIE_TTL = 120; // minutes
+
+    /**
+     * Read the cart. Logged-in members use the session (works fine).
+     * Guests use an encrypted cookie because their session cookie has
+     * been observed not to round-trip on this deployment, producing a
+     * fresh session ID on every request.
+     */
+    private function readCart(Request $request): array
+    {
+        if (session('player_id')) {
+            return $request->session()->get(self::CART_COOKIE, []);
+        }
+        $raw = $request->cookie(self::CART_COOKIE);
+        if (!$raw) return [];
+        $decoded = is_array($raw) ? $raw : json_decode($raw, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Persist the cart for the current request mode.
+     * For members the session is saved synchronously; for guests we
+     * queue an encrypted cookie via Laravel's cookie response stack.
+     */
+    private function writeCart(Request $request, array $cart): void
+    {
+        if (session('player_id')) {
+            $request->session()->put(self::CART_COOKIE, $cart);
+            $request->session()->save();
+            return;
+        }
+        Cookie::queue(self::CART_COOKIE, json_encode($cart), self::CART_COOKIE_TTL);
+    }
+
+    /** Clear the cart for the current request mode. */
+    private function forgetCart(Request $request): void
+    {
+        if (session('player_id')) {
+            $request->session()->forget(self::CART_COOKIE);
+            $request->session()->save();
+            return;
+        }
+        Cookie::queue(Cookie::forget(self::CART_COOKIE));
+    }
+
     // ─── Helpers ───────────────────────────────────────────────────────────────
 
     private static function availabilityQuery()
@@ -175,11 +222,13 @@ class StoreController extends Controller
 
     public function addToCart(Request $request, string $productSlug)
     {
+        $isGuest = !session('player_id');
         Log::info('addToCart:start', [
             'slug'        => $productSlug,
             'quantity_in' => $request->input('quantity'),
-            'session_id'  => $request->session()->getId(),
-            'cart_pre'    => $request->session()->get('store_cart', []),
+            'guest'       => $isGuest,
+            'storage'     => $isGuest ? 'cookie' : 'session',
+            'cart_pre'    => $this->readCart($request),
         ]);
 
         $product = static::availabilityQuery()
@@ -199,7 +248,7 @@ class StoreController extends Controller
         $maxQty   = max(1, min((int) $product->productMaxQuantity ?: 1, (int) $product->productStock));
         $quantity = max(1, min((int) $request->input('quantity', 1), $maxQty));
 
-        $cart = $request->session()->get('store_cart', []);
+        $cart = $this->readCart($request);
         $cart[(int) $product->productID] = [
             'productID'    => (int) $product->productID,
             'productSlug'  => $product->productSlug,
@@ -208,14 +257,13 @@ class StoreController extends Controller
             'productImage' => $product->productImage,
             'quantity'     => $quantity,
         ];
-        $request->session()->put('store_cart', $cart);
-        $request->session()->save();
+        $this->writeCart($request, $cart);
 
         Log::info('addToCart:success', [
-            'productID'   => $product->productID,
-            'quantity'    => $quantity,
-            'cart_post'   => $cart,
-            'session_id'  => $request->session()->getId(),
+            'productID' => $product->productID,
+            'quantity'  => $quantity,
+            'cart_post' => $cart,
+            'storage'   => $isGuest ? 'cookie' : 'session',
         ]);
 
         return redirect('/store/cart')->with('cart_added', $product->productName);
@@ -223,11 +271,12 @@ class StoreController extends Controller
 
     public function viewCart(Request $request)
     {
-        $cartData = $request->session()->get('store_cart', []);
+        $cartData = $this->readCart($request);
 
         Log::info('viewCart:read', [
-            'session_id' => $request->session()->getId(),
-            'cart'       => $cartData,
+            'guest'   => !session('player_id'),
+            'storage' => session('player_id') ? 'session' : 'cookie',
+            'cart'    => $cartData,
         ]);
 
         $member = session('player_id')
@@ -271,15 +320,15 @@ class StoreController extends Controller
     public function removeFromCart(Request $request)
     {
         $productID = (int) $request->input('productID');
-        $cart = session('store_cart', []);
+        $cart = $this->readCart($request);
         unset($cart[$productID]);
-        session(['store_cart' => $cart]);
+        $this->writeCart($request, $cart);
         return back();
     }
 
     public function cartCheckout(Request $request)
     {
-        $cartData = session('store_cart', []);
+        $cartData = $this->readCart($request);
 
         if (empty($cartData)) {
             return redirect('/store/cart')->with('error', 'Your cart is empty.');
@@ -428,7 +477,7 @@ class StoreController extends Controller
 
         if ($session->metadata->type === 'store_cart') {
             static::fulfillOrder($session->id, $orderID, $memberID);
-            session()->forget('store_cart');
+            $this->forgetCart($request);
         } else {
             static::fulfillOrder($session->id, $orderID, $memberID);
         }
