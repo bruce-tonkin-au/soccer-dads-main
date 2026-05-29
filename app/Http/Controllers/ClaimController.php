@@ -36,12 +36,12 @@ class ClaimController extends Controller
             return redirect('/claim/' . $memberCode);
         }
 
-        $validated = $request->validate([
-            'firstName' => 'required|string|max:100',
-            'lastName'  => 'required|string|max:100',
+        $rules = [
+            'firstName' => ($member->memberNameFirst ? 'nullable' : 'required') . '|string|max:100',
+            'lastName'  => ($member->memberNameLast  ? 'nullable' : 'required') . '|string|max:100',
+            'birthday'  => ($member->memberBirthday  ? 'nullable' : 'required') . '|date|before:today',
             'email'     => 'required|email|max:255',
             'mobile'    => 'required|string|max:50',
-            'birthday'  => 'required|date|before:today',
             'country'   => 'required|string|max:10',
             'photo'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'contacts'                => 'required|array|min:2',
@@ -50,7 +50,9 @@ class ClaimController extends Controller
             'contacts.*.phone'        => 'required|string|max:50',
             'contacts.*.email'        => 'nullable|email|max:255',
             'primaryContact'          => 'required|integer|min:0',
-        ]);
+        ];
+
+        $validated = $request->validate($rules);
 
         $contacts = $validated['contacts'];
         $primaryIndex = (int) $validated['primaryContact'];
@@ -61,15 +63,22 @@ class ClaimController extends Controller
         }
 
         $update = [
-            'memberNameFirst'   => $validated['firstName'],
-            'memberNameLast'    => $validated['lastName'],
             'memberEmail'       => $validated['email'],
             'memberPhoneMobile' => $validated['mobile'],
-            'memberBirthday'    => $validated['birthday'],
             'memberCountry'     => $validated['country'],
             'memberClaimed'     => true,
             'memberClaimedAt'   => now(),
         ];
+
+        if (!$member->memberNameFirst && !empty($validated['firstName'])) {
+            $update['memberNameFirst'] = $validated['firstName'];
+        }
+        if (!$member->memberNameLast && !empty($validated['lastName'])) {
+            $update['memberNameLast'] = $validated['lastName'];
+        }
+        if (!$member->memberBirthday && !empty($validated['birthday'])) {
+            $update['memberBirthday'] = $validated['birthday'];
+        }
 
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('members/' . $member->memberID, 'public');

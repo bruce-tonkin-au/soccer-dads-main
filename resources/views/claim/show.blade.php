@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div style="max-width:640px; margin:3rem auto; padding:0 1.5rem;">
+<div style="max-width:640px; margin:0 auto; padding:4rem 1.5rem;">
 
     {{-- Header --}}
     <div style="text-align:center; margin-bottom:2rem;">
@@ -16,7 +16,7 @@
 
     <div style="background:#262c39; color:#fff; border-radius:16px; padding:1.25rem 1.5rem; margin-bottom:1.5rem; font-size:14px; line-height:1.6;">
         <i class="fa-solid fa-circle-info" style="color:rgba(255,255,255,0.6);"></i>
-        Finish setting up your account so we can keep your details up to date and contact someone if you ever get hurt on the pitch.
+        This is a one-time setup to complete your Soccer Dads profile. We just need a few details to keep your account up to date, and a couple of emergency contacts in case we ever need to reach someone on your behalf.
     </div>
 
     @if($errors->any())
@@ -41,13 +41,23 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1rem;">
                 <div>
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">First name</label>
-                    <input type="text" name="firstName" value="{{ old('firstName', $member->memberNameFirst) }}" required
-                        style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @if($member->memberNameFirst)
+                        <div style="padding:12px 14px; font-size:15px; color:#262c39; background:#f4f4f4; border-radius:8px; font-weight:500;">{{ $member->memberNameFirst }}</div>
+                        <div style="font-size:11px; color:#aaa; margin-top:4px;">Contact us to update this</div>
+                    @else
+                        <input type="text" name="firstName" value="{{ old('firstName') }}" required
+                            style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @endif
                 </div>
                 <div>
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">Last name</label>
-                    <input type="text" name="lastName" value="{{ old('lastName', $member->memberNameLast) }}" required
-                        style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @if($member->memberNameLast)
+                        <div style="padding:12px 14px; font-size:15px; color:#262c39; background:#f4f4f4; border-radius:8px; font-weight:500;">{{ $member->memberNameLast }}</div>
+                        <div style="font-size:11px; color:#aaa; margin-top:4px;">Contact us to update this</div>
+                    @else
+                        <input type="text" name="lastName" value="{{ old('lastName') }}" required
+                            style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @endif
                 </div>
             </div>
 
@@ -88,8 +98,13 @@
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                 <div>
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">Date of birth</label>
-                    <input type="date" name="birthday" value="{{ old('birthday', $member->memberBirthday) }}" required
-                        style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @if($member->memberBirthday)
+                        <div style="padding:12px 14px; font-size:15px; color:#262c39; background:#f4f4f4; border-radius:8px; font-weight:500;">{{ \Carbon\Carbon::parse($member->memberBirthday)->format('d/m/Y') }}</div>
+                        <div style="font-size:11px; color:#aaa; margin-top:4px;">Contact us to update this</div>
+                    @else
+                        <input type="date" name="birthday" value="{{ old('birthday') }}" required
+                            style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none;">
+                    @endif
                 </div>
                 <div>
                     <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888; margin-bottom:6px;">Country of origin</label>
