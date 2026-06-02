@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\Commentator;
+use App\Support\MemberIdentifier;
 
 class AdminController extends Controller
 {
@@ -162,16 +163,8 @@ class AdminController extends Controller
         $firstName = trim($request->input('firstName'));
         $lastName  = trim($request->input('lastName'));
 
-        do {
-            $code = strtoupper(Str::random(3));
-        } while (DB::table('members')->where('memberCode', $code)->exists());
-
-        $baseSlug = Str::slug($firstName . ' ' . $lastName);
-        $slug = $baseSlug;
-        $counter = 2;
-        while (DB::table('members')->where('memberSlug', $slug)->exists()) {
-            $slug = $baseSlug . '-' . $counter++;
-        }
+        $code = MemberIdentifier::generateCode();
+        $slug = MemberIdentifier::generateSlug($firstName, $lastName);
 
         DB::table('members')->insert([
             'memberNameFirst'   => $firstName,
@@ -196,15 +189,32 @@ class AdminController extends Controller
 
     public function updatePlayer(Request $request, $memberID)
     {
-        DB::table('members')->where('memberID', $memberID)->update([
-            'memberNameFirst'   => $request->input('firstName'),
-            'memberNameLast'    => $request->input('lastName'),
+        $firstName = trim($request->input('firstName'));
+        $lastName  = trim($request->input('lastName'));
+
+        $update = [
+            'memberNameFirst'   => $firstName,
+            'memberNameLast'    => $lastName,
             'memberEmail'       => $request->input('email'),
             'memberPhoneMobile' => $request->input('mobile'),
             'memberActive'      => $request->input('active', 0),
             'memberParent'      => $request->input('parent') ?: null,
             'memberBirthday'    => $request->input('birthday') ?: null,
-        ]);
+        ];
+
+        // Every member must have a memberCode and memberSlug (used in claim/rate
+        // and public profile URLs). Older/blank test records can be missing them,
+        // so generate any that are absent whenever a player is saved.
+        $existing = DB::table('members')->where('memberID', $memberID)->first();
+
+        if (empty($existing->memberCode)) {
+            $update['memberCode'] = MemberIdentifier::generateCode();
+        }
+        if (empty($existing->memberSlug)) {
+            $update['memberSlug'] = MemberIdentifier::generateSlug($firstName, $lastName, (int) $memberID);
+        }
+
+        DB::table('members')->where('memberID', $memberID)->update($update);
         return redirect('/admin/players')->with('success', 'Player updated.');
     }
 
