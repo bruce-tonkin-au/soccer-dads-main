@@ -61,9 +61,9 @@
 
 <div class="wc-page">
     {{-- 1. Header --}}
-    <div class="wc-hero">
+    <div class="wc-hero" style="background:linear-gradient(to right, #458bc8, #7bba56, #e68a46);">
         <div class="container">
-            <h1>World Cup 2026 Sweepstake</h1>
+            <h1 style="color:#fff;">World Cup 2026</h1>
         </div>
     </div>
 
