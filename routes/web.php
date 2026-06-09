@@ -15,6 +15,7 @@ use App\Http\Controllers\PlayerPortalController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AdminStoreController;
 use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\NewsletterController;
 use App\Livewire\WorldCupLadder;
 
 // Admin auth
@@ -98,6 +99,14 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/commentators/create', [AdminController::class, 'storeCommentator']);
     Route::get('/commentators/{commentatorID}/edit', [AdminController::class, 'editCommentator']);
     Route::post('/commentators/{commentatorID}/edit', [AdminController::class, 'updateCommentator']);
+
+    // Newsletters
+    Route::get('/newsletters', [NewsletterController::class, 'index']);
+    Route::get('/newsletters/create', [NewsletterController::class, 'create']);
+    Route::post('/newsletters', [NewsletterController::class, 'store']);
+    Route::get('/newsletters/{id}/edit', [NewsletterController::class, 'edit']);
+    Route::put('/newsletters/{id}', [NewsletterController::class, 'update']);
+    Route::delete('/newsletters/{id}', [NewsletterController::class, 'destroy']);
 });
 
 // Store — specific routes before the {productSlug} wildcard
