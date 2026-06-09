@@ -61,6 +61,16 @@ class WcEntryForm
                             ->options(fn (): array => WcEntryResource::playerOptions())
                             ->searchable()
                             ->dehydrated(false),
+                        Select::make('player_slot3')
+                            ->label('Player 3')
+                            ->options(fn (): array => WcEntryResource::playerOptions())
+                            ->searchable()
+                            ->dehydrated(false),
+                        Select::make('player_slot4')
+                            ->label('Player 4')
+                            ->options(fn (): array => WcEntryResource::playerOptions())
+                            ->searchable()
+                            ->dehydrated(false),
                     ]),
             ]);
     }

@@ -30,6 +30,8 @@ class EditWcEntry extends EditRecord
         $data['tier2_team'] = WcEntryTeam::where('entryID', $entryID)->where('tier', 2)->value('teamID');
         $data['player_slot1'] = WcEntryPlayer::where('entryID', $entryID)->where('slot', 1)->value('playerID');
         $data['player_slot2'] = WcEntryPlayer::where('entryID', $entryID)->where('slot', 2)->value('playerID');
+        $data['player_slot3'] = WcEntryPlayer::where('entryID', $entryID)->where('slot', 3)->value('playerID');
+        $data['player_slot4'] = WcEntryPlayer::where('entryID', $entryID)->where('slot', 4)->value('playerID');
 
         return $data;
     }

@@ -89,6 +89,8 @@ class WcEntryResource extends Resource
         static::syncTeam($entry->entryID, 2, $data['tier2_team'] ?? null);
         static::syncPlayer($entry->entryID, 1, $data['player_slot1'] ?? null);
         static::syncPlayer($entry->entryID, 2, $data['player_slot2'] ?? null);
+        static::syncPlayer($entry->entryID, 3, $data['player_slot3'] ?? null);
+        static::syncPlayer($entry->entryID, 4, $data['player_slot4'] ?? null);
     }
 
     protected static function syncTeam(int $entryID, int $tier, $teamID): void
