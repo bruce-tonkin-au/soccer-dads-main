@@ -9,6 +9,7 @@ use App\Models\WcGoal;
 use App\Models\WcPlayer;
 use App\Models\WcSetting;
 use App\Models\WcTeam;
+use App\Support\MemberDirectory;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -37,6 +38,9 @@ class WorldCupLadder extends Component
         $teams = WcTeam::whereIn('teamID', $teamIds)->get()->keyBy('teamID');
         $players = WcPlayer::with('team')->whereIn('playerID', $playerIds)->get()->keyBy('playerID');
 
+        // Member display names ("Last, First"), resolved in one query.
+        $memberNames = MemberDirectory::labels($entries->pluck('memberID')->all());
+
         $teamPoints = $this->teamPointsMap($pointsKey);
         $goalCounts = WcGoal::query()
             ->where('is_own_goal', false)
@@ -44,7 +48,7 @@ class WorldCupLadder extends Component
             ->groupBy('playerID')
             ->pluck('goals', 'playerID');
 
-        $enriched = $entries->map(fn (WcEntry $e) => $this->entryRow($e, $teams, $players, $teamPoints, $goalCounts, $pointsKey));
+        $enriched = $entries->map(fn (WcEntry $e) => $this->entryRow($e, $teams, $players, $teamPoints, $goalCounts, $pointsKey, $memberNames));
 
         return view('livewire.world-cup-ladder', [
             'activeTab' => $this->activeTab,
@@ -78,7 +82,7 @@ class WorldCupLadder extends Component
      * Build one enriched row per entry (teams, players, points). Works before
      * the draw too — entries simply have null teams / no players / zero points.
      */
-    protected function entryRow(WcEntry $entry, Collection $teams, Collection $players, Collection $teamPoints, $goalCounts, array $points): array
+    protected function entryRow(WcEntry $entry, Collection $teams, Collection $players, Collection $teamPoints, $goalCounts, array $points, array $memberNames): array
     {
         $topTeamId = $entry->entryTeams->firstWhere('tier', 1)?->teamID;
         $bottomTeamId = $entry->entryTeams->firstWhere('tier', 2)?->teamID;
@@ -107,6 +111,7 @@ class WorldCupLadder extends Component
         return [
             'entryID' => $entry->entryID,
             'entry_name' => $entry->entry_name,
+            'member_name' => $memberNames[$entry->memberID] ?? $entry->entry_name,
             'top_team' => $this->teamRow($teams[$topTeamId] ?? null),
             'bottom_team' => $this->teamRow($teams[$bottomTeamId] ?? null),
             'players' => $playerRows->all(),
@@ -125,11 +130,14 @@ class WorldCupLadder extends Component
     protected function ladder(Collection $enriched, bool $drawRun): Collection
     {
         if (! $drawRun) {
-            return $enriched->values()->map(function (array $row) {
-                $row['position'] = null;
+            return $enriched
+                ->sortBy(fn (array $row) => mb_strtolower($row['member_name']))
+                ->values()
+                ->map(function (array $row) {
+                    $row['position'] = null;
 
-                return $row;
-            });
+                    return $row;
+                });
         }
 
         return $enriched
@@ -317,6 +325,7 @@ class WorldCupLadder extends Component
             ->where('status', 'scheduled')
             ->with(['homeTeam', 'awayTeam'])
             ->orderBy('match_datetime')
+            ->limit(10)
             ->get();
 
         return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams) {
@@ -325,12 +334,13 @@ class WorldCupLadder extends Component
             $teamWatchers = [];
             $playerWatchers = [];
 
+            // $enriched is already in memory — no per-fixture queries.
             foreach ($enriched as $entry) {
                 foreach ($entry['team_ids'] as $teamId) {
                     if (in_array($teamId, $fixtureTeamIds)) {
                         $teamWatchers[] = [
-                            'entry_name' => $entry['entry_name'],
-                            'team_name' => $teams[$teamId]->name ?? '',
+                            'name' => $entry['member_name'],
+                            'team' => $teams[$teamId]->name ?? '',
                         ];
                     }
                 }
@@ -338,9 +348,8 @@ class WorldCupLadder extends Component
                 foreach ($entry['players'] as $player) {
                     if ($player['team_id'] !== null && in_array($player['team_id'], $fixtureTeamIds)) {
                         $playerWatchers[] = [
-                            'entry_name' => $entry['entry_name'],
-                            'player_name' => $player['name'],
-                            'team_name' => $player['team_name'],
+                            'name' => $entry['member_name'],
+                            'player' => $player['name'],
                         ];
                     }
                 }

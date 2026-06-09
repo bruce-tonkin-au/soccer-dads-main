@@ -49,6 +49,27 @@ class MemberDirectory
         return $m ? self::format($m) : null;
     }
 
+    /**
+     * Display labels for many member ids in a single query.
+     *
+     * @param  array<int, int|string|null>  $memberIds
+     * @return array<int, string>  memberID => "Last, First"
+     */
+    public static function labels(array $memberIds): array
+    {
+        $ids = array_values(array_unique(array_filter($memberIds)));
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        return DB::table('members')
+            ->whereIn('memberID', $ids)
+            ->get(['memberID', 'memberNameFirst', 'memberNameLast'])
+            ->mapWithKeys(fn ($m) => [$m->memberID => self::format($m)])
+            ->all();
+    }
+
     protected static function format(object $m): string
     {
         $last = trim((string) ($m->memberNameLast ?? ''));

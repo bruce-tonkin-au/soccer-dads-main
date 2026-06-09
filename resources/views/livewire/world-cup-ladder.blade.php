@@ -118,7 +118,7 @@
                                             @endswitch
                                         @endif
                                     </td>
-                                    <td><span class="wc-entry">{{ $row['entry_name'] }}</span></td>
+                                    <td><span class="wc-entry">{{ $row['member_name'] }}</span></td>
                                     @foreach (['top_team', 'bottom_team'] as $key)
                                         <td>
                                             @php $team = $row[$key]; @endphp
@@ -225,23 +225,24 @@
                                 </div>
                             </div>
 
-                            @if (! empty($fixture['team_watchers']))
+                            @if (! empty($fixture['team_watchers']) || ! empty($fixture['player_watchers']))
                                 <div class="wc-block">
-                                    <div class="wc-watch">
-                                        🎯
-                                        @foreach ($fixture['team_watchers'] as $w)
-                                            <strong>{{ $w['entry_name'] }}</strong> ({{ $w['team_name'] }}){{ ! $loop->last ? ',' : '' }}
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if (! empty($fixture['player_watchers']))
-                                <div class="wc-watch" style="margin-top:6px;">
-                                    ⚽
-                                    @foreach ($fixture['player_watchers'] as $w)
-                                        <strong>{{ $w['entry_name'] }}</strong> ({{ $w['player_name'] }} — {{ $w['team_name'] }}){{ ! $loop->last ? ',' : '' }}
-                                    @endforeach
+                                    @if (! empty($fixture['team_watchers']))
+                                        <div class="wc-watch">
+                                            🎯
+                                            @foreach ($fixture['team_watchers'] as $w)
+                                                <strong>{{ $w['name'] }}</strong> ({{ $w['team'] }}){{ ! $loop->last ? ' · ' : '' }}
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                    @if (! empty($fixture['player_watchers']))
+                                        <div class="wc-watch" style="margin-top:6px;">
+                                            ⚽
+                                            @foreach ($fixture['player_watchers'] as $w)
+                                                <strong>{{ $w['name'] }}</strong> ({{ $w['player'] }}){{ ! $loop->last ? ' · ' : '' }}
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
                             @endif
                         </div>
