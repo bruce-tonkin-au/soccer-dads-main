@@ -7,6 +7,7 @@ use App\Models\WcGoal;
 use App\Models\WcPlayer;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\DB;
 
 class EditWcFixture extends EditRecord
 {
@@ -20,65 +21,60 @@ class EditWcFixture extends EditRecord
     }
 
     /**
-     * Pre-tick the goalscorer/own-goal fields from existing wc_goals rows.
+     * Collapse existing wc_goals into repeater rows: one row per distinct
+     * (player, own-goal) pair, with the goal count.
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $goals = WcGoal::where('fixtureID', $this->record->fixtureID)->get();
-
-        $data['goalscorers'] = $goals->where('is_own_goal', false)->pluck('playerID')->all();
-        $data['own_goals'] = $goals->where('is_own_goal', true)->pluck('playerID')->all();
+        $data['goals'] = WcGoal::where('fixtureID', $this->record->fixtureID)
+            ->get()
+            ->groupBy(fn (WcGoal $goal) => $goal->playerID . '|' . ($goal->is_own_goal ? '1' : '0'))
+            ->map(fn ($group) => [
+                'playerID' => $group->first()->playerID,
+                'count' => $group->count(),
+                'is_own_goal' => (bool) $group->first()->is_own_goal,
+            ])
+            ->values()
+            ->all();
 
         return $data;
     }
 
     /**
-     * Sync wc_goals to match the ticked players. One goal per player per type
-     * (own / not own); ticking inserts, unticking deletes. No minute is recorded.
+     * Rebuild wc_goals from the repeater: clear the fixture's goals, then
+     * insert one row per goal (a count of 2 => 2 rows). teamID comes from the
+     * player's team; no minute is recorded.
      */
     protected function afterSave(): void
     {
         $fixtureID = $this->record->fixtureID;
+        $rows = collect($this->data['goals'] ?? []);
 
-        $normal = collect($this->data['goalscorers'] ?? [])->map(fn ($id) => (int) $id);
-        $own = collect($this->data['own_goals'] ?? [])->map(fn ($id) => (int) $id);
-
-        // Desired keys "playerID|isOwnGoal"
-        $desired = $normal->map(fn ($id) => $id . '|0')
-            ->merge($own->map(fn ($id) => $id . '|1'))
-            ->unique();
-
-        $existing = WcGoal::where('fixtureID', $fixtureID)->get();
-
-        // Delete goals that are no longer ticked.
-        foreach ($existing as $goal) {
-            $key = $goal->playerID . '|' . ($goal->is_own_goal ? '1' : '0');
-            if (! $desired->contains($key)) {
-                $goal->delete();
-            }
-        }
-
-        $existingKeys = $existing->map(fn ($g) => $g->playerID . '|' . ($g->is_own_goal ? '1' : '0'));
-
-        // Look up each player's team for the teamID column.
-        $teamByPlayer = WcPlayer::whereIn('playerID', $normal->merge($own)->unique())
+        $teamByPlayer = WcPlayer::whereIn('playerID', $rows->pluck('playerID')->filter()->unique())
             ->pluck('teamID', 'playerID');
 
-        foreach ($desired as $key) {
-            if ($existingKeys->contains($key)) {
-                continue;
+        DB::transaction(function () use ($fixtureID, $rows, $teamByPlayer) {
+            WcGoal::where('fixtureID', $fixtureID)->delete();
+
+            foreach ($rows as $row) {
+                $playerID = (int) ($row['playerID'] ?? 0);
+                if ($playerID === 0) {
+                    continue;
+                }
+
+                $count = max(1, (int) ($row['count'] ?? 1));
+                $isOwnGoal = (bool) ($row['is_own_goal'] ?? false);
+
+                for ($i = 0; $i < $count; $i++) {
+                    WcGoal::create([
+                        'fixtureID' => $fixtureID,
+                        'playerID' => $playerID,
+                        'teamID' => $teamByPlayer[$playerID] ?? null,
+                        'minute' => null,
+                        'is_own_goal' => $isOwnGoal,
+                    ]);
+                }
             }
-
-            [$playerID, $isOwn] = explode('|', $key);
-            $playerID = (int) $playerID;
-
-            WcGoal::create([
-                'fixtureID' => $fixtureID,
-                'playerID' => $playerID,
-                'teamID' => $teamByPlayer[$playerID] ?? null,
-                'minute' => null,
-                'is_own_goal' => $isOwn === '1',
-            ]);
-        }
+        });
     }
 }

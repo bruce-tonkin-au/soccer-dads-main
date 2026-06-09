@@ -4,10 +4,11 @@ namespace App\Filament\Resources\WcFixtures\Schemas;
 
 use App\Models\WcFixture;
 use App\Models\WcPlayer;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -45,12 +46,14 @@ class WcFixtureForm
                             ->label('Home team')
                             ->relationship('homeTeam', 'name')
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->live(),
                         Select::make('away_team_id')
                             ->label('Away team')
                             ->relationship('awayTeam', 'name')
                             ->searchable()
-                            ->preload(),
+                            ->preload()
+                            ->live(),
                         DateTimePicker::make('match_datetime')
                             ->label('Kick-off (UTC)')
                             ->seconds(false),
@@ -76,31 +79,41 @@ class WcFixtureForm
                     ]),
 
                 Section::make('Goalscorers')
-                    ->description('Tick each player who scored. Saving syncs the goal records for this fixture.')
+                    ->description('Add each scorer. Saving rebuilds this fixture\'s goal records.')
                     // Hidden on create — there are no teams/players to pick from until the fixture exists.
                     ->visible(fn (?WcFixture $record): bool => $record !== null)
                     ->schema([
-                        CheckboxList::make('goalscorers')
-                            ->label('Goals')
-                            ->options(fn (?WcFixture $record): array => self::playerOptions($record))
-                            ->descriptions(fn (?WcFixture $record): array => self::playerTeamDescriptions($record))
-                            ->columns(2)
-                            ->bulkToggleable()
-                            ->dehydrated(false),
-                        Select::make('own_goals')
-                            ->label('Own goals (edge cases)')
-                            ->helperText('Recorded as own goals; these never award player points.')
-                            ->multiple()
-                            ->options(fn (?WcFixture $record): array => self::playerOptions($record))
-                            ->searchable()
-                            ->dehydrated(false),
+                        Repeater::make('goals')
+                            ->label('Goalscorers')
+                            ->addActionLabel('+ Add goalscorer')
+                            ->defaultItems(0)
+                            ->columns(12)
+                            ->dehydrated(false)
+                            ->schema([
+                                Select::make('playerID')
+                                    ->label('Player')
+                                    ->options(fn (?WcFixture $record): array => self::playerOptions($record))
+                                    ->searchable()
+                                    ->required()
+                                    ->columnSpan(7),
+                                TextInput::make('count')
+                                    ->label('Goals')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(1)
+                                    ->required()
+                                    ->columnSpan(3),
+                                Toggle::make('is_own_goal')
+                                    ->label('Own goal')
+                                    ->columnSpan(2),
+                            ]),
                     ]),
             ]);
     }
 
     /**
      * Active players of both teams in this fixture, keyed by playerID.
-     * Label: "Flag Team — #shirt Name".
+     * Label: "Flag #shirt Name".
      */
     public static function playerOptions(?WcFixture $record): array
     {
@@ -124,36 +137,9 @@ class WcFixtureForm
             ->mapWithKeys(fn (WcPlayer $p) => [
                 $p->playerID => trim(
                     ($p->team?->flag ? $p->team->flag . ' ' : '')
-                    . ($p->team?->name ? $p->team->name . ' — ' : '')
                     . ($p->shirt_number ? '#' . $p->shirt_number . ' ' : '')
                     . $p->name
                 ),
-            ])
-            ->all();
-    }
-
-    /**
-     * Per-player team descriptions, keyed by playerID (used under each checkbox).
-     */
-    public static function playerTeamDescriptions(?WcFixture $record): array
-    {
-        if (! $record) {
-            return [];
-        }
-
-        $teamIds = array_filter([$record->home_team_id, $record->away_team_id]);
-
-        if (empty($teamIds)) {
-            return [];
-        }
-
-        return WcPlayer::query()
-            ->with('team')
-            ->whereIn('teamID', $teamIds)
-            ->where('is_active', true)
-            ->get()
-            ->mapWithKeys(fn (WcPlayer $p) => [
-                $p->playerID => trim(($p->team?->flag ? $p->team->flag . ' ' : '') . ($p->team?->name ?? '')),
             ])
             ->all();
     }
