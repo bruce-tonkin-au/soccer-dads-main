@@ -1,121 +1,7472 @@
 [
-  { "team_code": "MEX", "name": "Raúl Jiménez", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "MEX", "name": "Santiago Giménez", "position": "Forward", "shirt_number": 24 },
-  { "team_code": "KOR", "name": "Son Heung-min", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "KOR", "name": "Hwang Hee-chan", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "CZE", "name": "Patrik Schick", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "CZE", "name": "Adam Hložek", "position": "Forward", "shirt_number": 15 },
-  { "team_code": "RSA", "name": "Lyle Foster", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "RSA", "name": "Percy Tau", "position": "Forward", "shirt_number": 10 },
-
-  { "team_code": "CAN", "name": "Jonathan David", "position": "Forward", "shirt_number": 20 },
-  { "team_code": "CAN", "name": "Cyle Larin", "position": "Forward", "shirt_number": 17 },
-  { "team_code": "SUI", "name": "Breel Embolo", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "SUI", "name": "Dan Ndoye", "position": "Forward", "shirt_number": 20 },
-  { "team_code": "QAT", "name": "Almoez Ali", "position": "Forward", "shirt_number": 19 },
-  { "team_code": "QAT", "name": "Akram Afif", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "BIH", "name": "Edin Džeko", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "BIH", "name": "Ermedin Demirović", "position": "Forward", "shirt_number": 9 },
-
-  { "team_code": "BRA", "name": "Vinícius Júnior", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "BRA", "name": "Rodrygo", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "BRA", "name": "Raphinha", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "MAR", "name": "Youssef En-Nesyri", "position": "Forward", "shirt_number": 19 },
-  { "team_code": "MAR", "name": "Brahim Díaz", "position": "Midfielder", "shirt_number": 7 },
-  { "team_code": "SCO", "name": "Che Adams", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "SCO", "name": "John McGinn", "position": "Midfielder", "shirt_number": 7 },
-  { "team_code": "HAI", "name": "Frantzdy Pierrot", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "HAI", "name": "Duckens Nazon", "position": "Forward", "shirt_number": 10 },
-
-  { "team_code": "USA", "name": "Christian Pulisic", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "USA", "name": "Folarin Balogun", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "USA", "name": "Ricardo Pepi", "position": "Forward", "shirt_number": 16 },
-  { "team_code": "AUS", "name": "Mitchell Duke", "position": "Forward", "shirt_number": 15 },
-  { "team_code": "AUS", "name": "Kusini Yengi", "position": "Forward", "shirt_number": 22 },
-  { "team_code": "TUR", "name": "Kenan Yıldız", "position": "Forward", "shirt_number": 19 },
-  { "team_code": "TUR", "name": "Arda Güler", "position": "Midfielder", "shirt_number": 10 },
-  { "team_code": "PAR", "name": "Miguel Almirón", "position": "Forward", "shirt_number": 23 },
-  { "team_code": "PAR", "name": "Antonio Sanabria", "position": "Forward", "shirt_number": 9 },
-
-  { "team_code": "GER", "name": "Kai Havertz", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "GER", "name": "Florian Wirtz", "position": "Midfielder", "shirt_number": 17 },
-  { "team_code": "GER", "name": "Jamal Musiala", "position": "Midfielder", "shirt_number": 10 },
-  { "team_code": "ECU", "name": "Enner Valencia", "position": "Forward", "shirt_number": 13 },
-  { "team_code": "ECU", "name": "Kendry Páez", "position": "Midfielder", "shirt_number": 20 },
-  { "team_code": "CIV", "name": "Sébastien Haller", "position": "Forward", "shirt_number": 22 },
-  { "team_code": "CIV", "name": "Simon Adingra", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "CUW", "name": "Tahith Chong", "position": "Midfielder", "shirt_number": 10 },
-  { "team_code": "CUW", "name": "Leandro Bacuna", "position": "Midfielder", "shirt_number": 6 },
-
-  { "team_code": "NED", "name": "Memphis Depay", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "NED", "name": "Cody Gakpo", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "NED", "name": "Xavi Simons", "position": "Midfielder", "shirt_number": 7 },
-  { "team_code": "JPN", "name": "Kaoru Mitoma", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "JPN", "name": "Ayase Ueda", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "SWE", "name": "Alexander Isak", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "SWE", "name": "Viktor Gyökeres", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "TUN", "name": "Youssef Msakni", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "TUN", "name": "Hannibal Mejbri", "position": "Midfielder", "shirt_number": 8 },
-
-  { "team_code": "BEL", "name": "Romelu Lukaku", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "BEL", "name": "Kevin De Bruyne", "position": "Midfielder", "shirt_number": 7 },
-  { "team_code": "BEL", "name": "Jérémy Doku", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "IRN", "name": "Mehdi Taremi", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "IRN", "name": "Sardar Azmoun", "position": "Forward", "shirt_number": 20 },
-  { "team_code": "EGY", "name": "Mohamed Salah", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "EGY", "name": "Omar Marmoush", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "NZL", "name": "Chris Wood", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "NZL", "name": "Ben Waine", "position": "Forward", "shirt_number": 11 },
-
-  { "team_code": "ESP", "name": "Lamine Yamal", "position": "Forward", "shirt_number": 19 },
-  { "team_code": "ESP", "name": "Nico Williams", "position": "Forward", "shirt_number": 17 },
-  { "team_code": "ESP", "name": "Álvaro Morata", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "URU", "name": "Darwin Núñez", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "URU", "name": "Federico Valverde", "position": "Midfielder", "shirt_number": 15 },
-  { "team_code": "KSA", "name": "Salem Al-Dawsari", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "KSA", "name": "Firas Al-Buraikan", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "CPV", "name": "Garry Rodrigues", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "CPV", "name": "Ryan Mendes", "position": "Forward", "shirt_number": 10 },
-
-  { "team_code": "FRA", "name": "Kylian Mbappé", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "FRA", "name": "Ousmane Dembélé", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "FRA", "name": "Bradley Barcola", "position": "Forward", "shirt_number": 20 },
-  { "team_code": "SEN", "name": "Sadio Mané", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "SEN", "name": "Nicolas Jackson", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "NOR", "name": "Erling Haaland", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "NOR", "name": "Alexander Sørloth", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "NOR", "name": "Martin Ødegaard", "position": "Midfielder", "shirt_number": 20 },
-  { "team_code": "IRQ", "name": "Aymen Hussein", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "IRQ", "name": "Ali Al-Hamadi", "position": "Forward", "shirt_number": 20 },
-
-  { "team_code": "ARG", "name": "Lionel Messi", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "ARG", "name": "Lautaro Martínez", "position": "Forward", "shirt_number": 22 },
-  { "team_code": "ARG", "name": "Julián Álvarez", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "AUT", "name": "Marcel Sabitzer", "position": "Midfielder", "shirt_number": 9 },
-  { "team_code": "AUT", "name": "Michael Gregoritsch", "position": "Forward", "shirt_number": 19 },
-  { "team_code": "ALG", "name": "Riyad Mahrez", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "ALG", "name": "Mohamed Amoura", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "JOR", "name": "Mousa Al-Taamari", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "JOR", "name": "Yazan Al-Naimat", "position": "Forward", "shirt_number": 9 },
-
-  { "team_code": "POR", "name": "Cristiano Ronaldo", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "POR", "name": "Bruno Fernandes", "position": "Midfielder", "shirt_number": 8 },
-  { "team_code": "POR", "name": "Rafael Leão", "position": "Forward", "shirt_number": 15 },
-  { "team_code": "COL", "name": "Luis Díaz", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "COL", "name": "Jhon Durán", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "UZB", "name": "Eldor Shomurodov", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "UZB", "name": "Abbosbek Fayzullaev", "position": "Midfielder", "shirt_number": 10 },
-  { "team_code": "COD", "name": "Yoane Wissa", "position": "Forward", "shirt_number": 11 },
-  { "team_code": "COD", "name": "Cédric Bakambu", "position": "Forward", "shirt_number": 9 },
-
-  { "team_code": "ENG", "name": "Harry Kane", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "ENG", "name": "Bukayo Saka", "position": "Forward", "shirt_number": 7 },
-  { "team_code": "ENG", "name": "Jude Bellingham", "position": "Midfielder", "shirt_number": 10 },
-  { "team_code": "CRO", "name": "Andrej Kramarić", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "CRO", "name": "Ante Budimir", "position": "Forward", "shirt_number": 17 },
-  { "team_code": "GHA", "name": "Iñaki Williams", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "GHA", "name": "Mohammed Kudus", "position": "Midfielder", "shirt_number": 20 },
-  { "team_code": "GHA", "name": "Jordan Ayew", "position": "Forward", "shirt_number": 10 },
-  { "team_code": "PAN", "name": "Cecilio Waterman", "position": "Forward", "shirt_number": 9 },
-  { "team_code": "PAN", "name": "José Fajardo", "position": "Forward", "shirt_number": 19 }
+    {
+        "team_code": "CZE",
+        "name": "Matěj Kovář",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "CZE",
+        "name": "David Zima",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "CZE",
+        "name": "Tomáš Holeš",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "CZE",
+        "name": "Robin Hranáč",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "CZE",
+        "name": "Vladimír Coufal",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "CZE",
+        "name": "Štěpán Chaloupek",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "CZE",
+        "name": "Ladislav Krejčí",
+        "position": "DF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "CZE",
+        "name": "Vladimír Darida",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "CZE",
+        "name": "Adam Hložek",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "CZE",
+        "name": "Patrik Schick",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "CZE",
+        "name": "Jan Kuchta",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "CZE",
+        "name": "Lukáš Červ",
+        "position": "MF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "CZE",
+        "name": "Mojmír Chytil",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "CZE",
+        "name": "David Jurásek",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "CZE",
+        "name": "Pavel Šulc",
+        "position": "FW",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "CZE",
+        "name": "Jindřich Staněk",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "CZE",
+        "name": "Lukáš Provod",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "CZE",
+        "name": "Michal Sadílek",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "CZE",
+        "name": "Tomáš Chorý",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "CZE",
+        "name": "Jaroslav Zelený",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "CZE",
+        "name": "David Douděra",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "CZE",
+        "name": "Tomáš Souček",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "CZE",
+        "name": "Lukáš Horníček",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "CZE",
+        "name": "Alexandr Sojka",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "CZE",
+        "name": "Hugo Sochůrek",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "CZE",
+        "name": "Denis Višinský",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "MEX",
+        "name": "Raúl Rangel",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "MEX",
+        "name": "Jorge Sánchez",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "MEX",
+        "name": "César Montes",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "MEX",
+        "name": "Edson Álvarez",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "MEX",
+        "name": "Johan Vásquez",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "MEX",
+        "name": "Érik Lira",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "MEX",
+        "name": "Luis Romo",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "MEX",
+        "name": "Álvaro Fidalgo",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "MEX",
+        "name": "Raúl Jiménez",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "MEX",
+        "name": "Alexis Vega",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "MEX",
+        "name": "Santiago Giménez",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "MEX",
+        "name": "Carlos Acevedo",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "MEX",
+        "name": "Guillermo Ochoa",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "MEX",
+        "name": "Armando González",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "MEX",
+        "name": "Israel Reyes",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "MEX",
+        "name": "Julián Quiñones",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "MEX",
+        "name": "Orbelín Pineda",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "MEX",
+        "name": "Obed Vargas",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "MEX",
+        "name": "Gilberto Mora",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "MEX",
+        "name": "Mateo Chávez",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "MEX",
+        "name": "César Huerta",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "MEX",
+        "name": "Guillermo Martínez",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "MEX",
+        "name": "Jesús Gallardo",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "MEX",
+        "name": "Luis Chávez",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "MEX",
+        "name": "Roberto Alvarado",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "MEX",
+        "name": "Brian Gutiérrez",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "RSA",
+        "name": "Ronwen Williams",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "RSA",
+        "name": "Thabang Matuludi",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "RSA",
+        "name": "Khulumani Ndamane",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "RSA",
+        "name": "Teboho Mokoena",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "RSA",
+        "name": "Thalente Mbatha",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "RSA",
+        "name": "Aubrey Modiba",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "RSA",
+        "name": "Oswin Appollis",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "RSA",
+        "name": "Tshepang Moremi",
+        "position": "FW",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "RSA",
+        "name": "Lyle Foster",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "RSA",
+        "name": "Relebohile Mofokeng",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "RSA",
+        "name": "Themba Zwane",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "RSA",
+        "name": "Thapelo Maseko",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "RSA",
+        "name": "Sphephelo Sithole",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "RSA",
+        "name": "Mbekezeli Mbokazi",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "RSA",
+        "name": "Iqraam Rayners",
+        "position": "FW",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "RSA",
+        "name": "Sipho Chaine",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "RSA",
+        "name": "Evidence Makgopa",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "RSA",
+        "name": "Samukele Kabini",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "RSA",
+        "name": "Nkosinathi Sibisi",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "RSA",
+        "name": "Khuliso Mudau",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "RSA",
+        "name": "Ime Okon",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "RSA",
+        "name": "Ricardo Goss",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "RSA",
+        "name": "Jayden Adams",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "RSA",
+        "name": "Olwethu Makhanya",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "RSA",
+        "name": "Kamogelo Sebelebele",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "RSA",
+        "name": "Bradley Cross",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "KOR",
+        "name": "Kim Seung-gyu",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "KOR",
+        "name": "Lee Han-beom",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "KOR",
+        "name": "Lee Gi-hyuk",
+        "position": "MF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "KOR",
+        "name": "Kim Min-jae",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "KOR",
+        "name": "Kim Tae-hyeon",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "KOR",
+        "name": "Hwang In-beom",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "KOR",
+        "name": "Son Heung-min",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "KOR",
+        "name": "Paik Seung-ho",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "KOR",
+        "name": "Cho Gue-sung",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "KOR",
+        "name": "Lee Jae-sung",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "KOR",
+        "name": "Hwang Hee-chan",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "KOR",
+        "name": "Song Bum-keun",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "KOR",
+        "name": "Lee Tae-seok",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "KOR",
+        "name": "Cho Wi-je",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "KOR",
+        "name": "Kim Moon-hwan",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "KOR",
+        "name": "Park Jin-seob",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "KOR",
+        "name": "Bae Jun-ho",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "KOR",
+        "name": "Oh Hyeon-gyu",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "KOR",
+        "name": "Lee Kang-in",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "KOR",
+        "name": "Yang Hyun-jun",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "KOR",
+        "name": "Jo Hyeon-woo",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "KOR",
+        "name": "Seol Young-woo",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "KOR",
+        "name": "Jens Castrop",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "KOR",
+        "name": "Kim Jin-gyu",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "KOR",
+        "name": "Eom Ji-sung",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "KOR",
+        "name": "Lee Dong-gyeong",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "BIH",
+        "name": "Nikola Vasilj",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "BIH",
+        "name": "Nihad Mujakić",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "BIH",
+        "name": "Dennis Hadžikadunić",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "BIH",
+        "name": "Tarik Muharemović",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "BIH",
+        "name": "Sead Kolašinac",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "BIH",
+        "name": "Benjamin Tahirović",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "BIH",
+        "name": "Amar Dedić",
+        "position": "DF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "BIH",
+        "name": "Armin Gigović",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "BIH",
+        "name": "Samed Baždar",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "BIH",
+        "name": "Ermedin Demirović",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "BIH",
+        "name": "Edin Džeko",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "BIH",
+        "name": "Mladen Jurkas",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "BIH",
+        "name": "Ivan Bašić",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "BIH",
+        "name": "Ivan Šunjić",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "BIH",
+        "name": "Amar Memić",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "BIH",
+        "name": "Amir Hadžiahmetović",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "BIH",
+        "name": "Dženis Burnić",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "BIH",
+        "name": "Nikola Katić",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "BIH",
+        "name": "Kerim Alajbegović",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "BIH",
+        "name": "Esmir Bajraktarević",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "BIH",
+        "name": "Stjepan Radeljić",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "BIH",
+        "name": "Martin Zlomislić",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "BIH",
+        "name": "Haris Tabaković",
+        "position": "FW",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "BIH",
+        "name": "Nidal Čelik",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "BIH",
+        "name": "Jovo Lukić",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "BIH",
+        "name": "Ermin Mahmić",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "CAN",
+        "name": "Dayne St. Clair",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "CAN",
+        "name": "Alistair Johnston",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "CAN",
+        "name": "Alfie Jones",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "CAN",
+        "name": "Luc de Fougerolles",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "CAN",
+        "name": "Joel Waterman",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "CAN",
+        "name": "Mathieu Choinière",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "CAN",
+        "name": "Stephen Eustáquio",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "CAN",
+        "name": "Ismaël Koné",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "CAN",
+        "name": "Cyle Larin",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "CAN",
+        "name": "Jonathan David",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "CAN",
+        "name": "Liam Millar",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "CAN",
+        "name": "Tani Oluwaseyi",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "CAN",
+        "name": "Derek Cornelius",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "CAN",
+        "name": "Jacob Shaffelburg",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "CAN",
+        "name": "Moïse Bombito",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "CAN",
+        "name": "Maxime Crépeau",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "CAN",
+        "name": "Tajon Buchanan",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "CAN",
+        "name": "Owen Goodman",
+        "position": "GK",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "CAN",
+        "name": "Alphonso Davies",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "CAN",
+        "name": "Ali Ahmed",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "CAN",
+        "name": "Jonathan Osorio",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "CAN",
+        "name": "Richie Laryea",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "CAN",
+        "name": "Niko Sigur",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "CAN",
+        "name": "Promise David",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "CAN",
+        "name": "Nathan Saliba",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "QAT",
+        "name": "Mahmud Abunada",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "QAT",
+        "name": "Pedro Miguel",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "QAT",
+        "name": "Lucas Mendes",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "QAT",
+        "name": "Issa Laye",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "QAT",
+        "name": "Jassem Gaber",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "QAT",
+        "name": "Abdulaziz Hatem",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "QAT",
+        "name": "Ahmed Alaaeldin",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "QAT",
+        "name": "Edmilson Junior",
+        "position": "FW",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "QAT",
+        "name": "Mohammed Muntari",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "QAT",
+        "name": "Hassan Al-Haydos",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "QAT",
+        "name": "Akram Afif",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "QAT",
+        "name": "Karim Boudiaf",
+        "position": "MF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "QAT",
+        "name": "Ayoub Al-Oui",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "QAT",
+        "name": "Homam Ahmed",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "QAT",
+        "name": "Yusuf Abdurisag",
+        "position": "FW",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "QAT",
+        "name": "Boualem Khoukhi",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "QAT",
+        "name": "Ahmed Al-Ganehi",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "QAT",
+        "name": "Sultan Al-Brake",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "QAT",
+        "name": "Almoez Ali",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "QAT",
+        "name": "Ahmed Fathy",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "QAT",
+        "name": "Salah Zakaria",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "QAT",
+        "name": "Meshaal Barsham",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "QAT",
+        "name": "Assim Madibo",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "QAT",
+        "name": "Tahsin Jamshid",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "QAT",
+        "name": "Al-Hashmi Al-Hussain",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "QAT",
+        "name": "Mohamed Manai",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "SUI",
+        "name": "Gregor Kobel",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "SUI",
+        "name": "Miro Muheim",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "SUI",
+        "name": "Silvan Widmer",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "SUI",
+        "name": "Nico Elvedi",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "SUI",
+        "name": "Manuel Akanji",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "SUI",
+        "name": "Denis Zakaria",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "SUI",
+        "name": "Breel Embolo",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "SUI",
+        "name": "Remo Freuler",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "SUI",
+        "name": "Johan Manzambi",
+        "position": "MF",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "SUI",
+        "name": "Granit Xhaka",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "SUI",
+        "name": "Dan Ndoye",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "SUI",
+        "name": "Yvon Mvogo",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "SUI",
+        "name": "Ricardo Rodriguez",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "SUI",
+        "name": "Ardon Jashari",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "SUI",
+        "name": "Djibril Sow",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "SUI",
+        "name": "Christian Fassnacht",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "SUI",
+        "name": "Rubén Vargas",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "SUI",
+        "name": "Eray Cömert",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "SUI",
+        "name": "Noah Okafor",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "SUI",
+        "name": "Michel Aebischer",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "SUI",
+        "name": "Marvin Keller",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "SUI",
+        "name": "Fabian Rieder",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "SUI",
+        "name": "Zeki Amdouni",
+        "position": "FW",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "SUI",
+        "name": "Aurèle Amenda",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "SUI",
+        "name": "Luca Jaquez",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "SUI",
+        "name": "Cedric Itten",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "BRA",
+        "name": "Alisson",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "BRA",
+        "name": "Éderson Silva",
+        "position": "MF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "BRA",
+        "name": "Gabriel Magalhães",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "BRA",
+        "name": "Marquinhos",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "BRA",
+        "name": "Casemiro",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "BRA",
+        "name": "Alex Sandro",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "BRA",
+        "name": "Vinícius Júnior",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "BRA",
+        "name": "Bruno Guimarães",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "BRA",
+        "name": "Matheus Cunha",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "BRA",
+        "name": "Neymar",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "BRA",
+        "name": "Raphinha",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "BRA",
+        "name": "Weverton",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "BRA",
+        "name": "Danilo Luiz",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "BRA",
+        "name": "Bremer",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "BRA",
+        "name": "Léo Pereira",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "BRA",
+        "name": "Douglas Santos",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "BRA",
+        "name": "Fabinho",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "BRA",
+        "name": "Danilo Santos",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "BRA",
+        "name": "Endrick",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "BRA",
+        "name": "Lucas Paquetá",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "BRA",
+        "name": "Luiz Henrique",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "BRA",
+        "name": "Gabriel Martinelli",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "BRA",
+        "name": "Ederson Moraes",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "BRA",
+        "name": "Roger Ibañez",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "BRA",
+        "name": "Igor Thiago",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "BRA",
+        "name": "Rayan",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "HAI",
+        "name": "Johny Placide",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "HAI",
+        "name": "Carlens Arcus",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "HAI",
+        "name": "Keeto Thermoncy",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "HAI",
+        "name": "Ricardo Adé",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "HAI",
+        "name": "Hannes Delcroix",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "HAI",
+        "name": "Carl Sainté",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "HAI",
+        "name": "Derrick Etienne Jr.",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "HAI",
+        "name": "Martin Expérience",
+        "position": "DF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "HAI",
+        "name": "Duckens Nazon",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "HAI",
+        "name": "Jean-Ricner Bellegarde",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "HAI",
+        "name": "Louicius Deedson",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "HAI",
+        "name": "Alexandre Pierre",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "HAI",
+        "name": "Duke Lacroix",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "HAI",
+        "name": "Leverton Pierre",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "HAI",
+        "name": "Ruben Providence",
+        "position": "FW",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "HAI",
+        "name": "Lenny Joseph",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "HAI",
+        "name": "Danley Jean Jacques",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "HAI",
+        "name": "Wilson Isidor",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "HAI",
+        "name": "Yassin Fortuné",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "HAI",
+        "name": "Frantzdy Pierrot",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "HAI",
+        "name": "Josué Casimir",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "HAI",
+        "name": "Jean-Kévin Duverne",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "HAI",
+        "name": "Josué Duverger",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "HAI",
+        "name": "Wilguens Paugain",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "HAI",
+        "name": "Dominique Simon",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "HAI",
+        "name": "Woodensky Pierre",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "MAR",
+        "name": "Yassine Bounou",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "MAR",
+        "name": "Achraf Hakimi",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "MAR",
+        "name": "Noussair Mazraoui",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "MAR",
+        "name": "Sofyan Amrabat",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "MAR",
+        "name": "Nayef Aguerd",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "MAR",
+        "name": "Ayyoub Bouaddi",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "MAR",
+        "name": "Chemsdine Talbi",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "MAR",
+        "name": "Azzedine Ounahi",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "MAR",
+        "name": "Soufiane Rahimi",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "MAR",
+        "name": "Brahim Díaz",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "MAR",
+        "name": "Ismael Saibari",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "MAR",
+        "name": "Munir Mohamedi",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "MAR",
+        "name": "Zakaria El Ouahdi",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "MAR",
+        "name": "Issa Diop",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "MAR",
+        "name": "Samir El Mourabet",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "MAR",
+        "name": "Gessime Yassine",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "MAR",
+        "name": "Abde Ezzalzouli",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "MAR",
+        "name": "Chadi Riad",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "MAR",
+        "name": "Youssef Belammari",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "MAR",
+        "name": "Ayoub El Kaabi",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "MAR",
+        "name": "Ayoube Amaimouni",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "MAR",
+        "name": "Ahmed Reda Tagnaouti",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "MAR",
+        "name": "Bilal El Khannouss",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "MAR",
+        "name": "Neil El Aynaoui",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "MAR",
+        "name": "Redouane Halhal",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "MAR",
+        "name": "Anass Salah-Eddine",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "SCO",
+        "name": "Angus Gunn",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "SCO",
+        "name": "Aaron Hickey",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "SCO",
+        "name": "Andy Robertson",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "SCO",
+        "name": "Scott McTominay",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "SCO",
+        "name": "Grant Hanley",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "SCO",
+        "name": "Kieran Tierney",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "SCO",
+        "name": "John McGinn",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "SCO",
+        "name": "Tyler Fletcher",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "SCO",
+        "name": "Lyndon Dykes",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "SCO",
+        "name": "Ché Adams",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "SCO",
+        "name": "Ryan Christie",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "SCO",
+        "name": "Liam Kelly",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "SCO",
+        "name": "Jack Hendry",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "SCO",
+        "name": "Ross Stewart",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "SCO",
+        "name": "John Souttar",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "SCO",
+        "name": "Dominic Hyam",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "SCO",
+        "name": "Ben Gannon-Doak",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "SCO",
+        "name": "George Hirst",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "SCO",
+        "name": "Lewis Ferguson",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "SCO",
+        "name": "Lawrence Shankland",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "SCO",
+        "name": "Craig Gordon",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "SCO",
+        "name": "Nathan Patterson",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "SCO",
+        "name": "Kenny McLean",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "SCO",
+        "name": "Anthony Ralston",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "SCO",
+        "name": "Findlay Curtis",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "SCO",
+        "name": "Scott McKenna",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "AUS",
+        "name": "Mathew Ryan",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "AUS",
+        "name": "Miloš Degenek",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "AUS",
+        "name": "Alessandro Circati",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "AUS",
+        "name": "Jacob Italiano",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "AUS",
+        "name": "Jordan Bos",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "AUS",
+        "name": "Jason Geria",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "AUS",
+        "name": "Mathew Leckie",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "AUS",
+        "name": "Connor Metcalfe",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "AUS",
+        "name": "Mohamed Touré",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "AUS",
+        "name": "Ajdin Hrustic",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "AUS",
+        "name": "Awer Mabil",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "AUS",
+        "name": "Paul Izzo",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "AUS",
+        "name": "Aiden O'Neill",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "AUS",
+        "name": "Cammy Devlin",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "AUS",
+        "name": "Kai Trewin",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "AUS",
+        "name": "Aziz Behich",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "AUS",
+        "name": "Nestory Irankunda",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "AUS",
+        "name": "Patrick Beach",
+        "position": "GK",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "AUS",
+        "name": "Harry Souttar",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "AUS",
+        "name": "Cristian Volpato",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "AUS",
+        "name": "Cameron Burgess",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "AUS",
+        "name": "Jackson Irvine",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "AUS",
+        "name": "Nishan Velupillay",
+        "position": "FW",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "AUS",
+        "name": "Paul Okon-Engstler",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "AUS",
+        "name": "Lucas Herrington",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "AUS",
+        "name": "Tete Yengi",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "PAR",
+        "name": "Gatito Fernández",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "PAR",
+        "name": "Gustavo Velázquez",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "PAR",
+        "name": "Omar Alderete",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "PAR",
+        "name": "Juan José Cáceres",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "PAR",
+        "name": "Fabián Balbuena",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "PAR",
+        "name": "Júnior Alonso",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "PAR",
+        "name": "Ramón Sosa",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "PAR",
+        "name": "Diego Gómez",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "PAR",
+        "name": "Antonio Sanabria",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "PAR",
+        "name": "Miguel Almirón",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "PAR",
+        "name": "Maurício",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "PAR",
+        "name": "Orlando Gill",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "PAR",
+        "name": "José Canale",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "PAR",
+        "name": "Andrés Cubas",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "PAR",
+        "name": "Gustavo Gómez",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "PAR",
+        "name": "Damián Bobadilla",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "PAR",
+        "name": "Kaku",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "PAR",
+        "name": "Álex Arce",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "PAR",
+        "name": "Julio Enciso",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "PAR",
+        "name": "Braian Ojeda",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "PAR",
+        "name": "Gabriel Ávalos",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "PAR",
+        "name": "Gastón Olveira",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "PAR",
+        "name": "Matías Galarza",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "PAR",
+        "name": "Gustavo Caballero",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "PAR",
+        "name": "Isidro Pitta",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "PAR",
+        "name": "Alexandro Maidana",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "TUR",
+        "name": "Mert Günok",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "TUR",
+        "name": "Zeki Çelik",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "TUR",
+        "name": "Merih Demiral",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "TUR",
+        "name": "Çağlar Söyüncü",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "TUR",
+        "name": "Salih Özcan",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "TUR",
+        "name": "Orkun Kökçü",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "TUR",
+        "name": "Kerem Aktürkoğlu",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "TUR",
+        "name": "Arda Güler",
+        "position": "FW",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "TUR",
+        "name": "Deniz Gül",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "TUR",
+        "name": "Hakan Çalhanoğlu",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "TUR",
+        "name": "Kenan Yıldız",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "TUR",
+        "name": "Altay Bayındır",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "TUR",
+        "name": "Eren Elmalı",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "TUR",
+        "name": "Abdülkerim Bardakcı",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "TUR",
+        "name": "Ozan Kabak",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "TUR",
+        "name": "İsmail Yüksek",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "TUR",
+        "name": "İrfan Can Kahveci",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "TUR",
+        "name": "Mert Müldür",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "TUR",
+        "name": "Yunus Akgün",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "TUR",
+        "name": "Ferdi Kadıoğlu",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "TUR",
+        "name": "Barış Alper Yılmaz",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "TUR",
+        "name": "Kaan Ayhan",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "TUR",
+        "name": "Uğurcan Çakır",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "TUR",
+        "name": "Oğuz Aydın",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "TUR",
+        "name": "Samet Akaydin",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "TUR",
+        "name": "Can Uzun",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "USA",
+        "name": "Matt Turner",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "USA",
+        "name": "Sergiño Dest",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "USA",
+        "name": "Chris Richards",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "USA",
+        "name": "Tyler Adams",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "USA",
+        "name": "Antonee Robinson",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "USA",
+        "name": "Auston Trusty",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "USA",
+        "name": "Giovanni Reyna",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "USA",
+        "name": "Weston McKennie",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "USA",
+        "name": "Ricardo Pepi",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "USA",
+        "name": "Christian Pulisic",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "USA",
+        "name": "Brenden Aaronson",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "USA",
+        "name": "Miles Robinson",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "USA",
+        "name": "Tim Ream",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "USA",
+        "name": "Sebastian Berhalter",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "USA",
+        "name": "Cristian Roldan",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "USA",
+        "name": "Alex Freeman",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "USA",
+        "name": "Malik Tillman",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "USA",
+        "name": "Max Arfsten",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "USA",
+        "name": "Haji Wright",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "USA",
+        "name": "Folarin Balogun",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "USA",
+        "name": "Timothy Weah",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "USA",
+        "name": "Mark McKenzie",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "USA",
+        "name": "Joe Scally",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "USA",
+        "name": "Matt Freese",
+        "position": "GK",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "USA",
+        "name": "Chris Brady",
+        "position": "GK",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "USA",
+        "name": "Alejandro Zendejas",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "CUW",
+        "name": "Eloy Room",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "CUW",
+        "name": "Shurandy Sambo",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "CUW",
+        "name": "Juriën Gaari",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "CUW",
+        "name": "Roshon van Eijma",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "CUW",
+        "name": "Sherel Floranus",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "CUW",
+        "name": "Godfried Roemeratoe",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "CUW",
+        "name": "Juninho Bacuna",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "CUW",
+        "name": "Livano Comenencia",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "CUW",
+        "name": "Jürgen Locadia",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "CUW",
+        "name": "Leandro Bacuna",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "CUW",
+        "name": "Jeremy Antonisse",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "CUW",
+        "name": "Sontje Hansen",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "CUW",
+        "name": "Tyrese Noslin",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "CUW",
+        "name": "Kenji Gorré",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "CUW",
+        "name": "Ar'jany Martha",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "CUW",
+        "name": "Jearl Margaritha",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "CUW",
+        "name": "Brandley Kuwas",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "CUW",
+        "name": "Armando Obispo",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "CUW",
+        "name": "Gervane Kastaneer",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "CUW",
+        "name": "Joshua Brenet",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "CUW",
+        "name": "Tahith Chong",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "CUW",
+        "name": "Kevin Felida",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "CUW",
+        "name": "Riechedly Bazoer",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "CUW",
+        "name": "Deveron Fonville",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "CUW",
+        "name": "Tyrick Bodak",
+        "position": "GK",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "CUW",
+        "name": "Trevor Doornbusch",
+        "position": "GK",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "ECU",
+        "name": "Hernán Galíndez",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "ECU",
+        "name": "Félix Torres",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "ECU",
+        "name": "Piero Hincapié",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "ECU",
+        "name": "Joel Ordóñez",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "ECU",
+        "name": "Jordy Alcívar",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "ECU",
+        "name": "Willian Pacho",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "ECU",
+        "name": "Pervis Estupiñán",
+        "position": "DF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "ECU",
+        "name": "Anthony Valencia",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "ECU",
+        "name": "John Yeboah",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "ECU",
+        "name": "Kendry Páez",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "ECU",
+        "name": "Kevin Rodríguez",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "ECU",
+        "name": "Moisés Ramírez",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "ECU",
+        "name": "Enner Valencia",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "ECU",
+        "name": "Alan Minda",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "ECU",
+        "name": "Pedro Vite",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "ECU",
+        "name": "Jordy Caicedo",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "ECU",
+        "name": "Ángelo Preciado",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "ECU",
+        "name": "Denil Castillo",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "ECU",
+        "name": "Gonzalo Plata",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "ECU",
+        "name": "Nilson Angulo",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "ECU",
+        "name": "Alan Franco",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "ECU",
+        "name": "Gonzalo Valle",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "ECU",
+        "name": "Moisés Caicedo",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "ECU",
+        "name": "Jeremy Arévalo",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "ECU",
+        "name": "Jackson Porozo",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "ECU",
+        "name": "Yaimar Medina",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "GER",
+        "name": "Manuel Neuer",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "GER",
+        "name": "Antonio Rüdiger",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "GER",
+        "name": "Waldemar Anton",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "GER",
+        "name": "Jonathan Tah",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "GER",
+        "name": "Aleksandar Pavlović",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "GER",
+        "name": "Joshua Kimmich",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "GER",
+        "name": "Kai Havertz",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "GER",
+        "name": "Leon Goretzka",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "GER",
+        "name": "Jamie Leweling",
+        "position": "MF",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "GER",
+        "name": "Jamal Musiala",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "GER",
+        "name": "Nick Woltemade",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "GER",
+        "name": "Oliver Baumann",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "GER",
+        "name": "Pascal Groß",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "GER",
+        "name": "Maximilian Beier",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "GER",
+        "name": "Nico Schlotterbeck",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "GER",
+        "name": "Angelo Stiller",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "GER",
+        "name": "Florian Wirtz",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "GER",
+        "name": "Nathaniel Brown",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "GER",
+        "name": "Leroy Sané",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "GER",
+        "name": "Nadiem Amiri",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "GER",
+        "name": "Alexander Nübel",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "GER",
+        "name": "David Raum",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "GER",
+        "name": "Felix Nmecha",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "GER",
+        "name": "Malick Thiaw",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "GER",
+        "name": "Assan Ouédraogo",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "GER",
+        "name": "Deniz Undav",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "CIV",
+        "name": "Yahia Fofana",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "CIV",
+        "name": "Ousmane Diomande",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "CIV",
+        "name": "Ghislain Konan",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "CIV",
+        "name": "Jean Michaël Seri",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "CIV",
+        "name": "Wilfried Singo",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "CIV",
+        "name": "Seko Fofana",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "CIV",
+        "name": "Odilon Kossounou",
+        "position": "DF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "CIV",
+        "name": "Franck Kessié",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "CIV",
+        "name": "Ange-Yoan Bonny",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "CIV",
+        "name": "Simon Adingra",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "CIV",
+        "name": "Yan Diomande",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "CIV",
+        "name": "Elye Wahi",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "CIV",
+        "name": "Christopher Opéri",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "CIV",
+        "name": "Oumar Diakité",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "CIV",
+        "name": "Amad Diallo",
+        "position": "FW",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "CIV",
+        "name": "Mohamed Koné",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "CIV",
+        "name": "Guéla Doué",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "CIV",
+        "name": "Ibrahim Sangaré",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "CIV",
+        "name": "Nicolas Pépé",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "CIV",
+        "name": "Emmanuel Agbadou",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "CIV",
+        "name": "Evan Ndicka",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "CIV",
+        "name": "Evann Guessand",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "CIV",
+        "name": "Alban Lafont",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "CIV",
+        "name": "Bazoumana Touré",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "CIV",
+        "name": "Parfait Guiagon",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "CIV",
+        "name": "Christ Inao Oulaï",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "JPN",
+        "name": "Zion Suzuki",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "JPN",
+        "name": "Yukinari Sugawara",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "JPN",
+        "name": "Shōgo Taniguchi",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "JPN",
+        "name": "Kō Itakura",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "JPN",
+        "name": "Yūto Nagatomo",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "JPN",
+        "name": "Wataru Endo",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "JPN",
+        "name": "Ao Tanaka",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "JPN",
+        "name": "Takefusa Kubo",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "JPN",
+        "name": "Keisuke Gotō",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "JPN",
+        "name": "Ritsu Dōan",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "JPN",
+        "name": "Daizen Maeda",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "JPN",
+        "name": "Keisuke Ōsako",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "JPN",
+        "name": "Keito Nakamura",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "JPN",
+        "name": "Junya Itō",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "JPN",
+        "name": "Daichi Kamada",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "JPN",
+        "name": "Tsuyoshi Watanabe",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "JPN",
+        "name": "Yuito Suzuki",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "JPN",
+        "name": "Ayase Ueda",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "JPN",
+        "name": "Kōki Ogawa",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "JPN",
+        "name": "Ayumu Seko",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "JPN",
+        "name": "Hiroki Itō",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "JPN",
+        "name": "Takehiro Tomiyasu",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "JPN",
+        "name": "Tomoki Hayakawa",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "JPN",
+        "name": "Kaishū Sano",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "JPN",
+        "name": "Junnosuke Suzuki",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "JPN",
+        "name": "Kento Shiogai",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "NED",
+        "name": "Bart Verbruggen",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "NED",
+        "name": "Lutsharel Geertruida",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "NED",
+        "name": "Marten de Roon",
+        "position": "MF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "NED",
+        "name": "Virgil van Dijk",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "NED",
+        "name": "Nathan Aké",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "NED",
+        "name": "Jan Paul van Hecke",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "NED",
+        "name": "Justin Kluivert",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "NED",
+        "name": "Ryan Gravenberch",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "NED",
+        "name": "Wout Weghorst",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "NED",
+        "name": "Memphis Depay",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "NED",
+        "name": "Cody Gakpo",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "NED",
+        "name": "Mats Wieffer",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "NED",
+        "name": "Robin Roefs",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "NED",
+        "name": "Tijjani Reijnders",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "NED",
+        "name": "Micky van de Ven",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "NED",
+        "name": "Guus Til",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "NED",
+        "name": "Noa Lang",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "NED",
+        "name": "Donyell Malen",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "NED",
+        "name": "Brian Brobbey",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "NED",
+        "name": "Teun Koopmeiners",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "NED",
+        "name": "Frenkie de Jong",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "NED",
+        "name": "Denzel Dumfries",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "NED",
+        "name": "Mark Flekken",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "NED",
+        "name": "Crysencio Summerville",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "NED",
+        "name": "Jorrel Hato",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "NED",
+        "name": "Quinten Timber",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "SWE",
+        "name": "Jacob Widell Zetterström",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "SWE",
+        "name": "Gustaf Lagerbielke",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "SWE",
+        "name": "Victor Lindelöf",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "SWE",
+        "name": "Isak Hien",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "SWE",
+        "name": "Gabriel Gudmundsson",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "SWE",
+        "name": "Herman Johansson",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "SWE",
+        "name": "Lucas Bergvall",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "SWE",
+        "name": "Daniel Svensson",
+        "position": "DF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "SWE",
+        "name": "Alexander Isak",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "SWE",
+        "name": "Benjamin Nygren",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "SWE",
+        "name": "Anthony Elanga",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "SWE",
+        "name": "Viktor Johansson",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "SWE",
+        "name": "Ken Sema",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "SWE",
+        "name": "Hjalmar Ekdal",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "SWE",
+        "name": "Carl Starfelt",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "SWE",
+        "name": "Jesper Karlström",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "SWE",
+        "name": "Viktor Gyökeres",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "SWE",
+        "name": "Yasin Ayari",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "SWE",
+        "name": "Mattias Svanberg",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "SWE",
+        "name": "Eric Smith",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "SWE",
+        "name": "Alexander Bernhardsson",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "SWE",
+        "name": "Besfort Zeneli",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "SWE",
+        "name": "Kristoffer Nordfeldt",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "SWE",
+        "name": "Elliot Stroud",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "SWE",
+        "name": "Gustaf Nilsson",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "SWE",
+        "name": "Taha Ali",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "TUN",
+        "name": "Mouhib Chamakh",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "TUN",
+        "name": "Ali Abdi",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "TUN",
+        "name": "Montassar Talbi",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "TUN",
+        "name": "Omar Rekik",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "TUN",
+        "name": "Adem Arous",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "TUN",
+        "name": "Dylan Bronn",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "TUN",
+        "name": "Elias Achouri",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "TUN",
+        "name": "Elias Saad",
+        "position": "FW",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "TUN",
+        "name": "Hazem Mastouri",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "TUN",
+        "name": "Hannibal Mejbri",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "TUN",
+        "name": "Ismaël Gharbi",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "TUN",
+        "name": "Mortadha Ben Ouanes",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "TUN",
+        "name": "Rani Khedira",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "TUN",
+        "name": "Khalil Ayari",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "TUN",
+        "name": "Hadj Mahmoud",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "TUN",
+        "name": "Aymen Dahmen",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "TUN",
+        "name": "Ellyes Skhiri",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "TUN",
+        "name": "Rayan Elloumi",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "TUN",
+        "name": "Firas Chaouat",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "TUN",
+        "name": "Yan Valery",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "TUN",
+        "name": "Mohamed Amine Ben Hamida",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "TUN",
+        "name": "Sabri Ben Hessen",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "TUN",
+        "name": "Moutaz Neffati",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "TUN",
+        "name": "Raed Chikhaoui",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "TUN",
+        "name": "Anis Ben Slimane",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "TUN",
+        "name": "Sebastian Tounekti",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "BEL",
+        "name": "Thibaut Courtois",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "BEL",
+        "name": "Zeno Debast",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "BEL",
+        "name": "Arthur Theate",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "BEL",
+        "name": "Brandon Mechele",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "BEL",
+        "name": "Maxim De Cuyper",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "BEL",
+        "name": "Axel Witsel",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "BEL",
+        "name": "Kevin De Bruyne",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "BEL",
+        "name": "Youri Tielemans",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "BEL",
+        "name": "Romelu Lukaku",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "BEL",
+        "name": "Leandro Trossard",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "BEL",
+        "name": "Jérémy Doku",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "BEL",
+        "name": "Senne Lammens",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "BEL",
+        "name": "Mike Penders",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "BEL",
+        "name": "Dodi Lukébakio",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "BEL",
+        "name": "Thomas Meunier",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "BEL",
+        "name": "Koni De Winter",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "BEL",
+        "name": "Charles De Ketelaere",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "BEL",
+        "name": "Joaquin Seys",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "BEL",
+        "name": "Diego Moreira",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "BEL",
+        "name": "Hans Vanaken",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "BEL",
+        "name": "Timothy Castagne",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "BEL",
+        "name": "Alexis Saelemaekers",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "BEL",
+        "name": "Nicolas Raskin",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "BEL",
+        "name": "Amadou Onana",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "BEL",
+        "name": "Nathan Ngoy",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "BEL",
+        "name": "Matias Fernandez-Pardo",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mohamed El Shenawy",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "EGY",
+        "name": "Yasser Ibrahim",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mohamed Hany",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "EGY",
+        "name": "Hossam Abdelmaguid",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "EGY",
+        "name": "Ramy Rabia",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mohamed Abdelmonem",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "EGY",
+        "name": "Trézéguet",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "EGY",
+        "name": "Emam Ashour",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "EGY",
+        "name": "Hamza Abdelkarim",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mohamed Salah",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mostafa Ziko",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "EGY",
+        "name": "Haissem Hassan",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "EGY",
+        "name": "Ahmed Fatouh",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "EGY",
+        "name": "Hamdy Fathy",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "EGY",
+        "name": "Karim Hafez",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "EGY",
+        "name": "El Mahdy Soliman",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mohanad Lasheen",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "EGY",
+        "name": "Nabil Emad",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "EGY",
+        "name": "Marwan Attia",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "EGY",
+        "name": "Ibrahim Adel",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mahmoud Saber",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "EGY",
+        "name": "Omar Marmoush",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mostafa Shobeir",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "EGY",
+        "name": "Tarek Alaa",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "EGY",
+        "name": "Zizo",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "EGY",
+        "name": "Mohamed Alaa",
+        "position": "GK",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "IRN",
+        "name": "Alireza Beiranvand",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "IRN",
+        "name": "Saleh Hardani",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "IRN",
+        "name": "Ehsan Hajsafi",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "IRN",
+        "name": "Shojae Khalilzadeh",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "IRN",
+        "name": "Milad Mohammadi",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "IRN",
+        "name": "Saeid Ezatolahi",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "IRN",
+        "name": "Alireza Jahanbakhsh",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "IRN",
+        "name": "Mohammad Mohebi",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "IRN",
+        "name": "Mehdi Taremi",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "IRN",
+        "name": "Mehdi Ghayedi",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "IRN",
+        "name": "Ali Alipour",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "IRN",
+        "name": "Payam Niazmand",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "IRN",
+        "name": "Hossein Kanaanizadegan",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "IRN",
+        "name": "Saman Ghoddos",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "IRN",
+        "name": "Rouzbeh Cheshmi",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "IRN",
+        "name": "Mehdi Torabi",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "IRN",
+        "name": "Aria Yousefi",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "IRN",
+        "name": "Amirhossein Hosseinzadeh",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "IRN",
+        "name": "Ali Nemati",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "IRN",
+        "name": "Shahriyar Moghanlou",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "IRN",
+        "name": "Mohammad Ghorbani",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "IRN",
+        "name": "Hossein Hosseini",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "IRN",
+        "name": "Ramin Rezaeian",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "IRN",
+        "name": "Dennis Eckert",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "IRN",
+        "name": "Danial Eiri",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "IRN",
+        "name": "Amirmohammad Razzaghinia",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "NZL",
+        "name": "Max Crocombe",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "NZL",
+        "name": "Tim Payne",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "NZL",
+        "name": "Francis de Vries",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "NZL",
+        "name": "Tyler Bindon",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "NZL",
+        "name": "Michael Boxall",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "NZL",
+        "name": "Joe Bell",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "NZL",
+        "name": "Matthew Garbett",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "NZL",
+        "name": "Marko Stamenić",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "NZL",
+        "name": "Chris Wood",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "NZL",
+        "name": "Sarpreet Singh",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "NZL",
+        "name": "Elijah Just",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "NZL",
+        "name": "Alex Paulsen",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "NZL",
+        "name": "Liberato Cacace",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "NZL",
+        "name": "Alex Rufer",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "NZL",
+        "name": "Nando Pijnaker",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "NZL",
+        "name": "Finn Surman",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "NZL",
+        "name": "Kosta Barbarouses",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "NZL",
+        "name": "Ben Waine",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "NZL",
+        "name": "Ben Old",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "NZL",
+        "name": "Callum McCowatt",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "NZL",
+        "name": "Jesse Randall",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "NZL",
+        "name": "Michael Woud",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "NZL",
+        "name": "Ryan Thomas",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "NZL",
+        "name": "Callan Elliot",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "NZL",
+        "name": "Lachlan Bayliss",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "NZL",
+        "name": "Tommy Smith",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "CPV",
+        "name": "Vozinha",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "CPV",
+        "name": "Stopira",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "CPV",
+        "name": "Diney",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "CPV",
+        "name": "Roberto Lopes",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "CPV",
+        "name": "Logan Costa",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "CPV",
+        "name": "Kevin Pina",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "CPV",
+        "name": "Jovane Cabral",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "CPV",
+        "name": "João Paulo",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "CPV",
+        "name": "Gilson Benchimol",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "CPV",
+        "name": "Jamiro Monteiro",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "CPV",
+        "name": "Garry Rodrigues",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "CPV",
+        "name": "Márcio Rosa",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "CPV",
+        "name": "Sidny Lopes Cabral",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "CPV",
+        "name": "Deroy Duarte",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "CPV",
+        "name": "Laros Duarte",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "CPV",
+        "name": "Yannick Semedo",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "CPV",
+        "name": "Willy Semedo",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "CPV",
+        "name": "Telmo Arcanjo",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "CPV",
+        "name": "Dailon Livramento",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "CPV",
+        "name": "Ryan Mendes",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "CPV",
+        "name": "Nuno da Costa",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "CPV",
+        "name": "Steven Moreira",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "CPV",
+        "name": "CJ dos Santos",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "CPV",
+        "name": "Wagner Pina",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "CPV",
+        "name": "Kelvin Pires",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "CPV",
+        "name": "Hélio Varela",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "KSA",
+        "name": "Nawaf Al-Aqidi",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "KSA",
+        "name": "Ali Majrashi",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "KSA",
+        "name": "Ali Lajami",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "KSA",
+        "name": "Abdulelah Al-Amri",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "KSA",
+        "name": "Hassan Al-Tambakti",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "KSA",
+        "name": "Nasser Al-Dawsari",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "KSA",
+        "name": "Musab Al-Juwayr",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "KSA",
+        "name": "Ayman Yahya",
+        "position": "FW",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "KSA",
+        "name": "Firas Al-Buraikan",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "KSA",
+        "name": "Salem Al-Dawsari",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "KSA",
+        "name": "Saleh Al-Shehri",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "KSA",
+        "name": "Saud Abdulhamid",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "KSA",
+        "name": "Nawaf Boushal",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "KSA",
+        "name": "Hassan Kadesh",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "KSA",
+        "name": "Abdullah Al-Khaibari",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "KSA",
+        "name": "Ziyad Al-Johani",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "KSA",
+        "name": "Khalid Al-Ghannam",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "KSA",
+        "name": "Alaa Al-Hejji",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "KSA",
+        "name": "Abdullah Al-Hamdan",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "KSA",
+        "name": "Sultan Mandash",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "KSA",
+        "name": "Mohammed Al-Owais",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "KSA",
+        "name": "Ahmed Al-Kassar",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "KSA",
+        "name": "Mohamed Kanno",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "KSA",
+        "name": "Moteb Al-Harbi",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "KSA",
+        "name": "Jehad Thakri",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "KSA",
+        "name": "Mohammed Abu Al-Shamat",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "ESP",
+        "name": "David Raya",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "ESP",
+        "name": "Marc Pubill",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "ESP",
+        "name": "Álex Grimaldo",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "ESP",
+        "name": "Eric García",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "ESP",
+        "name": "Marcos Llorente",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "ESP",
+        "name": "Mikel Merino",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "ESP",
+        "name": "Ferran Torres",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "ESP",
+        "name": "Fabián Ruiz",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "ESP",
+        "name": "Gavi",
+        "position": "MF",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "ESP",
+        "name": "Dani Olmo",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "ESP",
+        "name": "Yéremy Pino",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "ESP",
+        "name": "Pedro Porro",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "ESP",
+        "name": "Joan Garcia",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "ESP",
+        "name": "Aymeric Laporte",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "ESP",
+        "name": "Álex Baena",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "ESP",
+        "name": "Rodri",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "ESP",
+        "name": "Nico Williams",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "ESP",
+        "name": "Martín Zubimendi",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "ESP",
+        "name": "Lamine Yamal",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "ESP",
+        "name": "Pedri",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "ESP",
+        "name": "Mikel Oyarzabal",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "ESP",
+        "name": "Pau Cubarsí",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "ESP",
+        "name": "Unai Simón",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "ESP",
+        "name": "Marc Cucurella",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "ESP",
+        "name": "Víctor Muñoz",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "ESP",
+        "name": "Borja Iglesias",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "URU",
+        "name": "Sergio Rochet",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "URU",
+        "name": "José Giménez",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "URU",
+        "name": "Sebastián Cáceres",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "URU",
+        "name": "Ronald Araújo",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "URU",
+        "name": "Manuel Ugarte",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "URU",
+        "name": "Rodrigo Bentancur",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "URU",
+        "name": "Nicolás de la Cruz",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "URU",
+        "name": "Federico Valverde",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "URU",
+        "name": "Darwin Núñez",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "URU",
+        "name": "Giorgian de Arrascaeta",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "URU",
+        "name": "Facundo Pellistri",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "URU",
+        "name": "Santiago Mele",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "URU",
+        "name": "Guillermo Varela",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "URU",
+        "name": "Agustín Canobbio",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "URU",
+        "name": "Emiliano Martínez",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "URU",
+        "name": "Mathías Olivera",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "URU",
+        "name": "Matías Viña",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "URU",
+        "name": "Brian Rodríguez",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "URU",
+        "name": "Rodrigo Aguirre",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "URU",
+        "name": "Maximiliano Araújo",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "URU",
+        "name": "Federico Viñas",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "URU",
+        "name": "Joaquín Piquerez",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "URU",
+        "name": "Fernando Muslera",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "URU",
+        "name": "Santiago Bueno",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "URU",
+        "name": "Juan Manuel Sanabria",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "URU",
+        "name": "Rodrigo Zalazar",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "FRA",
+        "name": "Brice Samba",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "FRA",
+        "name": "Malo Gusto",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "FRA",
+        "name": "Lucas Digne",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "FRA",
+        "name": "Dayot Upamecano",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "FRA",
+        "name": "Jules Koundé",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "FRA",
+        "name": "Manu Koné",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "FRA",
+        "name": "Ousmane Dembélé",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "FRA",
+        "name": "Aurélien Tchouaméni",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "FRA",
+        "name": "Marcus Thuram",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "FRA",
+        "name": "Kylian Mbappé",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "FRA",
+        "name": "Michael Olise",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "FRA",
+        "name": "Bradley Barcola",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "FRA",
+        "name": "N'Golo Kanté",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "FRA",
+        "name": "Adrien Rabiot",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "FRA",
+        "name": "Ibrahima Konaté",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "FRA",
+        "name": "Mike Maignan",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "FRA",
+        "name": "William Saliba",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "FRA",
+        "name": "Warren Zaïre-Emery",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "FRA",
+        "name": "Théo Hernandez",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "FRA",
+        "name": "Désiré Doué",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "FRA",
+        "name": "Lucas Hernandez",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "FRA",
+        "name": "Jean-Philippe Mateta",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "FRA",
+        "name": "Robin Risser",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "FRA",
+        "name": "Rayan Cherki",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "FRA",
+        "name": "Maghnes Akliouche",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "FRA",
+        "name": "Maxence Lacroix",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Fahad Talib",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Rebin Sulaka",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Hussein Ali",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Zaid Tahseen",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Akam Hashim",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Manaf Younis",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Youssef Amyn",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ibrahim Bayesh",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ali Al-Hamadi",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Mohanad Ali",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ahmed Qasem",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Jalal Hassan",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ali Yousif",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Zidane Iqbal",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ahmed Maknzi",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Amir Al-Ammari",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ali Jasim",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Aymen Hussein",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Kevin Yakob",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Aimar Sher",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Marko Farji",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Ahmed Basil",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Merchas Doski",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Zaid Ismail",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Mustafa Saadoon",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "IRQ",
+        "name": "Frans Putros",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "NOR",
+        "name": "Ørjan Nyland",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "NOR",
+        "name": "Morten Thorsby",
+        "position": "MF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "NOR",
+        "name": "Kristoffer Ajer",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "NOR",
+        "name": "Leo Østigård",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "NOR",
+        "name": "David Møller Wolfe",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "NOR",
+        "name": "Patrick Berg",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "NOR",
+        "name": "Alexander Sørloth",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "NOR",
+        "name": "Sander Berge",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "NOR",
+        "name": "Erling Haaland",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "NOR",
+        "name": "Martin Ødegaard",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "NOR",
+        "name": "Jørgen Strand Larsen",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "NOR",
+        "name": "Sander Tangvik",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "NOR",
+        "name": "Egil Selvik",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "NOR",
+        "name": "Fredrik Aursnes",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "NOR",
+        "name": "Fredrik André Bjørkan",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "NOR",
+        "name": "Marcus Holmgren Pedersen",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "NOR",
+        "name": "Torbjørn Heggem",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "NOR",
+        "name": "Kristian Thorstvedt",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "NOR",
+        "name": "Thelo Aasgaard",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "NOR",
+        "name": "Antonio Nusa",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "NOR",
+        "name": "Andreas Schjelderup",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "NOR",
+        "name": "Oscar Bobb",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "NOR",
+        "name": "Jens Petter Hauge",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "NOR",
+        "name": "Sondre Langås",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "NOR",
+        "name": "Henrik Falchener",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "NOR",
+        "name": "Julian Ryerson",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "SEN",
+        "name": "Yehvann Diouf",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "SEN",
+        "name": "Mamadou Sarr",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "SEN",
+        "name": "Kalidou Koulibaly",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "SEN",
+        "name": "Abdoulaye Seck",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "SEN",
+        "name": "Idrissa Gueye",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "SEN",
+        "name": "Pathé Ciss",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "SEN",
+        "name": "Assane Diao",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "SEN",
+        "name": "Lamine Camara",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "SEN",
+        "name": "Bamba Dieng",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "SEN",
+        "name": "Sadio Mané",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "SEN",
+        "name": "Nicolas Jackson",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "SEN",
+        "name": "Cherif Ndiaye",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "SEN",
+        "name": "Iliman Ndiaye",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "SEN",
+        "name": "Ismail Jakobs",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "SEN",
+        "name": "Krépin Diatta",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "SEN",
+        "name": "Édouard Mendy",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "SEN",
+        "name": "Pape Matar Sarr",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "SEN",
+        "name": "Ismaïla Sarr",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "SEN",
+        "name": "Moussa Niakhaté",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "SEN",
+        "name": "Ibrahim Mbaye",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "SEN",
+        "name": "Habib Diarra",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "SEN",
+        "name": "Bara Sapoko Ndiaye",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "SEN",
+        "name": "Mory Diaw",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "SEN",
+        "name": "Antoine Mendy",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "SEN",
+        "name": "El Hadji Malick Diouf",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "SEN",
+        "name": "Pape Gueye",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "ALG",
+        "name": "Melvin Mastil",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "ALG",
+        "name": "Aïssa Mandi",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "ALG",
+        "name": "Achref Abada",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "ALG",
+        "name": "Mohamed Amine Tougai",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "ALG",
+        "name": "Zineddine Belaïd",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "ALG",
+        "name": "Ramiz Zerrouki",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "ALG",
+        "name": "Riyad Mahrez",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "ALG",
+        "name": "Houssem Aouar",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "ALG",
+        "name": "Amine Gouiri",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "ALG",
+        "name": "Farès Chaïbi",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "ALG",
+        "name": "Anis Hadj Moussa",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "ALG",
+        "name": "Nadhir Benbouali",
+        "position": "FW",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "ALG",
+        "name": "Jaouen Hadjam",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "ALG",
+        "name": "Hicham Boudaoui",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "ALG",
+        "name": "Rayan Aït-Nouri",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "ALG",
+        "name": "Oussama Benbot",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "ALG",
+        "name": "Rafik Belghali",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "ALG",
+        "name": "Mohamed Amoura",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "ALG",
+        "name": "Nabil Bentaleb",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "ALG",
+        "name": "Adil Boulbina",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "ALG",
+        "name": "Ramy Bensebaini",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "ALG",
+        "name": "Ibrahim Maza",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "ALG",
+        "name": "Luca Zidane",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "ALG",
+        "name": "Yacine Titraoui",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "ALG",
+        "name": "Farès Ghedjemis",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "ALG",
+        "name": "Samir Chergui",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "ARG",
+        "name": "Juan Musso",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "ARG",
+        "name": "Nicolás Tagliafico",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "ARG",
+        "name": "Gonzalo Montiel",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "ARG",
+        "name": "Leandro Paredes",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "ARG",
+        "name": "Lisandro Martínez",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "ARG",
+        "name": "Rodrigo De Paul",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "ARG",
+        "name": "Valentín Barco",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "ARG",
+        "name": "Julián Alvarez",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "ARG",
+        "name": "Lionel Messi",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "ARG",
+        "name": "Giovani Lo Celso",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "ARG",
+        "name": "Gerónimo Rulli",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "ARG",
+        "name": "Cristian Romero",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "ARG",
+        "name": "Exequiel Palacios",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "ARG",
+        "name": "Nicolás González",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "ARG",
+        "name": "Thiago Almada",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "ARG",
+        "name": "Giuliano Simeone",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "ARG",
+        "name": "Nico Paz",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "ARG",
+        "name": "Nicolás Otamendi",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "ARG",
+        "name": "Alexis Mac Allister",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "ARG",
+        "name": "José Manuel López",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "ARG",
+        "name": "Lautaro Martínez",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "ARG",
+        "name": "Emiliano Martínez",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "ARG",
+        "name": "Enzo Fernández",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "ARG",
+        "name": "Facundo Medina",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "ARG",
+        "name": "Nahuel Molina",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "AUT",
+        "name": "Alexander Schlager",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "AUT",
+        "name": "David Affengruber",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "AUT",
+        "name": "Kevin Danso",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "AUT",
+        "name": "Xaver Schlager",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "AUT",
+        "name": "Stefan Posch",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "AUT",
+        "name": "Nicolas Seiwald",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "AUT",
+        "name": "Marko Arnautović",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "AUT",
+        "name": "David Alaba",
+        "position": "DF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "AUT",
+        "name": "Marcel Sabitzer",
+        "position": "MF",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "AUT",
+        "name": "Florian Grillitsch",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "AUT",
+        "name": "Michael Gregoritsch",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "AUT",
+        "name": "Florian Wiegele",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "AUT",
+        "name": "Patrick Pentz",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "AUT",
+        "name": "Saša Kalajdžić",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "AUT",
+        "name": "Philipp Lienhart",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "AUT",
+        "name": "Phillipp Mwene",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "AUT",
+        "name": "Carney Chukwuemeka",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "AUT",
+        "name": "Romano Schmid",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "AUT",
+        "name": "Konrad Laimer",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "AUT",
+        "name": "Patrick Wimmer",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "AUT",
+        "name": "Alexander Prass",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "AUT",
+        "name": "Marco Friedl",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "AUT",
+        "name": "Paul Wanner",
+        "position": "MF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "AUT",
+        "name": "Michael Svoboda",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "AUT",
+        "name": "Alessandro Schöpf",
+        "position": "MF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "JOR",
+        "name": "Yazeed Abulaila",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mohammad Abu Hashish",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "JOR",
+        "name": "Abdallah Nasib",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "JOR",
+        "name": "Husam Abu Dahab",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "JOR",
+        "name": "Yazan Al-Arab",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "JOR",
+        "name": "Amer Jamous",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mohammad Abu Zrayq",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "JOR",
+        "name": "Noor Al-Rawabdeh",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "JOR",
+        "name": "Ali Olwan",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "JOR",
+        "name": "Musa Al-Taamari",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "JOR",
+        "name": "Odeh Al-Fakhouri",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "JOR",
+        "name": "Nour Bani Attiah",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mahmoud Al-Mardi",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "JOR",
+        "name": "Rajaei Ayed",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "JOR",
+        "name": "Ibrahim Sadeh",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mo Abualnadi",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "JOR",
+        "name": "Salim Obaid",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mohammad Taha",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "JOR",
+        "name": "Saed Al-Rosan",
+        "position": "DF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mohannad Abu Taha",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "JOR",
+        "name": "Nizar Al-Rashdan",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "JOR",
+        "name": "Abdallah Al-Fakhouri",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "JOR",
+        "name": "Ihsan Haddad",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "JOR",
+        "name": "Ali Azaizeh",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "JOR",
+        "name": "Mohammad Al-Dawoud",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "JOR",
+        "name": "Anas Badawi",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "COL",
+        "name": "David Ospina",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "COL",
+        "name": "Daniel Muñoz",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "COL",
+        "name": "Jhon Lucumí",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "COL",
+        "name": "Santiago Arias",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "COL",
+        "name": "Kevin Castaño",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "COL",
+        "name": "Richard Ríos",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "COL",
+        "name": "Luis Díaz",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "COL",
+        "name": "Jorge Carrascal",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "COL",
+        "name": "Jhon Córdoba",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "COL",
+        "name": "James Rodríguez",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "COL",
+        "name": "Jhon Arias",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "COL",
+        "name": "Camilo Vargas",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "COL",
+        "name": "Yerry Mina",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "COL",
+        "name": "Gustavo Puerta",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "COL",
+        "name": "Juan Portilla",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "COL",
+        "name": "Jefferson Lerma",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "COL",
+        "name": "Johan Mojica",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "COL",
+        "name": "Willer Ditta",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "COL",
+        "name": "Cucho Hernández",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "COL",
+        "name": "Juan Fernando Quintero",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "COL",
+        "name": "Jaminton Campaz",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "COL",
+        "name": "Deiver Machado",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "COL",
+        "name": "Davinson Sánchez",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "COL",
+        "name": "Álvaro Montero",
+        "position": "GK",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "COL",
+        "name": "Luis Suárez",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "COL",
+        "name": "Andrés Gómez",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "COD",
+        "name": "Lionel Mpasi",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "COD",
+        "name": "Aaron Wan-Bissaka",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "COD",
+        "name": "Steve Kapuadi",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "COD",
+        "name": "Axel Tuanzebe",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "COD",
+        "name": "Dylan Batubinsika",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "COD",
+        "name": "Ngal'ayel Mukau",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "COD",
+        "name": "Nathanaël Mbuku",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "COD",
+        "name": "Samuel Moutoussamy",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "COD",
+        "name": "Brian Cipenga",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "COD",
+        "name": "Théo Bongonda",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "COD",
+        "name": "Gaël Kakuta",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "COD",
+        "name": "Joris Kayembe",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "COD",
+        "name": "Meschak Elia",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "COD",
+        "name": "Noah Sadiki",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "COD",
+        "name": "Aaron Tshibola",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "COD",
+        "name": "Timothy Fayulu",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "COD",
+        "name": "Cédric Bakambu",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "COD",
+        "name": "Charles Pickel",
+        "position": "MF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "COD",
+        "name": "Fiston Mayele",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "COD",
+        "name": "Yoane Wissa",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "COD",
+        "name": "Matthieu Epolo",
+        "position": "GK",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "COD",
+        "name": "Chancel Mbemba",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "COD",
+        "name": "Simon Banza",
+        "position": "FW",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "COD",
+        "name": "Gédéon Kalulu",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "COD",
+        "name": "Edo Kayembe",
+        "position": "MF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "COD",
+        "name": "Arthur Masuaku",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "POR",
+        "name": "Diogo Costa",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "POR",
+        "name": "Nélson Semedo",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "POR",
+        "name": "Rúben Dias",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "POR",
+        "name": "Tomás Araújo",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "POR",
+        "name": "Diogo Dalot",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "POR",
+        "name": "Matheus Nunes",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "POR",
+        "name": "Cristiano Ronaldo",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "POR",
+        "name": "Bruno Fernandes",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "POR",
+        "name": "Gonçalo Ramos",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "POR",
+        "name": "Bernardo Silva",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "POR",
+        "name": "João Félix",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "POR",
+        "name": "José Sá",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "POR",
+        "name": "Renato Veiga",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "POR",
+        "name": "Gonçalo Inácio",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "POR",
+        "name": "João Neves",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "POR",
+        "name": "Francisco Trincão",
+        "position": "FW",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "POR",
+        "name": "Rafael Leão",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "POR",
+        "name": "Pedro Neto",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "POR",
+        "name": "Gonçalo Guedes",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "POR",
+        "name": "João Cancelo",
+        "position": "DF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "POR",
+        "name": "Rúben Neves",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "POR",
+        "name": "Rui Silva",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "POR",
+        "name": "Vitinha",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "POR",
+        "name": "Samú Costa",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "POR",
+        "name": "Nuno Mendes",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "POR",
+        "name": "Francisco Conceição",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "UZB",
+        "name": "Utkir Yusupov",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "UZB",
+        "name": "Abdukodir Khusanov",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "UZB",
+        "name": "Khojiakbar Alijonov",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "UZB",
+        "name": "Farrukh Sayfiev",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "UZB",
+        "name": "Rustam Ashurmatov",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "UZB",
+        "name": "Akmal Mozgovoy",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "UZB",
+        "name": "Otabek Shukurov",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "UZB",
+        "name": "Jamshid Iskanderov",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "UZB",
+        "name": "Odiljon Hamrobekov",
+        "position": "MF",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "UZB",
+        "name": "Jaloliddin Masharipov",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "UZB",
+        "name": "Oston Urunov",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "UZB",
+        "name": "Abduvohid Nematov",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "UZB",
+        "name": "Sherzod Nasrullaev",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "UZB",
+        "name": "Eldor Shomurodov",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "UZB",
+        "name": "Umar Eshmurodov",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "UZB",
+        "name": "Botirali Ergashev",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "UZB",
+        "name": "Dostonbek Khamdamov",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "UZB",
+        "name": "Abdulla Abdullaev",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "UZB",
+        "name": "Azizjon Ganiev",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "UZB",
+        "name": "Azizbek Amonov",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "UZB",
+        "name": "Igor Sergeev",
+        "position": "FW",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "UZB",
+        "name": "Abbosbek Fayzullaev",
+        "position": "MF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "UZB",
+        "name": "Sherzod Esanov",
+        "position": "MF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "UZB",
+        "name": "Bekhruz Karimov",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "UZB",
+        "name": "Avazbek Ulmasaliev",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "UZB",
+        "name": "Jakhongir Urozov",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "CRO",
+        "name": "Dominik Livaković",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "CRO",
+        "name": "Josip Stanišić",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "CRO",
+        "name": "Marin Pongračić",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "CRO",
+        "name": "Joško Gvardiol",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "CRO",
+        "name": "Duje Ćaleta-Car",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "CRO",
+        "name": "Josip Šutalo",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "CRO",
+        "name": "Nikola Moro",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "CRO",
+        "name": "Mateo Kovačić",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "CRO",
+        "name": "Andrej Kramarić",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "CRO",
+        "name": "Luka Modrić",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "CRO",
+        "name": "Ante Budimir",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "CRO",
+        "name": "Ivor Pandur",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "CRO",
+        "name": "Nikola Vlašić",
+        "position": "MF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "CRO",
+        "name": "Ivan Perišić",
+        "position": "FW",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "CRO",
+        "name": "Mario Pašalić",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "CRO",
+        "name": "Martin Baturina",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "CRO",
+        "name": "Petar Sučić",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "CRO",
+        "name": "Kristijan Jakić",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "CRO",
+        "name": "Toni Fruk",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "CRO",
+        "name": "Igor Matanović",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "CRO",
+        "name": "Luka Sučić",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "CRO",
+        "name": "Luka Vušković",
+        "position": "DF",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "CRO",
+        "name": "Dominik Kotarski",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "CRO",
+        "name": "Marco Pašalić",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "CRO",
+        "name": "Martin Erlić",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "CRO",
+        "name": "Petar Musa",
+        "position": "FW",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "ENG",
+        "name": "Jordan Pickford",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "ENG",
+        "name": "Ezri Konsa",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "ENG",
+        "name": "Nico O'Reilly",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "ENG",
+        "name": "Declan Rice",
+        "position": "MF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "ENG",
+        "name": "John Stones",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "ENG",
+        "name": "Marc Guéhi",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "ENG",
+        "name": "Bukayo Saka",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "ENG",
+        "name": "Elliot Anderson",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "ENG",
+        "name": "Harry Kane",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "ENG",
+        "name": "Jude Bellingham",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "ENG",
+        "name": "Marcus Rashford",
+        "position": "FW",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "ENG",
+        "name": "Tino Livramento",
+        "position": "DF",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "ENG",
+        "name": "Dean Henderson",
+        "position": "GK",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "ENG",
+        "name": "Jordan Henderson",
+        "position": "MF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "ENG",
+        "name": "Dan Burn",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "ENG",
+        "name": "Kobbie Mainoo",
+        "position": "MF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "ENG",
+        "name": "Morgan Rogers",
+        "position": "MF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "ENG",
+        "name": "Anthony Gordon",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "ENG",
+        "name": "Ollie Watkins",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "ENG",
+        "name": "Noni Madueke",
+        "position": "FW",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "ENG",
+        "name": "Eberechi Eze",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "ENG",
+        "name": "Ivan Toney",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "ENG",
+        "name": "James Trafford",
+        "position": "GK",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "ENG",
+        "name": "Reece James",
+        "position": "DF",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "ENG",
+        "name": "Djed Spence",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "ENG",
+        "name": "Jarell Quansah",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "GHA",
+        "name": "Lawrence Ati-Zigi",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "GHA",
+        "name": "Alidu Seidu",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "GHA",
+        "name": "Caleb Yirenkyi",
+        "position": "MF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "GHA",
+        "name": "Jonas Adjetey",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "GHA",
+        "name": "Thomas Partey",
+        "position": "MF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "GHA",
+        "name": "Abdul Mumin",
+        "position": "DF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "GHA",
+        "name": "Abdul Fatawu",
+        "position": "FW",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "GHA",
+        "name": "Kwasi Sibo",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "GHA",
+        "name": "Jordan Ayew",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "GHA",
+        "name": "Brandon Thomas-Asante",
+        "position": "FW",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "GHA",
+        "name": "Antoine Semenyo",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "GHA",
+        "name": "Joseph Anang",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "GHA",
+        "name": "Christopher Bonsu Baah",
+        "position": "FW",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "GHA",
+        "name": "Gideon Mensah",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "GHA",
+        "name": "Elisha Owusu",
+        "position": "MF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "GHA",
+        "name": "Benjamin Asare",
+        "position": "GK",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "GHA",
+        "name": "Abdul Rahman Baba",
+        "position": "DF",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "GHA",
+        "name": "Jerome Opoku",
+        "position": "DF",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "GHA",
+        "name": "Iñaki Williams",
+        "position": "FW",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "GHA",
+        "name": "Augustine Boakye",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "GHA",
+        "name": "Kojo Peprah Oppong",
+        "position": "DF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "GHA",
+        "name": "Kamaldeen Sulemana",
+        "position": "FW",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "GHA",
+        "name": "Derrick Luckassen",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "GHA",
+        "name": "Ernest Nuamah",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "GHA",
+        "name": "Prince Kwabena Adu",
+        "position": "FW",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "GHA",
+        "name": "Marvin Senaya",
+        "position": "DF",
+        "shirt_number": 26
+    },
+    {
+        "team_code": "PAN",
+        "name": "Luis Mejía",
+        "position": "GK",
+        "shirt_number": 1
+    },
+    {
+        "team_code": "PAN",
+        "name": "César Blackman",
+        "position": "DF",
+        "shirt_number": 2
+    },
+    {
+        "team_code": "PAN",
+        "name": "José Córdoba",
+        "position": "DF",
+        "shirt_number": 3
+    },
+    {
+        "team_code": "PAN",
+        "name": "Fidel Escobar",
+        "position": "DF",
+        "shirt_number": 4
+    },
+    {
+        "team_code": "PAN",
+        "name": "Edgardo Fariña",
+        "position": "DF",
+        "shirt_number": 5
+    },
+    {
+        "team_code": "PAN",
+        "name": "Cristian Martínez",
+        "position": "MF",
+        "shirt_number": 6
+    },
+    {
+        "team_code": "PAN",
+        "name": "José Luis Rodríguez",
+        "position": "MF",
+        "shirt_number": 7
+    },
+    {
+        "team_code": "PAN",
+        "name": "Adalberto Carrasquilla",
+        "position": "MF",
+        "shirt_number": 8
+    },
+    {
+        "team_code": "PAN",
+        "name": "Tomás Rodríguez",
+        "position": "FW",
+        "shirt_number": 9
+    },
+    {
+        "team_code": "PAN",
+        "name": "Ismael Díaz",
+        "position": "MF",
+        "shirt_number": 10
+    },
+    {
+        "team_code": "PAN",
+        "name": "Yoel Bárcenas",
+        "position": "MF",
+        "shirt_number": 11
+    },
+    {
+        "team_code": "PAN",
+        "name": "César Samudio",
+        "position": "GK",
+        "shirt_number": 12
+    },
+    {
+        "team_code": "PAN",
+        "name": "Jiovany Ramos",
+        "position": "DF",
+        "shirt_number": 13
+    },
+    {
+        "team_code": "PAN",
+        "name": "Carlos Harvey",
+        "position": "DF",
+        "shirt_number": 14
+    },
+    {
+        "team_code": "PAN",
+        "name": "Eric Davis",
+        "position": "DF",
+        "shirt_number": 15
+    },
+    {
+        "team_code": "PAN",
+        "name": "Andrés Andrade",
+        "position": "DF",
+        "shirt_number": 16
+    },
+    {
+        "team_code": "PAN",
+        "name": "José Fajardo",
+        "position": "FW",
+        "shirt_number": 17
+    },
+    {
+        "team_code": "PAN",
+        "name": "Cecilio Waterman",
+        "position": "FW",
+        "shirt_number": 18
+    },
+    {
+        "team_code": "PAN",
+        "name": "Alberto Quintero",
+        "position": "MF",
+        "shirt_number": 19
+    },
+    {
+        "team_code": "PAN",
+        "name": "Aníbal Godoy",
+        "position": "MF",
+        "shirt_number": 20
+    },
+    {
+        "team_code": "PAN",
+        "name": "César Yanis",
+        "position": "MF",
+        "shirt_number": 21
+    },
+    {
+        "team_code": "PAN",
+        "name": "Orlando Mosquera",
+        "position": "GK",
+        "shirt_number": 22
+    },
+    {
+        "team_code": "PAN",
+        "name": "Michael Amir Murillo",
+        "position": "DF",
+        "shirt_number": 23
+    },
+    {
+        "team_code": "PAN",
+        "name": "Azarias Londoño",
+        "position": "FW",
+        "shirt_number": 24
+    },
+    {
+        "team_code": "PAN",
+        "name": "Roderick Miller",
+        "position": "DF",
+        "shirt_number": 25
+    },
+    {
+        "team_code": "PAN",
+        "name": "Jorge Gutiérrez",
+        "position": "DF",
+        "shirt_number": 26
+    }
 ]
