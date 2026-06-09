@@ -46,6 +46,22 @@
 </div>
 
 
+{{-- World Cup 2026 Sweepstake CTA --}}
+<div style="background:#f6f7f9; padding:4rem 2rem; text-align:center; border-bottom:1px solid #eceef1;">
+    <div class="container">
+        <h2 style="font-family:'GetShow'; font-weight:normal; font-size:48px; color:#262c39; margin-bottom:0.75rem;">World Cup 2026 Sweepstake</h2>
+        <p style="font-size:18px; color:#667085; margin-bottom:1.75rem;">
+            @if (empty($wcLeaders))
+                Draw happening soon. Follow the live ladder.
+            @else
+                🥇 {{ $wcLeaders[0] }}@if (isset($wcLeaders[1])) · 🥈 {{ $wcLeaders[1] }}@endif
+            @endif
+        </p>
+        <a href="/worldcup" class="btn btn-primary" style="background:#262c39;">View the live ladder</a>
+    </div>
+</div>
+
+
 {{-- How it works --}}
 <div style="padding:5rem 2rem;">
     <div class="container">
