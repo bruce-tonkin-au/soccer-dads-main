@@ -15,6 +15,7 @@ use App\Http\Controllers\PlayerPortalController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AdminStoreController;
 use App\Http\Controllers\ClaimController;
+use App\Livewire\WorldCupLadder;
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'showLogin']);
@@ -121,6 +122,8 @@ Route::get('/claim/{memberCode}/welcome', [ClaimController::class, 'welcome'])->
 Route::get('/seasons', [SeasonsController::class, 'index']);
 Route::get('/seasons/{seasonKey}', [SeasonsController::class, 'show']);
 Route::get('/seasons/{seasonKey}/{gameRound}', [SeasonsController::class, 'night']);
+
+Route::get('/worldcup', WorldCupLadder::class);
 
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/contact', [ContactController::class, 'index']);

@@ -16,5 +16,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(AdminUserSeeder::class);
+
+        $this->call([
+            WcTeamSeeder::class,
+            WcPlayerSeeder::class,
+            WcFixtureSeeder::class,
+        ]);
     }
 }

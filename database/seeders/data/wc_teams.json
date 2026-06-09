@@ -1,0 +1,61 @@
+[
+  { "name": "Mexico", "code": "MEX", "flag": "🇲🇽", "confederation": "CONCACAF", "fifa_ranking": 14, "pot": 1, "seed_tier": 1, "group_letter": "A", "group_position": 1 },
+  { "name": "South Korea", "code": "KOR", "flag": "🇰🇷", "confederation": "AFC", "fifa_ranking": 23, "pot": 2, "seed_tier": 1, "group_letter": "A", "group_position": 2 },
+  { "name": "Czechia", "code": "CZE", "flag": "🇨🇿", "confederation": "UEFA", "fifa_ranking": 36, "pot": 3, "seed_tier": 2, "group_letter": "A", "group_position": 3 },
+  { "name": "South Africa", "code": "RSA", "flag": "🇿🇦", "confederation": "CAF", "fifa_ranking": 58, "pot": 4, "seed_tier": 2, "group_letter": "A", "group_position": 4 },
+
+  { "name": "Canada", "code": "CAN", "flag": "🇨🇦", "confederation": "CONCACAF", "fifa_ranking": 31, "pot": 1, "seed_tier": 1, "group_letter": "B", "group_position": 1 },
+  { "name": "Switzerland", "code": "SUI", "flag": "🇨🇭", "confederation": "UEFA", "fifa_ranking": 19, "pot": 2, "seed_tier": 1, "group_letter": "B", "group_position": 2 },
+  { "name": "Qatar", "code": "QAT", "flag": "🇶🇦", "confederation": "AFC", "fifa_ranking": 37, "pot": 3, "seed_tier": 2, "group_letter": "B", "group_position": 3 },
+  { "name": "Bosnia and Herzegovina", "code": "BIH", "flag": "🇧🇦", "confederation": "UEFA", "fifa_ranking": 74, "pot": 4, "seed_tier": 2, "group_letter": "B", "group_position": 4 },
+
+  { "name": "Brazil", "code": "BRA", "flag": "🇧🇷", "confederation": "CONMEBOL", "fifa_ranking": 5, "pot": 1, "seed_tier": 1, "group_letter": "C", "group_position": 1 },
+  { "name": "Morocco", "code": "MAR", "flag": "🇲🇦", "confederation": "CAF", "fifa_ranking": 12, "pot": 2, "seed_tier": 1, "group_letter": "C", "group_position": 2 },
+  { "name": "Scotland", "code": "SCO", "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "confederation": "UEFA", "fifa_ranking": 39, "pot": 3, "seed_tier": 2, "group_letter": "C", "group_position": 3 },
+  { "name": "Haiti", "code": "HAI", "flag": "🇭🇹", "confederation": "CONCACAF", "fifa_ranking": 83, "pot": 4, "seed_tier": 2, "group_letter": "C", "group_position": 4 },
+
+  { "name": "United States", "code": "USA", "flag": "🇺🇸", "confederation": "CONCACAF", "fifa_ranking": 16, "pot": 1, "seed_tier": 1, "group_letter": "D", "group_position": 1 },
+  { "name": "Australia", "code": "AUS", "flag": "🇦🇺", "confederation": "AFC", "fifa_ranking": 24, "pot": 2, "seed_tier": 1, "group_letter": "D", "group_position": 2 },
+  { "name": "Turkey", "code": "TUR", "flag": "🇹🇷", "confederation": "UEFA", "fifa_ranking": 26, "pot": 3, "seed_tier": 2, "group_letter": "D", "group_position": 3 },
+  { "name": "Paraguay", "code": "PAR", "flag": "🇵🇾", "confederation": "CONMEBOL", "fifa_ranking": 46, "pot": 4, "seed_tier": 2, "group_letter": "D", "group_position": 4 },
+
+  { "name": "Germany", "code": "GER", "flag": "🇩🇪", "confederation": "UEFA", "fifa_ranking": 9, "pot": 1, "seed_tier": 1, "group_letter": "E", "group_position": 1 },
+  { "name": "Ecuador", "code": "ECU", "flag": "🇪🇨", "confederation": "CONMEBOL", "fifa_ranking": 31, "pot": 2, "seed_tier": 1, "group_letter": "E", "group_position": 2 },
+  { "name": "Ivory Coast", "code": "CIV", "flag": "🇨🇮", "confederation": "CAF", "fifa_ranking": 41, "pot": 3, "seed_tier": 2, "group_letter": "E", "group_position": 3 },
+  { "name": "Curaçao", "code": "CUW", "flag": "🇨🇼", "confederation": "CONCACAF", "fifa_ranking": 90, "pot": 4, "seed_tier": 2, "group_letter": "E", "group_position": 4 },
+
+  { "name": "Netherlands", "code": "NED", "flag": "🇳🇱", "confederation": "UEFA", "fifa_ranking": 6, "pot": 1, "seed_tier": 1, "group_letter": "F", "group_position": 1 },
+  { "name": "Japan", "code": "JPN", "flag": "🇯🇵", "confederation": "AFC", "fifa_ranking": 17, "pot": 2, "seed_tier": 1, "group_letter": "F", "group_position": 2 },
+  { "name": "Sweden", "code": "SWE", "flag": "🇸🇪", "confederation": "UEFA", "fifa_ranking": 35, "pot": 3, "seed_tier": 2, "group_letter": "F", "group_position": 3 },
+  { "name": "Tunisia", "code": "TUN", "flag": "🇹🇳", "confederation": "CAF", "fifa_ranking": 40, "pot": 4, "seed_tier": 2, "group_letter": "F", "group_position": 4 },
+
+  { "name": "Belgium", "code": "BEL", "flag": "🇧🇪", "confederation": "UEFA", "fifa_ranking": 8, "pot": 1, "seed_tier": 1, "group_letter": "G", "group_position": 1 },
+  { "name": "Iran", "code": "IRN", "flag": "🇮🇷", "confederation": "AFC", "fifa_ranking": 20, "pot": 2, "seed_tier": 1, "group_letter": "G", "group_position": 2 },
+  { "name": "Egypt", "code": "EGY", "flag": "🇪🇬", "confederation": "CAF", "fifa_ranking": 33, "pot": 3, "seed_tier": 2, "group_letter": "G", "group_position": 3 },
+  { "name": "New Zealand", "code": "NZL", "flag": "🇳🇿", "confederation": "OFC", "fifa_ranking": 89, "pot": 4, "seed_tier": 2, "group_letter": "G", "group_position": 4 },
+
+  { "name": "Spain", "code": "ESP", "flag": "🇪🇸", "confederation": "UEFA", "fifa_ranking": 3, "pot": 1, "seed_tier": 1, "group_letter": "H", "group_position": 1 },
+  { "name": "Uruguay", "code": "URU", "flag": "🇺🇾", "confederation": "CONMEBOL", "fifa_ranking": 15, "pot": 2, "seed_tier": 1, "group_letter": "H", "group_position": 2 },
+  { "name": "Saudi Arabia", "code": "KSA", "flag": "🇸🇦", "confederation": "AFC", "fifa_ranking": 60, "pot": 3, "seed_tier": 2, "group_letter": "H", "group_position": 3 },
+  { "name": "Cape Verde", "code": "CPV", "flag": "🇨🇻", "confederation": "CAF", "fifa_ranking": 70, "pot": 4, "seed_tier": 2, "group_letter": "H", "group_position": 4 },
+
+  { "name": "France", "code": "FRA", "flag": "🇫🇷", "confederation": "UEFA", "fifa_ranking": 2, "pot": 1, "seed_tier": 1, "group_letter": "I", "group_position": 1 },
+  { "name": "Senegal", "code": "SEN", "flag": "🇸🇳", "confederation": "CAF", "fifa_ranking": 18, "pot": 2, "seed_tier": 1, "group_letter": "I", "group_position": 2 },
+  { "name": "Norway", "code": "NOR", "flag": "🇳🇴", "confederation": "UEFA", "fifa_ranking": 30, "pot": 3, "seed_tier": 2, "group_letter": "I", "group_position": 3 },
+  { "name": "Iraq", "code": "IRQ", "flag": "🇮🇶", "confederation": "AFC", "fifa_ranking": 57, "pot": 4, "seed_tier": 2, "group_letter": "I", "group_position": 4 },
+
+  { "name": "Argentina", "code": "ARG", "flag": "🇦🇷", "confederation": "CONMEBOL", "fifa_ranking": 1, "pot": 1, "seed_tier": 1, "group_letter": "J", "group_position": 1 },
+  { "name": "Austria", "code": "AUT", "flag": "🇦🇹", "confederation": "UEFA", "fifa_ranking": 25, "pot": 2, "seed_tier": 1, "group_letter": "J", "group_position": 2 },
+  { "name": "Algeria", "code": "ALG", "flag": "🇩🇿", "confederation": "CAF", "fifa_ranking": 43, "pot": 3, "seed_tier": 2, "group_letter": "J", "group_position": 3 },
+  { "name": "Jordan", "code": "JOR", "flag": "🇯🇴", "confederation": "AFC", "fifa_ranking": 68, "pot": 4, "seed_tier": 2, "group_letter": "J", "group_position": 4 },
+
+  { "name": "Portugal", "code": "POR", "flag": "🇵🇹", "confederation": "UEFA", "fifa_ranking": 7, "pot": 1, "seed_tier": 1, "group_letter": "K", "group_position": 1 },
+  { "name": "Colombia", "code": "COL", "flag": "🇨🇴", "confederation": "CONMEBOL", "fifa_ranking": 13, "pot": 2, "seed_tier": 1, "group_letter": "K", "group_position": 2 },
+  { "name": "Uzbekistan", "code": "UZB", "flag": "🇺🇿", "confederation": "AFC", "fifa_ranking": 56, "pot": 3, "seed_tier": 2, "group_letter": "K", "group_position": 3 },
+  { "name": "DR Congo", "code": "COD", "flag": "🇨🇩", "confederation": "CAF", "fifa_ranking": 62, "pot": 4, "seed_tier": 2, "group_letter": "K", "group_position": 4 },
+
+  { "name": "England", "code": "ENG", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "confederation": "UEFA", "fifa_ranking": 4, "pot": 1, "seed_tier": 1, "group_letter": "L", "group_position": 1 },
+  { "name": "Croatia", "code": "CRO", "flag": "🇭🇷", "confederation": "UEFA", "fifa_ranking": 10, "pot": 2, "seed_tier": 1, "group_letter": "L", "group_position": 2 },
+  { "name": "Panama", "code": "PAN", "flag": "🇵🇦", "confederation": "CONCACAF", "fifa_ranking": 45, "pot": 3, "seed_tier": 2, "group_letter": "L", "group_position": 3 },
+  { "name": "Ghana", "code": "GHA", "flag": "🇬🇭", "confederation": "CAF", "fifa_ranking": 73, "pot": 4, "seed_tier": 2, "group_letter": "L", "group_position": 4 }
+]
