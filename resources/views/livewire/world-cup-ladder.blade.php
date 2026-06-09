@@ -63,8 +63,7 @@
     {{-- 1. Header --}}
     <div class="wc-hero">
         <div class="container">
-            <h1>⚽ World Cup 2026 Sweepstake</h1>
-            <div class="wc-sub">Soccer Dads</div>
+            <h1>World Cup 2026 Sweepstake</h1>
         </div>
     </div>
 
