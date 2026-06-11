@@ -3,24 +3,23 @@
 
 @push('styles')
 <style>
-    .link-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 0;
+    .link-block {
+        padding: 16px 0;
         border-bottom: 1px solid #f0f0f0;
-        gap: 1rem;
     }
-    .link-row:last-child { border-bottom: none; }
-    .player-name { font-weight: 500; font-size: 14px; min-width: 180px; }
+    .link-block:last-child { border-bottom: none; }
+    .link-label { font-weight: 600; font-size: 14px; color: #262c39; margin-bottom: 6px; }
+    .link-hint { font-size: 12px; color: #888; margin-bottom: 10px; }
+    .link-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .link-url {
         font-size: 12px;
         color: #888;
         font-family: monospace;
         background: #f4f4f4;
-        padding: 4px 8px;
-        border-radius: 4px;
+        padding: 8px 10px;
+        border-radius: 6px;
         flex: 1;
+        min-width: 220px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -29,7 +28,7 @@
         background: #f4f4f4;
         border: 1px solid #e8e8e8;
         border-radius: 6px;
-        padding: 6px 12px;
+        padding: 8px 12px;
         font-size: 12px;
         cursor: pointer;
         white-space: nowrap;
@@ -52,38 +51,39 @@
     </a>
     <div>
         <h1 style="font-size:22px; font-weight:700; color:#262c39;">{{ $message->messageSubject }}</h1>
-        <p style="font-size:13px; color:#888; margin-top:2px;">Code: <code>{{ $message->messageCode }}</code> · Copy individual links to send via SMS</p>
+        <p style="font-size:13px; color:#888; margin-top:2px;">Code: <code>{{ $message->messageCode }}</code></p>
     </div>
 </div>
 
+@php
+    $smsLink = url('/msg/' . $message->messageCode) . '/{memberCode}';
+    $newsletterLink = url('/msg/' . $message->messageCode . '/newsletter');
+@endphp
+
 <div class="admin-card">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <h2 style="margin-bottom:0;">Player links ({{ $players->count() }})</h2>
-        <button onclick="copyAll(event)" class="btn btn-primary">
-            <i class="fa-solid fa-copy"></i> Copy all as list
-        </button>
-    </div>
-
-    <div style="margin-bottom:1rem;">
-        <input type="text" id="search-players" placeholder="Search players..."
-               class="form-control" style="max-width:300px;"
-               oninput="filterPlayers(this.value)">
-    </div>
-
-    <div id="links-list">
-        @foreach($players as $player)
-        @php $url = url('/msg/' . $message->messageCode . '/' . $player->memberCode); @endphp
-        <div class="link-row" data-name="{{ strtolower($player->memberNameFirst . ' ' . $player->memberNameLast) }}">
-            <div class="player-name">{{ $player->memberNameFirst }} {{ $player->memberNameLast }}</div>
-            <div class="link-url" title="{{ $url }}">{{ $url }}</div>
-            <button class="copy-btn" onclick="copyLink(this, '{{ $url }}')">
+    <div class="link-block">
+        <div class="link-label"><i class="fa-solid fa-comment-sms"></i> SMS Link</div>
+        <div class="link-hint">Per-player link sent via SMS — replace <code>{memberCode}</code> with the player's code.</div>
+        <div class="link-controls">
+            <div class="link-url" title="{{ $smsLink }}">{{ $smsLink }}</div>
+            <button class="copy-btn" onclick="copyLink(this, '{{ $smsLink }}')">
                 <i class="fa-solid fa-copy"></i> Copy
             </button>
-            <a href="{{ $url }}" target="_blank" class="copy-btn">
+        </div>
+    </div>
+
+    <div class="link-block">
+        <div class="link-label"><i class="fa-solid fa-envelope"></i> Newsletter Link</div>
+        <div class="link-hint">Email-friendly HTML page to copy into Sendy.</div>
+        <div class="link-controls">
+            <div class="link-url" title="{{ $newsletterLink }}">{{ $newsletterLink }}</div>
+            <button class="copy-btn" onclick="copyLink(this, '{{ $newsletterLink }}')">
+                <i class="fa-solid fa-copy"></i> Copy
+            </button>
+            <a href="{{ $newsletterLink }}" target="_blank" class="copy-btn">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview
             </a>
         </div>
-        @endforeach
     </div>
 </div>
 
@@ -91,37 +91,13 @@
 <script>
     function copyLink(btn, url) {
         navigator.clipboard.writeText(url).then(() => {
+            const original = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
             btn.classList.add('copied');
             setTimeout(() => {
-                btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy';
+                btn.innerHTML = original;
                 btn.classList.remove('copied');
             }, 2000);
-        });
-    }
-
-    function copyAll(event) {
-        const rows = document.querySelectorAll('.link-row');
-        let text = '';
-        rows.forEach(row => {
-            if (row.style.display === 'none') return;
-            const name = row.querySelector('.player-name').textContent.trim();
-            const url = row.querySelector('.link-url').title;
-            text += name + ': ' + url + '\n';
-        });
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = event.target.closest('button');
-            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy all as list';
-            }, 2000);
-        });
-    }
-
-    function filterPlayers(query) {
-        const rows = document.querySelectorAll('.link-row');
-        rows.forEach(row => {
-            row.style.display = row.dataset.name.includes(query.toLowerCase()) ? '' : 'none';
         });
     }
 </script>

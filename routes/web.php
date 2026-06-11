@@ -136,6 +136,7 @@ Route::get('/worldcup', WorldCupLadder::class);
 
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/contact', [ContactController::class, 'index']);
+Route::get('/msg/{messageCode}/newsletter', [MessageController::class, 'newsletter']);
 Route::get('/msg/{messageCode}/{memberCode}', [MessageController::class, 'show']);
 Route::get('/contact.html', fn() => redirect('/contact', 301));
 Route::get('/about/history', [AboutController::class, 'history']);

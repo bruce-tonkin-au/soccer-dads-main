@@ -92,4 +92,17 @@ class MessageController extends Controller
             'needsPeerReview', 'atCapacity', 'onBench', 'benchPosition'
         ));
     }
+
+    public function newsletter($messageCode)
+    {
+        $message = DB::table('messages')
+            ->where('messageCode', $messageCode)
+            ->where('messageActive', 1)
+            ->firstOrFail();
+
+        return view('message-newsletter', [
+            'subject' => $message->messageSubject,
+            'body'    => $message->messageBody,
+        ]);
+    }
 }

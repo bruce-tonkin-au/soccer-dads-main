@@ -34,9 +34,6 @@
                     @endif
                 </td>
                 <td style="display:flex; gap:8px;">
-                    <a href="/admin/messages/{{ $message->messageCode }}/links" class="btn btn-primary" style="padding:6px 12px; font-size:13px;">
-                        <i class="fa-solid fa-link"></i> Links
-                    </a>
                     <a href="/admin/messages/{{ $message->messageCode }}/edit" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-pen"></i> Edit
                     </a>

@@ -51,7 +51,6 @@
     <a href="/admin/seasons">Seasons</a>
     <a href="/admin/ratings">Ratings</a>
     <a href="/admin/messages">Messages</a>
-    <a href="/admin/newsletters">Newsletters</a>
     <a href="/admin/finances">Finances</a>
     <a href="/admin/store/products">Store</a>
     <a href="/admin/registrations">Registrations</a>
