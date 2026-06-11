@@ -27,7 +27,7 @@ class WcDashboard extends Page
     protected static ?string $title = 'World Cup 2026 Dashboard';
 
     /** Scoring keys managed on this page. */
-    protected const SCORING_KEYS = ['points_team_win', 'points_team_draw', 'points_player_goal'];
+    protected const SCORING_KEYS = ['points_team_goal', 'points_player_goal'];
 
     public ?array $data = [];
 
@@ -36,9 +36,8 @@ class WcDashboard extends Page
         $values = WcSetting::whereIn('key', self::SCORING_KEYS)->pluck('value', 'key');
 
         $this->form->fill([
-            'points_team_win' => $values['points_team_win'] ?? 3,
-            'points_team_draw' => $values['points_team_draw'] ?? 1,
-            'points_player_goal' => $values['points_player_goal'] ?? 2,
+            'points_team_goal' => $values['points_team_goal'] ?? 1,
+            'points_player_goal' => $values['points_player_goal'] ?? 1,
         ]);
     }
 
@@ -48,15 +47,10 @@ class WcDashboard extends Page
             ->components([
                 Section::make('Scoring configuration')
                     ->description('These values drive the live points calculation across the sweepstake.')
-                    ->columns(3)
+                    ->columns(2)
                     ->schema([
-                        TextInput::make('points_team_win')
-                            ->label('Points: team win')
-                            ->numeric()
-                            ->required()
-                            ->minValue(0),
-                        TextInput::make('points_team_draw')
-                            ->label('Points: team draw')
+                        TextInput::make('points_team_goal')
+                            ->label('Points: team goal')
                             ->numeric()
                             ->required()
                             ->minValue(0),

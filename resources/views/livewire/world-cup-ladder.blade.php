@@ -253,9 +253,8 @@
 
         {{-- Points key — always visible --}}
         <div class="wc-key">
-            Win = <strong>{{ $pointsKey['win'] }}pts</strong>
-            · Draw = <strong>{{ $pointsKey['draw'] }}pt{{ $pointsKey['draw'] == 1 ? '' : 's' }}</strong>
-            · Goal = <strong>{{ $pointsKey['goal'] }}pts</strong>
+            Team goal = <strong>{{ $pointsKey['team_goal'] }}pt{{ $pointsKey['team_goal'] == 1 ? '' : 's' }}</strong>
+            · Player goal = <strong>{{ $pointsKey['player_goal'] }}pt{{ $pointsKey['player_goal'] == 1 ? '' : 's' }}</strong>
         </div>
 
     </div>

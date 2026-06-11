@@ -63,18 +63,17 @@ class WorldCupLadder extends Component
     }
 
     /**
-     * @return array{win:int,draw:int,goal:int}
+     * @return array{team_goal:int,player_goal:int}
      */
     protected function pointsKey(): array
     {
         $values = WcSetting::query()
-            ->whereIn('key', ['points_team_win', 'points_team_draw', 'points_player_goal'])
+            ->whereIn('key', ['points_team_goal', 'points_player_goal'])
             ->pluck('value', 'key');
 
         return [
-            'win' => (int) ($values['points_team_win'] ?? 3),
-            'draw' => (int) ($values['points_team_draw'] ?? 1),
-            'goal' => (int) ($values['points_player_goal'] ?? 2),
+            'team_goal' => (int) ($values['points_team_goal'] ?? 1),
+            'player_goal' => (int) ($values['points_player_goal'] ?? 1),
         ];
     }
 
@@ -106,7 +105,7 @@ class WorldCupLadder extends Component
             })
             ->values();
 
-        $playerPts = $playerRows->sum('goal_count') * $points['goal'];
+        $playerPts = $playerRows->sum('goal_count') * $points['player_goal'];
 
         return [
             'entryID' => $entry->entryID,
@@ -151,34 +150,19 @@ class WorldCupLadder extends Component
     }
 
     /**
-     * @param  array{win:int,draw:int,goal:int}  $points
+     * Points earned by each team: one point (× points_team_goal) for every goal
+     * the team scores, own goals excluded. Bulk-counted in a single query.
+     *
+     * @param  array{team_goal:int,player_goal:int}  $points
      */
     protected function teamPointsMap(array $points): Collection
     {
-        $map = [];
-
-        WcFixture::query()
-            ->where('status', 'completed')
-            ->whereNotNull('home_score')
-            ->whereNotNull('away_score')
-            ->get(['home_team_id', 'away_team_id', 'home_score', 'away_score'])
-            ->each(function (WcFixture $fixture) use (&$map, $points) {
-                $home = $fixture->home_team_id;
-                $away = $fixture->away_team_id;
-                $map[$home] ??= 0;
-                $map[$away] ??= 0;
-
-                if ($fixture->home_score > $fixture->away_score) {
-                    $map[$home] += $points['win'];
-                } elseif ($fixture->home_score < $fixture->away_score) {
-                    $map[$away] += $points['win'];
-                } else {
-                    $map[$home] += $points['draw'];
-                    $map[$away] += $points['draw'];
-                }
-            });
-
-        return collect($map);
+        return WcGoal::query()
+            ->where('is_own_goal', false)
+            ->selectRaw('"teamID", count(*) as goals')
+            ->groupBy('teamID')
+            ->pluck('goals', 'teamID')
+            ->map(fn ($goals) => (int) $goals * $points['team_goal']);
     }
 
     protected function teamRow(?WcTeam $team): ?array
@@ -199,7 +183,7 @@ class WorldCupLadder extends Component
      * All completed fixtures (newest first) with scorers and a per-match
      * breakdown of which entries gained points and why.
      *
-     * @param  array{win:int,draw:int,goal:int}  $points
+     * @param  array{team_goal:int,player_goal:int}  $points
      */
     protected function buildResults(Collection $enriched, Collection $teams, Collection $players, array $points): Collection
     {
@@ -224,30 +208,22 @@ class WorldCupLadder extends Component
         return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams, $players, $points, $goalsByFixture) {
             $goals = $goalsByFixture[$fixture->fixtureID] ?? collect();
 
-            // Which team won/drew (losers absent from the map).
-            $teamResult = [];
-            if ($fixture->home_score > $fixture->away_score) {
-                $teamResult[$fixture->home_team_id] = 'win';
-            } elseif ($fixture->home_score < $fixture->away_score) {
-                $teamResult[$fixture->away_team_id] = 'win';
-            } else {
-                $teamResult[$fixture->home_team_id] = 'draw';
-                $teamResult[$fixture->away_team_id] = 'draw';
-            }
-
             $awards = [];
 
-            // Team-based points.
-            foreach ($enriched as $entry) {
-                foreach ($entry['team_ids'] as $teamId) {
-                    if (! isset($teamResult[$teamId])) {
+            // Team-goal points: per team that scored (non own goal) in this match.
+            $byTeam = $goals->where('is_own_goal', false)->groupBy('teamID');
+            foreach ($byTeam as $teamId => $teamGoals) {
+                $count = $teamGoals->count();
+                $teamName = $teams[$teamId]->name ?? 'Team';
+
+                foreach ($enriched as $entry) {
+                    if (! in_array($teamId, $entry['team_ids'])) {
                         continue;
                     }
-                    $result = $teamResult[$teamId];
                     $awards[] = [
                         'entry_name' => $entry['entry_name'],
-                        'points' => $result === 'win' ? $points['win'] : $points['draw'],
-                        'reason' => ($teams[$teamId]->name ?? 'Team') . ' ' . $result,
+                        'points' => $count * $points['team_goal'],
+                        'reason' => $count === 1 ? "{$teamName} goal" : "{$teamName} {$count} goals",
                     ];
                 }
             }
@@ -264,7 +240,7 @@ class WorldCupLadder extends Component
                     }
                     $awards[] = [
                         'entry_name' => $entry['entry_name'],
-                        'points' => $count * $points['goal'],
+                        'points' => $count * $points['player_goal'],
                         'reason' => $count === 1 ? "{$playerName} goal" : "{$playerName} {$count} goals",
                     ];
                 }
