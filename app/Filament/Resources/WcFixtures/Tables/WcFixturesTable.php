@@ -19,7 +19,7 @@ class WcFixturesTable
             ->columns([
                 TextColumn::make('match_datetime')
                     ->label('Kick-off')
-                    ->dateTime('D j M, H:i')
+                    ->dateTime('D j M, H:i', 'Australia/Adelaide')
                     ->sortable(),
                 TextColumn::make('group_letter')
                     ->label('Grp')
