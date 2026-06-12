@@ -11,10 +11,8 @@ use App\Models\WcSetting;
 use App\Models\WcTeam;
 use App\Support\MemberDirectory;
 use Illuminate\Support\Collection;
-use Livewire\Attributes\Poll;
 use Livewire\Component;
 
-#[Poll('30s')]
 class WorldCupLadder extends Component
 {
     public string $activeTab = 'ladder';

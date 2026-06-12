@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.30s>
 <style>
     .wc-page { background:#fff; }
     .wc-hero { background:#262c39; padding:3.5rem 2rem 3rem; }
