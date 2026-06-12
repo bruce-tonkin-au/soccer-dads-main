@@ -70,6 +70,10 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/seasons/{seasonID}/games/{gameID}/charge', [AdminController::class, 'processCharges']);
 
     Route::get('/finances', [AdminController::class, 'finances']);
+    Route::get('/finances/transaction', [AdminController::class, 'createTransaction']);
+    Route::post('/finances/transaction', [AdminController::class, 'storeTransaction']);
+    Route::get('/finances/transfer', [AdminController::class, 'createTransfer']);
+    Route::post('/finances/transfer', [AdminController::class, 'storeTransfer']);
 
     // Store management
     Route::get('/store/products', [AdminStoreController::class, 'products']);

@@ -1327,6 +1327,94 @@ class AdminController extends Controller
         return view('admin.finances', compact('transactions'));
     }
 
+    /**
+     * Active members for the finance forms' member selects ("Last First" order).
+     */
+    private function financeMembers()
+    {
+        return DB::table('members')
+            ->where('memberActive', 1)
+            ->orderBy('memberNameLast')
+            ->orderBy('memberNameFirst')
+            ->get(['memberID', 'memberNameFirst', 'memberNameLast']);
+    }
+
+    public function createTransaction()
+    {
+        return view('admin.finances-transaction', ['members' => $this->financeMembers()]);
+    }
+
+    public function storeTransaction(Request $request)
+    {
+        $data = $request->validate([
+            'memberID'    => 'required|integer|exists:members,memberID',
+            'type'        => 'required|in:deposit,charge',
+            'amount'      => 'required|numeric|min:0.01|max:10000',
+            'description' => 'required|string|max:255',
+            'date'        => 'required|date',
+        ]);
+
+        $amount = round((float) $data['amount'], 2);
+
+        DB::table('account')->insert([
+            'memberID'       => $data['memberID'],
+            'accountValue'   => $data['type'] === 'charge' ? -$amount : $amount,
+            'gameID'         => null,
+            'accountComment' => $data['description'],
+            'accountVisible' => 1,
+            'accountCreated' => \Carbon\Carbon::parse($data['date']),
+            'accountEdited'  => now(),
+        ]);
+
+        return redirect('/admin/finances')->with('success', 'Transaction added.');
+    }
+
+    public function createTransfer()
+    {
+        return view('admin.finances-transfer', ['members' => $this->financeMembers()]);
+    }
+
+    public function storeTransfer(Request $request)
+    {
+        $data = $request->validate([
+            'fromMemberID' => 'required|integer|exists:members,memberID|different:toMemberID',
+            'toMemberID'   => 'required|integer|exists:members,memberID',
+            'amount'       => 'required|numeric|min:0.01|max:10000',
+            'description'  => 'required|string|max:255',
+            'date'         => 'required|date',
+        ]);
+
+        $amount  = round((float) $data['amount'], 2);
+        $comment = $data['description'] . ' (transfer)';
+        $created = \Carbon\Carbon::parse($data['date']);
+        $now     = now();
+
+        // Both legs succeed or neither does.
+        DB::transaction(function () use ($data, $amount, $comment, $created, $now) {
+            DB::table('account')->insert([
+                'memberID'       => $data['fromMemberID'],
+                'accountValue'   => -$amount,
+                'gameID'         => null,
+                'accountComment' => $comment,
+                'accountVisible' => 1,
+                'accountCreated' => $created,
+                'accountEdited'  => $now,
+            ]);
+
+            DB::table('account')->insert([
+                'memberID'       => $data['toMemberID'],
+                'accountValue'   => $amount,
+                'gameID'         => null,
+                'accountComment' => $comment,
+                'accountVisible' => 1,
+                'accountCreated' => $created,
+                'accountEdited'  => $now,
+            ]);
+        });
+
+        return redirect('/admin/finances')->with('success', 'Transfer completed.');
+    }
+
     // COMMENTATORS
 
     public function commentators()

@@ -97,6 +97,14 @@
 
 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
     <h1 style="font-size:24px; font-weight:700; color:#262c39;">Finances</h1>
+    <div style="display:flex; gap:8px;">
+        <a href="/admin/finances/transaction" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> New Transaction
+        </a>
+        <a href="/admin/finances/transfer" class="btn btn-secondary">
+            <i class="fa-solid fa-right-left"></i> Transfer
+        </a>
+    </div>
 </div>
 
 <div class="admin-card">
