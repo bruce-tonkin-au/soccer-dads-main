@@ -59,6 +59,23 @@
     .wc-key { text-align:center; color:#667085; font-size:14px; border-top:1px solid #eceef1; padding-top:1.75rem; margin-top:1rem; }
     .wc-key strong { color:#262c39; }
 
+    /* Live Now */
+    .wc-live { margin-bottom:2.25rem; }
+    .wc-live-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .wc-live-head h2 { font-size:18px; font-weight:800; color:#262c39; letter-spacing:.01em; }
+    .wc-live-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; }
+    .wc-live-card { border:1px solid #f3c6c5; background:linear-gradient(180deg,#fff6f5,#ffffff); border-radius:16px; padding:16px 18px; box-shadow:0 1px 3px rgba(226,75,74,.10); }
+    .wc-live-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .wc-live-badge { display:inline-flex; align-items:center; gap:7px; color:#1f9d55; font-size:12px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
+    .wc-live-badge .dot { width:9px; height:9px; border-radius:50%; background:#1f9d55; animation:wc-pulse 1.2s ease-in-out infinite; }
+    @keyframes wc-pulse { 0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(31,157,85,.5); } 50% { opacity:.5; box-shadow:0 0 0 6px rgba(31,157,85,0); } }
+    .wc-live-score { display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; margin:14px 0 2px; }
+    .wc-live-team { display:flex; align-items:center; gap:8px; font-size:16px; font-weight:700; color:#262c39; }
+    .wc-live-team .flag { font-size:24px; }
+    .wc-live-num { font-size:30px; font-weight:800; color:#fff; background:#262c39; border-radius:10px; padding:2px 14px; white-space:nowrap; }
+    .wc-live-scorers { text-align:center; margin-top:8px; font-size:13px; color:#667085; }
+    .wc-live-stakes { margin-top:12px; border-top:1px dashed #f3c6c5; padding-top:10px; }
+
     @media (max-width:600px) {
         .wc-hero h1 { font-size:42px; }
         .wc-tab { padding:12px 14px; }
@@ -74,6 +91,57 @@
     </div>
 
     <div class="wc-wrap">
+
+        {{-- LIVE NOW — only when a fixture is in play --}}
+        @if (! $liveFixtures->isEmpty())
+            <div class="wc-live">
+                <div class="wc-live-head">
+                    <span class="wc-live-badge"><span class="dot"></span> Live</span>
+                    <h2>Live now</h2>
+                </div>
+                <div class="wc-live-grid">
+                    @foreach ($liveFixtures as $fixture)
+                        <div class="wc-live-card">
+                            <div class="wc-live-top">
+                                <span class="wc-live-badge"><span class="dot"></span> Live</span>
+                                @if ($fixture['group_letter'])<span class="wc-grp-pill">Group {{ $fixture['group_letter'] }}</span>@endif
+                            </div>
+
+                            <div class="wc-live-score">
+                                <span class="wc-live-team"><span class="flag">{{ $fixture['home_flag'] }}</span> {{ $fixture['home_name'] }}</span>
+                                <span class="wc-live-num">{{ $fixture['home_score'] }} : {{ $fixture['away_score'] }}</span>
+                                <span class="wc-live-team"><span class="flag">{{ $fixture['away_flag'] }}</span> {{ $fixture['away_name'] }}</span>
+                            </div>
+
+                            @if ($fixture['scorers'] !== '')
+                                <div class="wc-live-scorers">⚽ {{ $fixture['scorers'] }}</div>
+                            @endif
+
+                            @if (! empty($fixture['team_stakes']) || ! empty($fixture['player_stakes']))
+                                <div class="wc-live-stakes">
+                                    @if (! empty($fixture['team_stakes']))
+                                        <div class="wc-watch">
+                                            🎯
+                                            @foreach ($fixture['team_stakes'] as $stake)
+                                                <strong>{{ implode(', ', $stake['names']) }}</strong> have <strong>{{ $stake['team'] }}</strong>{{ ! $loop->last ? ' · ' : '' }}
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                    @if (! empty($fixture['player_stakes']))
+                                        <div class="wc-watch" style="margin-top:6px;">
+                                            ⚽
+                                            @foreach ($fixture['player_stakes'] as $stake)
+                                                <strong>{{ implode(', ', $stake['names']) }}</strong> have <strong>{{ $stake['player'] }}</strong>{{ ! $loop->last ? ' · ' : '' }}
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         {{-- Tabs --}}
         <div class="wc-tabs">

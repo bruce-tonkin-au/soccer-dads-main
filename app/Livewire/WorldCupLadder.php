@@ -11,8 +11,10 @@ use App\Models\WcSetting;
 use App\Models\WcTeam;
 use App\Support\MemberDirectory;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Poll;
 use Livewire\Component;
 
+#[Poll('30s')]
 class WorldCupLadder extends Component
 {
     public string $activeTab = 'ladder';
@@ -54,6 +56,7 @@ class WorldCupLadder extends Component
             'activeTab' => $this->activeTab,
             'drawRun' => $drawRun,
             'pointsKey' => $pointsKey,
+            'liveFixtures' => $this->liveFixtures($enriched, $teams),
             'ladder' => $this->ladder($enriched, $drawRun),
             'results' => $this->buildResults($enriched, $teams, $players, $pointsKey),
             'upcoming' => $this->buildUpcoming($enriched, $teams),
@@ -111,6 +114,7 @@ class WorldCupLadder extends Component
             'entryID' => $entry->entryID,
             'entry_name' => $entry->entry_name,
             'member_name' => $memberNames[$entry->memberID] ?? $entry->entry_name,
+            'draw_completed' => (bool) $entry->draw_completed,
             'top_team' => $this->teamRow($teams[$topTeamId] ?? null),
             'bottom_team' => $this->teamRow($teams[$bottomTeamId] ?? null),
             'players' => $playerRows->all(),
@@ -289,6 +293,61 @@ class WorldCupLadder extends Component
         }
 
         return implode(' · ', $parts);
+    }
+
+    /**
+     * Currently in-play fixtures (status = 'live'), each annotated with the
+     * entries that have a stake — a team in the match, or a player on the pitch.
+     * Stakes are grouped by team / player and only count fully-drawn entries.
+     * Uses the already-loaded $enriched collection — no per-fixture queries.
+     */
+    protected function liveFixtures(Collection $enriched, Collection $teams): Collection
+    {
+        $fixtures = WcFixture::query()
+            ->where('status', 'live')
+            ->with(['homeTeam', 'awayTeam', 'goals.player'])
+            ->orderBy('match_datetime')
+            ->get();
+
+        return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams) {
+            $fixtureTeamIds = array_values(array_filter([$fixture->home_team_id, $fixture->away_team_id]));
+
+            $teamGroups = [];   // teamID   => ['team' => name, 'names' => [...]]
+            $playerGroups = []; // playerID => ['player' => name, 'names' => [...]]
+
+            foreach ($enriched as $entry) {
+                if (! $entry['draw_completed']) {
+                    continue;
+                }
+
+                foreach ($entry['team_ids'] as $teamId) {
+                    if (in_array($teamId, $fixtureTeamIds)) {
+                        $teamGroups[$teamId]['team'] = $teams[$teamId]->name ?? '';
+                        $teamGroups[$teamId]['names'][] = $entry['member_name'];
+                    }
+                }
+
+                foreach ($entry['players'] as $player) {
+                    if ($player['team_id'] !== null && in_array($player['team_id'], $fixtureTeamIds)) {
+                        $playerGroups[$player['playerID']]['player'] = $player['name'];
+                        $playerGroups[$player['playerID']]['names'][] = $entry['member_name'];
+                    }
+                }
+            }
+
+            return [
+                'group_letter' => $fixture->group_letter,
+                'home_flag' => $fixture->homeTeam?->flag,
+                'home_name' => $fixture->homeTeam?->name ?? $fixture->home_placeholder ?? 'TBD',
+                'away_flag' => $fixture->awayTeam?->flag,
+                'away_name' => $fixture->awayTeam?->name ?? $fixture->away_placeholder ?? 'TBD',
+                'home_score' => $fixture->home_score ?? 0,
+                'away_score' => $fixture->away_score ?? 0,
+                'scorers' => $this->scorerLine($fixture->goals),
+                'team_stakes' => array_values($teamGroups),
+                'player_stakes' => array_values($playerGroups),
+            ];
+        });
     }
 
     /**
