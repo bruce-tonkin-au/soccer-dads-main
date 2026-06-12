@@ -36,6 +36,14 @@ class ApiFootball
         $response = $this->client()->get('/fixtures', $query);
         $response->throw();
 
+        // API-Football returns HTTP 200 with a non-empty `errors` map for plan /
+        // parameter problems (e.g. season not covered by the current plan). Treat
+        // those as failures so callers don't mistake them for "no fixtures".
+        $errors = $response->json('errors');
+        if (! empty($errors)) {
+            throw new \RuntimeException('API-Football error: ' . json_encode($errors));
+        }
+
         return $response->json('response', []);
     }
 
