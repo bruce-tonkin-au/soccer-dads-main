@@ -10,7 +10,7 @@ Artisan::command('inspire', function () {
 
 // World Cup results sync (Laravel 13 registers schedules here, not in a Console Kernel).
 Schedule::command('wc:sync-results')
-    ->everyFiveMinutes()
+    ->everyTwoMinutes()
     ->withoutOverlapping();
 
 // Re-match fixtures daily at 3am Adelaide time in case new knockout fixtures are added upstream.
