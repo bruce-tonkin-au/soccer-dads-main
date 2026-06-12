@@ -23,14 +23,16 @@ class WcFixture extends Model
         'home_score',
         'away_score',
         'status',
+        'api_football_id',
     ];
 
     protected $casts = [
-        'home_team_id'   => 'integer',
-        'away_team_id'   => 'integer',
-        'match_datetime' => 'datetime',
-        'home_score'     => 'integer',
-        'away_score'     => 'integer',
+        'home_team_id'    => 'integer',
+        'away_team_id'    => 'integer',
+        'match_datetime'  => 'datetime',
+        'home_score'      => 'integer',
+        'away_score'      => 'integer',
+        'api_football_id' => 'integer',
     ];
 
     public function homeTeam(): BelongsTo

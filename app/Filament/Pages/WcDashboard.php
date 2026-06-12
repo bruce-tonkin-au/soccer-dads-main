@@ -5,11 +5,13 @@ namespace App\Filament\Pages;
 use App\Filament\Widgets\WcOverviewStats;
 use App\Models\WcSetting;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Artisan;
 use UnitEnum;
 
 class WcDashboard extends Page
@@ -30,6 +32,25 @@ class WcDashboard extends Page
     protected const SCORING_KEYS = ['points_team_goal', 'points_player_goal'];
 
     public ?array $data = [];
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('syncResults')
+                ->label('Sync Results Now')
+                ->icon('heroicon-o-arrow-path')
+                ->action(function () {
+                    Artisan::call('wc:sync-results');
+                    $output = trim(Artisan::output());
+
+                    Notification::make()
+                        ->title('Results sync complete')
+                        ->body($output !== '' ? $output : 'No fixtures needed updating.')
+                        ->success()
+                        ->send();
+                }),
+        ];
+    }
 
     public function mount(): void
     {
