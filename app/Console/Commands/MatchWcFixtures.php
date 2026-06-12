@@ -35,6 +35,7 @@ class MatchWcFixtures extends Command
         'democratic republic of congo'  => 'dr congo',
         'dr congo'                      => 'dr congo',
         'cabo verde'                    => 'cape verde',
+        'cape verde islands'            => 'cape verde',
         "cote d'ivoire"                 => 'ivory coast',
         'cote divoire'                  => 'ivory coast',
         'turkiye'                       => 'turkey',
