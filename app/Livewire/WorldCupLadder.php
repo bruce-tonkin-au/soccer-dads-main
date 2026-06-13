@@ -227,7 +227,7 @@ class WorldCupLadder extends Component
                         continue;
                     }
                     $awards[] = [
-                        'entry_name' => $entry['entry_name'],
+                        'member_name' => $entry['member_name'],
                         'points' => $count * $points['team_goal'],
                         'reason' => $count === 1 ? "{$teamName} goal" : "{$teamName} {$count} goals",
                     ];
@@ -245,7 +245,7 @@ class WorldCupLadder extends Component
                         continue;
                     }
                     $awards[] = [
-                        'entry_name' => $entry['entry_name'],
+                        'member_name' => $entry['member_name'],
                         'points' => $count * $points['player_goal'],
                         'reason' => $count === 1 ? "{$playerName} goal" : "{$playerName} {$count} goals",
                     ];

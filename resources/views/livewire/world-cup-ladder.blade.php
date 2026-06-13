@@ -264,7 +264,7 @@
                                     <div class="lbl">Points awarded</div>
                                     @foreach ($result['awards'] as $award)
                                         <div class="wc-award">
-                                            <strong>{{ $award['entry_name'] }}</strong>
+                                            <strong>{{ $award['member_name'] }}</strong>
                                             <span class="pts">+{{ $award['points'] }}</span>
                                             <span class="wc-muted">({{ $award['reason'] }})</span>
                                         </div>
