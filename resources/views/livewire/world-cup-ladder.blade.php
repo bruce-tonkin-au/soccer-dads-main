@@ -117,21 +117,35 @@
                                 <div class="wc-live-scorers">⚽ {{ $fixture['scorers'] }}</div>
                             @endif
 
-                            @if (! empty($fixture['team_stakes']) || ! empty($fixture['player_stakes']))
+                            @php
+                                $teamWatchers = [];
+                                foreach ($fixture['team_stakes'] as $stake) {
+                                    foreach ($stake['names'] as $name) {
+                                        $teamWatchers[] = ['name' => $name, 'team' => $stake['team']];
+                                    }
+                                }
+                                $playerWatchers = [];
+                                foreach ($fixture['player_stakes'] as $stake) {
+                                    foreach ($stake['names'] as $name) {
+                                        $playerWatchers[] = ['name' => $name, 'player' => $stake['player']];
+                                    }
+                                }
+                            @endphp
+                            @if (! empty($teamWatchers) || ! empty($playerWatchers))
                                 <div class="wc-live-stakes">
-                                    @if (! empty($fixture['team_stakes']))
+                                    @if (! empty($teamWatchers))
                                         <div class="wc-watch">
                                             🎯
-                                            @foreach ($fixture['team_stakes'] as $stake)
-                                                <strong>{{ implode(', ', $stake['names']) }}</strong> have <strong>{{ $stake['team'] }}</strong>{{ ! $loop->last ? ' · ' : '' }}
+                                            @foreach ($teamWatchers as $w)
+                                                <strong>{{ $w['name'] }}</strong> ({{ $w['team'] }}){{ ! $loop->last ? ' · ' : '' }}
                                             @endforeach
                                         </div>
                                     @endif
-                                    @if (! empty($fixture['player_stakes']))
+                                    @if (! empty($playerWatchers))
                                         <div class="wc-watch" style="margin-top:6px;">
                                             ⚽
-                                            @foreach ($fixture['player_stakes'] as $stake)
-                                                <strong>{{ implode(', ', $stake['names']) }}</strong> have <strong>{{ $stake['player'] }}</strong>{{ ! $loop->last ? ' · ' : '' }}
+                                            @foreach ($playerWatchers as $w)
+                                                <strong>{{ $w['name'] }}</strong> ({{ $w['player'] }}){{ ! $loop->last ? ' · ' : '' }}
                                             @endforeach
                                         </div>
                                     @endif
