@@ -34,7 +34,10 @@ class WcEntryForm
                             ->numeric()
                             ->helperText('Optional — links to a store order.'),
                         Toggle::make('draw_completed')
-                            ->label('Draw completed'),
+                            ->label('Draw completed')
+                            ->helperText('Set automatically when both teams and all 4 players are assigned.')
+                            ->disabled()
+                            ->dehydrated(false),
                     ]),
 
                 Section::make('Draw selections')

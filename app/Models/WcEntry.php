@@ -46,6 +46,20 @@ class WcEntry extends Model
     }
 
     /**
+     * Whether the draw is fully assigned: both team tiers (top-24 + bottom-24)
+     * and all four player slots. Read fresh from the pivots so it is correct
+     * immediately after WcEntryResource::syncDraw() persists selections.
+     */
+    public function isDrawComplete(): bool
+    {
+        $tiers = $this->entryTeams()->pluck('tier');
+        $slots = $this->entryPlayers()->pluck('slot');
+
+        return $tiers->contains(1) && $tiers->contains(2)
+            && collect([1, 2, 3, 4])->every(fn (int $s) => $slots->contains($s));
+    }
+
+    /**
      * Live sweepstake points for this entry: one point (× the configurable
      * scoring values from wc_settings) for every goal scored by an assigned
      * team, plus one for every goal scored by an assigned player. Own goals

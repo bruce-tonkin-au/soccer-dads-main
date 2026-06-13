@@ -91,6 +91,11 @@ class WcEntryResource extends Resource
         static::syncPlayer($entry->entryID, 2, $data['player_slot2'] ?? null);
         static::syncPlayer($entry->entryID, 3, $data['player_slot3'] ?? null);
         static::syncPlayer($entry->entryID, 4, $data['player_slot4'] ?? null);
+
+        // draw_completed is derived, not manual: true once both team tiers and
+        // all four player slots are assigned. Recomputed on every save.
+        $entry->draw_completed = $entry->isDrawComplete();
+        $entry->save();
     }
 
     protected static function syncTeam(int $entryID, int $tier, $teamID): void
