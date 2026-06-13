@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\WcEntry;
+use App\Models\WcEntryPlayer;
 use App\Models\WcEntryTeam;
 use App\Models\WcFixture;
 use App\Models\WcGoal;
@@ -54,7 +55,7 @@ class WorldCupLadder extends Component
             'activeTab' => $this->activeTab,
             'drawRun' => $drawRun,
             'pointsKey' => $pointsKey,
-            'liveFixtures' => $this->liveFixtures($enriched, $teams),
+            'liveFixtures' => $this->liveFixtures(),
             'ladder' => $this->ladder($enriched, $drawRun),
             'results' => $this->buildResults($enriched, $teams, $players, $pointsKey),
             'upcoming' => $this->buildUpcoming($enriched, $teams),
@@ -299,7 +300,7 @@ class WorldCupLadder extends Component
      * Stakes are grouped by team / player and only count fully-drawn entries.
      * Uses the already-loaded $enriched collection — no per-fixture queries.
      */
-    protected function liveFixtures(Collection $enriched, Collection $teams): Collection
+    protected function liveFixtures(): Collection
     {
         $fixtures = WcFixture::query()
             ->where('status', 'live')
@@ -307,30 +308,83 @@ class WorldCupLadder extends Component
             ->orderBy('match_datetime')
             ->get();
 
-        return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams) {
+        if ($fixtures->isEmpty()) {
+            return collect();
+        }
+
+        // Every team taking part in a live fixture.
+        $liveTeamIds = $fixtures
+            ->flatMap(fn (WcFixture $f) => array_filter([$f->home_team_id, $f->away_team_id]))
+            ->unique()
+            ->values();
+
+        // Stake data is queried straight from wc_entry_teams / wc_entry_players
+        // (drawn entries only) rather than relying on the render-time $enriched
+        // collection, so live stakes show regardless of which tab is active.
+        $teamStakeRows = WcEntryTeam::query()
+            ->whereIn('teamID', $liveTeamIds)
+            ->whereHas('entry', fn ($q) => $q->where('draw_completed', true))
+            ->get(['entryID', 'teamID']);
+
+        // Players belonging to a live team, so a fixture can be matched via the
+        // player's own team even when the entry didn't draw that team directly.
+        $players = WcPlayer::query()
+            ->whereIn('teamID', $liveTeamIds)
+            ->get(['playerID', 'teamID', 'name'])
+            ->keyBy('playerID');
+
+        $playerStakeRows = WcEntryPlayer::query()
+            ->whereIn('playerID', $players->keys())
+            ->whereHas('entry', fn ($q) => $q->where('draw_completed', true))
+            ->get(['entryID', 'playerID']);
+
+        // Resolve team names and member display labels in bulk.
+        $teams = WcTeam::whereIn('teamID', $liveTeamIds)->get()->keyBy('teamID');
+
+        $entryIds = $teamStakeRows->pluck('entryID')
+            ->merge($playerStakeRows->pluck('entryID'))
+            ->unique()
+            ->values();
+        $entries = WcEntry::whereIn('entryID', $entryIds)
+            ->get(['entryID', 'memberID', 'entry_name'])
+            ->keyBy('entryID');
+        $memberNames = MemberDirectory::labels($entries->pluck('memberID')->all());
+
+        $nameFor = function ($entryID) use ($entries, $memberNames) {
+            $entry = $entries[$entryID] ?? null;
+
+            return $entry ? ($memberNames[$entry->memberID] ?? $entry->entry_name) : null;
+        };
+
+        return $fixtures->map(function (WcFixture $fixture) use ($teamStakeRows, $playerStakeRows, $players, $teams, $nameFor) {
             $fixtureTeamIds = array_values(array_filter([$fixture->home_team_id, $fixture->away_team_id]));
 
             $teamGroups = [];   // teamID   => ['team' => name, 'names' => [...]]
             $playerGroups = []; // playerID => ['player' => name, 'names' => [...]]
 
-            foreach ($enriched as $entry) {
-                if (! $entry['draw_completed']) {
+            foreach ($teamStakeRows as $row) {
+                if (! in_array($row->teamID, $fixtureTeamIds)) {
                     continue;
                 }
-
-                foreach ($entry['team_ids'] as $teamId) {
-                    if (in_array($teamId, $fixtureTeamIds)) {
-                        $teamGroups[$teamId]['team'] = $teams[$teamId]->name ?? '';
-                        $teamGroups[$teamId]['names'][] = $entry['member_name'];
-                    }
+                $name = $nameFor($row->entryID);
+                if ($name === null) {
+                    continue;
                 }
+                $teamGroups[$row->teamID]['team'] = $teams[$row->teamID]->name ?? '';
+                $teamGroups[$row->teamID]['names'][] = $name;
+            }
 
-                foreach ($entry['players'] as $player) {
-                    if ($player['team_id'] !== null && in_array($player['team_id'], $fixtureTeamIds)) {
-                        $playerGroups[$player['playerID']]['player'] = $player['name'];
-                        $playerGroups[$player['playerID']]['names'][] = $entry['member_name'];
-                    }
+            foreach ($playerStakeRows as $row) {
+                $player = $players[$row->playerID] ?? null;
+                if ($player === null || ! in_array($player->teamID, $fixtureTeamIds)) {
+                    continue;
                 }
+                $name = $nameFor($row->entryID);
+                if ($name === null) {
+                    continue;
+                }
+                $playerGroups[$row->playerID]['player'] = $player->name;
+                $playerGroups[$row->playerID]['names'][] = $name;
             }
 
             return [
