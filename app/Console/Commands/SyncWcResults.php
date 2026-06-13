@@ -72,7 +72,15 @@ class SyncWcResults extends Command
                     'status'     => 'live',
                 ]);
                 $updated++;
-                $this->line("Fixture #{$fixture->fixtureID}: live {$homeScore}-{$awayScore} ({$statusShort}).");
+
+                // Record goals as they happen — additive only. Never delete
+                // mid-match, so a goal can't briefly vanish between polls and
+                // the ladder updates in real time.
+                [$inserted, $missing] = $this->syncGoals($fixture, $data['events'] ?? [], rebuild: false);
+                $goalsInserted += $inserted;
+                $playersNotFound = array_merge($playersNotFound, $missing);
+
+                $this->line("Fixture #{$fixture->fixtureID}: live {$homeScore}-{$awayScore} ({$statusShort}); {$inserted} new goal(s).");
                 continue;
             }
 
@@ -84,7 +92,9 @@ class SyncWcResults extends Command
                 ]);
                 $updated++;
 
-                [$inserted, $missing] = $this->syncGoals($fixture, $data['events'] ?? []);
+                // Final whistle — clear and rebuild from the API for an
+                // authoritative goal list (reconciles any VAR/corrections).
+                [$inserted, $missing] = $this->syncGoals($fixture, $data['events'] ?? [], rebuild: true);
                 $goalsInserted += $inserted;
                 $playersNotFound = array_merge($playersNotFound, $missing);
 
@@ -115,13 +125,18 @@ class SyncWcResults extends Command
     }
 
     /**
-     * Insert wc_goals rows for a completed fixture's goal events. Returns
+     * Insert wc_goals rows for a fixture's goal events, returning
      * [insertedCount, [unmatchedPlayerNames]].
+     *
+     * Inserts are de-duplicated against existing rows, so this is safe to call
+     * repeatedly while a match is live. When $rebuild is true (final whistle)
+     * the fixture's goals are first cleared inside a transaction so the API is
+     * authoritative; when false (live) goals are only ever added, never removed.
      *
      * @param  array<int, array<string, mixed>>  $events
      * @return array{0:int,1:array<int,string>}
      */
-    private function syncGoals(WcFixture $fixture, array $events): array
+    private function syncGoals(WcFixture $fixture, array $events, bool $rebuild = false): array
     {
         $candidates = WcPlayer::query()
             ->when(
@@ -133,60 +148,74 @@ class SyncWcResults extends Command
         $inserted = 0;
         $missing = [];
 
-        foreach ($events as $event) {
-            if (($event['type'] ?? null) !== 'Goal') {
-                continue;
+        $process = function () use (&$inserted, &$missing, $fixture, $events, $candidates, $rebuild) {
+            // Completed rebuild: wipe first so removed/overturned goals don't
+            // linger. Live: leave existing rows in place.
+            if ($rebuild) {
+                WcGoal::where('fixtureID', $fixture->fixtureID)->delete();
             }
 
-            $detail = $event['detail'] ?? '';
-            if ($detail === 'Missed Penalty') {
-                continue;
-            }
+            foreach ($events as $event) {
+                if (($event['type'] ?? null) !== 'Goal') {
+                    continue;
+                }
 
-            $playerName = $event['player']['name'] ?? null;
-            if (! $playerName) {
-                continue;
-            }
+                $detail = $event['detail'] ?? '';
+                if ($detail === 'Missed Penalty') {
+                    continue;
+                }
 
-            $isOwnGoal = $detail === 'Own Goal';
-            $minute    = $event['time']['elapsed'] ?? null;
-            if (isset($event['time']['extra']) && $event['time']['extra'] !== null && $minute !== null) {
-                $minute += (int) $event['time']['extra'];
-            }
+                $playerName = $event['player']['name'] ?? null;
+                if (! $playerName) {
+                    continue;
+                }
 
-            $player = $this->matchPlayer($playerName, $candidates);
+                $isOwnGoal = $detail === 'Own Goal';
+                $minute    = $event['time']['elapsed'] ?? null;
+                if (isset($event['time']['extra']) && $event['time']['extra'] !== null && $minute !== null) {
+                    $minute += (int) $event['time']['extra'];
+                }
 
-            if (! $player) {
-                $missing[] = $playerName . ' (fixture #' . $fixture->fixtureID . ')';
-                Log::warning('wc:sync-results — player not found for goal', [
-                    'fixtureID'      => $fixture->fixtureID,
-                    'api_football_id'=> $fixture->api_football_id,
-                    'player'         => $playerName,
-                    'detail'         => $detail,
+                $player = $this->matchPlayer($playerName, $candidates);
+
+                if (! $player) {
+                    $missing[] = $playerName . ' (fixture #' . $fixture->fixtureID . ')';
+                    Log::warning('wc:sync-results — player not found for goal', [
+                        'fixtureID'      => $fixture->fixtureID,
+                        'api_football_id'=> $fixture->api_football_id,
+                        'player'         => $playerName,
+                        'detail'         => $detail,
+                    ]);
+                    continue;
+                }
+
+                // Skip if this goal is already recorded.
+                $exists = WcGoal::query()
+                    ->where('fixtureID', $fixture->fixtureID)
+                    ->where('playerID', $player->playerID)
+                    ->where('is_own_goal', $isOwnGoal)
+                    ->when($minute !== null, fn ($q) => $q->where('minute', $minute))
+                    ->exists();
+
+                if ($exists) {
+                    continue;
+                }
+
+                WcGoal::create([
+                    'fixtureID'   => $fixture->fixtureID,
+                    'playerID'    => $player->playerID,
+                    'teamID'      => $player->teamID,
+                    'minute'      => $minute,
+                    'is_own_goal' => $isOwnGoal,
                 ]);
-                continue;
+                $inserted++;
             }
+        };
 
-            // Skip if this goal is already recorded.
-            $exists = WcGoal::query()
-                ->where('fixtureID', $fixture->fixtureID)
-                ->where('playerID', $player->playerID)
-                ->where('is_own_goal', $isOwnGoal)
-                ->when($minute !== null, fn ($q) => $q->where('minute', $minute))
-                ->exists();
-
-            if ($exists) {
-                continue;
-            }
-
-            WcGoal::create([
-                'fixtureID'   => $fixture->fixtureID,
-                'playerID'    => $player->playerID,
-                'teamID'      => $player->teamID,
-                'minute'      => $minute,
-                'is_own_goal' => $isOwnGoal,
-            ]);
-            $inserted++;
+        if ($rebuild) {
+            DB::transaction($process);
+        } else {
+            $process();
         }
 
         return [$inserted, $missing];
