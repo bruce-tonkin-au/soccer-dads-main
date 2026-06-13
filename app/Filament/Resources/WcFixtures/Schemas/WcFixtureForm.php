@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\WcFixtures\Schemas;
 
 use App\Models\WcFixture;
+use App\Models\WcGoal;
 use App\Models\WcPlayer;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
@@ -123,14 +124,28 @@ class WcFixtureForm
 
         $teamIds = array_filter([$record->home_team_id, $record->away_team_id]);
 
-        if (empty($teamIds)) {
+        // Players already recorded as scorers in this fixture — included even if
+        // inactive or on a since-changed team, so synced goals always render
+        // with a proper player label in the repeater (not a blank Select).
+        $scorerIds = WcGoal::where('fixtureID', $record->fixtureID)
+            ->pluck('playerID')
+            ->filter()
+            ->unique();
+
+        if (empty($teamIds) && $scorerIds->isEmpty()) {
             return [];
         }
 
         return WcPlayer::query()
             ->with('team')
-            ->whereIn('teamID', $teamIds)
-            ->where('is_active', true)
+            ->where(function ($q) use ($teamIds, $scorerIds) {
+                if (! empty($teamIds)) {
+                    $q->where(fn ($q2) => $q2->whereIn('teamID', $teamIds)->where('is_active', true));
+                }
+                if ($scorerIds->isNotEmpty()) {
+                    $q->orWhereIn('playerID', $scorerIds);
+                }
+            })
             ->orderBy('teamID')
             ->orderBy('shirt_number')
             ->get()

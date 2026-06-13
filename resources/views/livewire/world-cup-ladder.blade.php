@@ -64,7 +64,7 @@
     .wc-live-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
     .wc-live-head h2 { font-size:18px; font-weight:800; color:#262c39; letter-spacing:.01em; }
     .wc-live-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:14px; }
-    .wc-live-card { border:1px solid #f3c6c5; background:linear-gradient(180deg,#fff6f5,#ffffff); border-radius:16px; padding:16px 18px; box-shadow:0 1px 3px rgba(226,75,74,.10); }
+    .wc-live-card { border:2px solid #22c55e; background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-radius:16px; padding:16px 18px; box-shadow:0 1px 3px rgba(34,197,94,.12); }
     .wc-live-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
     .wc-live-badge { display:inline-flex; align-items:center; gap:7px; color:#1f9d55; font-size:12px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; }
     .wc-live-badge .dot { width:9px; height:9px; border-radius:50%; background:#1f9d55; animation:wc-pulse 1.2s ease-in-out infinite; }
@@ -74,7 +74,7 @@
     .wc-live-team .flag { font-size:24px; }
     .wc-live-num { font-size:30px; font-weight:800; color:#fff; background:#262c39; border-radius:10px; padding:2px 14px; white-space:nowrap; }
     .wc-live-scorers { text-align:center; margin-top:8px; font-size:13px; color:#667085; }
-    .wc-live-stakes { margin-top:12px; border-top:1px dashed #f3c6c5; padding-top:10px; }
+    .wc-live-stakes { margin-top:12px; border-top:1px dashed #86efac; padding-top:10px; text-align:center; }
 
     @media (max-width:600px) {
         .wc-hero h1 { font-size:42px; }
@@ -95,10 +95,6 @@
         {{-- LIVE NOW — only when a fixture is in play --}}
         @if (! $liveFixtures->isEmpty())
             <div class="wc-live">
-                <div class="wc-live-head">
-                    <span class="wc-live-badge"><span class="dot"></span> Live</span>
-                    <h2>Live now</h2>
-                </div>
                 <div class="wc-live-grid">
                     @foreach ($liveFixtures as $fixture)
                         <div class="wc-live-card">
