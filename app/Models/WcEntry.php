@@ -72,9 +72,10 @@ class WcEntry extends Model
         $teamIds = $this->entryTeams->pluck('teamID')->all();
         $playerIds = $this->entryPlayers->pluck('playerID')->all();
 
+        // Own goals are included for teams — wc_goals.teamID is the credited
+        // (benefiting) team — but excluded for players below.
         $teamGoals = empty($teamIds) ? 0 : WcGoal::query()
             ->whereIn('teamID', $teamIds)
-            ->where('is_own_goal', false)
             ->count();
 
         $playerGoals = empty($playerIds) ? 0 : WcGoal::query()

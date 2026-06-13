@@ -154,14 +154,15 @@ class WorldCupLadder extends Component
 
     /**
      * Points earned by each team: one point (× points_team_goal) for every goal
-     * the team scores, own goals excluded. Bulk-counted in a single query.
+     * credited to the team. Own goals ARE included — wc_goals.teamID already
+     * holds the team that benefits, so grouping by teamID counts each team's
+     * goals-for (matching the scoreline). Bulk-counted in a single query.
      *
      * @param  array{team_goal:int,player_goal:int}  $points
      */
     protected function teamPointsMap(array $points): Collection
     {
         return WcGoal::query()
-            ->where('is_own_goal', false)
             ->selectRaw('"teamID", count(*) as goals')
             ->groupBy('teamID')
             ->pluck('goals', 'teamID')

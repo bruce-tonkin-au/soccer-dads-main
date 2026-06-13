@@ -48,9 +48,9 @@ class HomeController extends Controller
         $teamGoalPts = (int) ($settings['points_team_goal'] ?? 1);
         $playerGoalPts = (int) ($settings['points_player_goal'] ?? 1);
 
-        // Goals scored per team and per player (excluding own goals).
+        // Team goals include own goals (teamID is the credited/benefiting team);
+        // player goals exclude them (an own goal doesn't reward its scorer).
         $teamGoals = DB::table('wc_goals')
-            ->where('is_own_goal', false)
             ->groupBy('teamID')
             ->selectRaw('"teamID", count(*) as goals')
             ->pluck('goals', 'teamID');

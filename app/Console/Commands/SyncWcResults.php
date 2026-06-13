@@ -145,70 +145,87 @@ class SyncWcResults extends Command
             )
             ->get(['playerID', 'teamID', 'name']);
 
-        $inserted = 0;
         $missing = [];
 
-        $process = function () use (&$inserted, &$missing, $fixture, $events, $candidates, $rebuild) {
+        // Resolve each API goal event to a normalised row. For an own goal the
+        // teamID is the OPPONENT — the side that benefits from / is credited
+        // with the goal — not the scorer's own team.
+        $goals = [];
+        foreach ($events as $event) {
+            if (($event['type'] ?? null) !== 'Goal') {
+                continue;
+            }
+
+            $detail = $event['detail'] ?? '';
+            if ($detail === 'Missed Penalty') {
+                continue;
+            }
+
+            $playerName = $event['player']['name'] ?? null;
+            if (! $playerName) {
+                continue;
+            }
+
+            $player = $this->matchPlayer($playerName, $candidates);
+            if (! $player) {
+                $missing[] = $playerName . ' (fixture #' . $fixture->fixtureID . ')';
+                Log::warning('wc:sync-results — player not found for goal', [
+                    'fixtureID'       => $fixture->fixtureID,
+                    'api_football_id' => $fixture->api_football_id,
+                    'player'          => $playerName,
+                    'detail'          => $detail,
+                ]);
+                continue;
+            }
+
+            $isOwnGoal = $detail === 'Own Goal';
+            $minute    = $event['time']['elapsed'] ?? null;
+            if (isset($event['time']['extra']) && $event['time']['extra'] !== null && $minute !== null) {
+                $minute += (int) $event['time']['extra'];
+            }
+
+            $goals[] = [
+                'playerID'    => $player->playerID,
+                'teamID'      => $isOwnGoal ? $this->benefitingTeamId($fixture, $player->teamID) : $player->teamID,
+                'minute'      => $minute,
+                'is_own_goal' => $isOwnGoal,
+            ];
+        }
+
+        $inserted = 0;
+
+        $process = function () use (&$inserted, $fixture, $goals, $rebuild) {
             // Completed rebuild: wipe first so removed/overturned goals don't
             // linger. Live: leave existing rows in place.
             if ($rebuild) {
                 WcGoal::where('fixtureID', $fixture->fixtureID)->delete();
             }
 
-            foreach ($events as $event) {
-                if (($event['type'] ?? null) !== 'Goal') {
-                    continue;
-                }
+            // Insert by shortfall, not existence: group by player + own-goal and
+            // add only as many rows as the API now reports beyond what is already
+            // stored. So a player who scored twice gets two rows, while
+            // re-polling a live match never duplicates.
+            $groups = collect($goals)->groupBy(fn ($g) => $g['playerID'] . '|' . ($g['is_own_goal'] ? '1' : '0'));
 
-                $detail = $event['detail'] ?? '';
-                if ($detail === 'Missed Penalty') {
-                    continue;
-                }
+            foreach ($groups as $group) {
+                $group = $group->values();
+                $first = $group->first();
 
-                $playerName = $event['player']['name'] ?? null;
-                if (! $playerName) {
-                    continue;
-                }
+                $existing = WcGoal::where('fixtureID', $fixture->fixtureID)
+                    ->where('playerID', $first['playerID'])
+                    ->where('is_own_goal', $first['is_own_goal'])
+                    ->count();
 
-                $isOwnGoal = $detail === 'Own Goal';
-                $minute    = $event['time']['elapsed'] ?? null;
-                if (isset($event['time']['extra']) && $event['time']['extra'] !== null && $minute !== null) {
-                    $minute += (int) $event['time']['extra'];
-                }
-
-                $player = $this->matchPlayer($playerName, $candidates);
-
-                if (! $player) {
-                    $missing[] = $playerName . ' (fixture #' . $fixture->fixtureID . ')';
-                    Log::warning('wc:sync-results — player not found for goal', [
-                        'fixtureID'      => $fixture->fixtureID,
-                        'api_football_id'=> $fixture->api_football_id,
-                        'player'         => $playerName,
-                        'detail'         => $detail,
+                foreach ($group->slice($existing) as $g) {
+                    WcGoal::create([
+                        'fixtureID'   => $fixture->fixtureID,
+                        'playerID'    => $g['playerID'],
+                        'teamID'      => $g['teamID'],
+                        'minute'      => $g['minute'],
+                        'is_own_goal' => $g['is_own_goal'],
                     ]);
-                    continue;
+                    $inserted++;
                 }
-
-                // Skip if this goal is already recorded.
-                $exists = WcGoal::query()
-                    ->where('fixtureID', $fixture->fixtureID)
-                    ->where('playerID', $player->playerID)
-                    ->where('is_own_goal', $isOwnGoal)
-                    ->when($minute !== null, fn ($q) => $q->where('minute', $minute))
-                    ->exists();
-
-                if ($exists) {
-                    continue;
-                }
-
-                WcGoal::create([
-                    'fixtureID'   => $fixture->fixtureID,
-                    'playerID'    => $player->playerID,
-                    'teamID'      => $player->teamID,
-                    'minute'      => $minute,
-                    'is_own_goal' => $isOwnGoal,
-                ]);
-                $inserted++;
             }
         };
 
@@ -219,6 +236,23 @@ class SyncWcResults extends Command
         }
 
         return [$inserted, $missing];
+    }
+
+    /**
+     * The team credited with a goal scored by a player on $scorerTeamId. For a
+     * normal goal that is the scorer's team; this resolves the OWN-GOAL case,
+     * where the credited team is the opponent in this fixture.
+     */
+    private function benefitingTeamId(WcFixture $fixture, ?int $scorerTeamId): ?int
+    {
+        if ($scorerTeamId !== null && (int) $scorerTeamId === (int) $fixture->home_team_id) {
+            return $fixture->away_team_id;
+        }
+        if ($scorerTeamId !== null && (int) $scorerTeamId === (int) $fixture->away_team_id) {
+            return $fixture->home_team_id;
+        }
+
+        return $scorerTeamId; // Scorer not on either side — leave unchanged.
     }
 
     /**
