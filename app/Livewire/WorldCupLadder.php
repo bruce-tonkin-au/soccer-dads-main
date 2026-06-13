@@ -214,8 +214,10 @@ class WorldCupLadder extends Component
 
             $awards = [];
 
-            // Team-goal points: per team that scored (non own goal) in this match.
-            $byTeam = $goals->where('is_own_goal', false)->groupBy('teamID');
+            // Team-goal points: per team credited with a goal this match. Own
+            // goals ARE included — wc_goals.teamID holds the benefiting team, so
+            // grouping by teamID matches the scoreline and the ladder total.
+            $byTeam = $goals->groupBy('teamID');
             foreach ($byTeam as $teamId => $teamGoals) {
                 $count = $teamGoals->count();
                 $teamName = $teams[$teamId]->name ?? 'Team';
