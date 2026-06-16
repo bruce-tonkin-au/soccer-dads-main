@@ -2,12 +2,7 @@
 @section('title', 'About — Soccer Dads')
 @section('content')
 
-<div style="background:#262c39; padding:4rem 2rem;">
-    <div class="container">
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#fff; margin-bottom:1rem;">About</h1>
-        <p style="font-size:18px; color:rgba(255,255,255,0.7); max-width:600px;">Friday night futsal for dads in the Adelaide Hills. Est. 2011.</p>
-    </div>
-</div>
+<x-page-header title="About" />
 
 <div style="padding:4rem 2rem;">
     <div class="container">

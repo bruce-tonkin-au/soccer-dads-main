@@ -2,11 +2,7 @@
 @section('title', 'Contact — Soccer Dads')
 @section('content')
 
-<div style="background:#262c39; padding:4rem 2rem;">
-    <div class="container">
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#fff;">Contact</h1>
-    </div>
-</div>
+<x-page-header title="Contact" />
 
 <div style="padding:4rem 2rem;">
     <div class="container" style="max-width:800px;">

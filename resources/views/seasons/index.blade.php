@@ -74,10 +74,10 @@
 
 @section('content')
 
-<div style="padding:4rem 2rem;">
-    <div class="container">
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#262c39; margin-bottom:0.5rem;">Seasons</h1>
+<x-page-header title="Seasons" />
 
+<div style="padding:3rem 2rem 4rem;">
+    <div class="container">
         <div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; overflow:hidden; padding:1.5rem;">
             <table id="seasons-table" style="width:100%;">
                 <thead>

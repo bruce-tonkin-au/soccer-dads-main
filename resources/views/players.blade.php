@@ -74,11 +74,7 @@
 
 @section('content')
 
-<div style="background:#262c39; padding:4rem 2rem 3rem;">
-    <div class="container">
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#fff; line-height:1; margin:0;">Players</h1>
-    </div>
-</div>
+<x-page-header title="Players" />
 
 <div style="padding:3rem 2rem 4rem;">
     <div class="container">

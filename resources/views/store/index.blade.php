@@ -3,22 +3,6 @@
 
 @push('styles')
 <style>
-    .store-hero {
-        background: #262c39;
-        padding: 4rem 2rem;
-        text-align: center;
-    }
-    .store-hero h1 {
-        font-family: 'GetShow', sans-serif;
-        font-size: 48px;
-        font-weight: normal;
-        color: #fff;
-        margin-bottom: 0.75rem;
-    }
-    .store-hero p {
-        color: rgba(255,255,255,0.6);
-        font-size: 16px;
-    }
     .store-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -82,17 +66,13 @@
     }
     @media (max-width: 600px) {
         .store-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .store-hero h1 { font-size: 32px; }
     }
 </style>
 @endpush
 
 @section('content')
 
-<div class="store-hero">
-    <h1>Store</h1>
-    <p>Official gear for players &amp; fans</p>
-</div>
+<x-page-header title="Store" />
 
 <div style="background:#f8f8f8; padding-bottom:4rem;">
     <div class="container">
