@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Concerns\MatchesWcPlayers;
 use App\Console\Concerns\SyncsWcCards;
 use App\Models\WcFixture;
 use App\Support\ApiFootball;
@@ -9,6 +10,7 @@ use Illuminate\Console\Command;
 
 class BackfillWcCards extends Command
 {
+    use MatchesWcPlayers;
     use SyncsWcCards;
 
     protected $signature = 'wc:backfill-cards';

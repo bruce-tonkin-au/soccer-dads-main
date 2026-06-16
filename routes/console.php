@@ -17,3 +17,9 @@ Schedule::command('wc:sync-results')
 Schedule::command('wc:match-fixtures')
     ->dailyAt('03:00')
     ->timezone('Australia/Adelaide');
+
+// Self-healing sweep: backfill goals for any completed fixture left without
+// recorded scorers (e.g. a fixture marked completed before its goals synced).
+Schedule::command('wc:backfill-goals')
+    ->dailyAt('04:00')
+    ->timezone('Australia/Adelaide');
