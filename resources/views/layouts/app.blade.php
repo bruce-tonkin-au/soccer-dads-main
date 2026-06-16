@@ -44,6 +44,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .navbar-brand img {
             height: 36px;
@@ -51,6 +53,8 @@
         .navbar-nav {
             display: flex;
             align-items: center;
+            flex-wrap: nowrap;
+            white-space: nowrap;
             gap: 2rem;
             list-style: none;
         }
@@ -199,7 +203,9 @@
             padding: 0 2rem;
         }
 
-        @media (max-width: 768px) {
+        /* Nav: switch cleanly from full nav to burger at the lg breakpoint so
+           the items never wrap and the Login button never orphans. */
+        @media (max-width: 991px) {
     #burger { display:block !important; }
     .navbar-nav {
         display: none;
@@ -232,6 +238,8 @@
         border-radius: 8px;
     }
     .nav-cart-label { display: inline; margin-left: 6px; }
+}
+        @media (max-width: 768px) {
     #footer-grid {
         grid-template-columns: 1fr 1fr !important;
     }
