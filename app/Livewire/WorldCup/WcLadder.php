@@ -23,10 +23,11 @@ class WcLadder extends WcPage
             ->groupBy('playerID')
             ->pluck('goals', 'playerID');
 
-        // teamID => goals scored (own goals excluded), one bulk query. Drives the
-        // ⚽ count shown under each top-24 / bottom-24 team name.
+        // teamID => goals-for, one bulk query. Own goals ARE counted: wc_goals.teamID
+        // already holds the benefiting team, so grouping by teamID gives each team's
+        // true goal tally (matching the scoreline and teamPointsMap). Drives the ⚽
+        // count shown under each top-24 / bottom-24 team name.
         $teamGoalMap = WcGoal::query()
-            ->where('is_own_goal', false)
             ->selectRaw('"teamID", count(*) as goals')
             ->groupBy('teamID')
             ->pluck('goals', 'teamID');
