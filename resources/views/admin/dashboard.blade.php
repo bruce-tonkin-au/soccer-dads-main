@@ -62,6 +62,22 @@
         @endforeach
     </div>
 
+    @if($benchRegistrations && $benchRegistrations->count() > 0)
+    <div style="margin-top:1rem;" id="bench-section">
+        <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">
+            <i class="fa-solid fa-chair" style="margin-right:4px;"></i>Bench
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;" id="bench-list">
+            @foreach($benchRegistrations as $i => $r)
+            <div style="display:inline-flex; align-items:center; gap:6px; background:#fff8ec; border:1px solid #e68a46; border-radius:20px; padding:4px 14px; font-size:13px; color:#a0620a;">
+                <span style="font-weight:700;">B{{ $i + 1 }}</span>
+                <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#a0620a; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     @if($recentUnregistered && $recentUnregistered->count() > 0)
     <div style="margin-top:1rem;" id="not-yet-registered-section" data-player-section>
         <p style="font-size:12px; color:#aaa; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px;">Not yet registered — played recently</p>

@@ -56,6 +56,7 @@ Route::middleware('admin.auth')->prefix('admin')->group(function () {
     Route::post('/registrations/{gameID}/promote/{memberID}', [AdminController::class, 'promotePlayer']);
     Route::post('/registrations/{gameID}/demote/{memberID}', [AdminController::class, 'demotePlayer']);
     Route::post('/registrations/{gameID}/register/{memberID}', [AdminController::class, 'registerPlayer']);
+    Route::post('/registrations/{gameID}/bench/{memberID}/move/{direction}', [AdminController::class, 'moveBench'])->where('direction', 'up|down');
 
     Route::get('/ratings', [AdminController::class, 'ratings']);
     Route::get('/ratings/{memberID}', [AdminController::class, 'playerRatings']);

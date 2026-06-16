@@ -45,6 +45,8 @@ class RegistrationController extends Controller
             ->where('r.gameID', $gameID)
             ->where('r.registrationBench', 1)
             ->where('r.registrationStatus', 1)
+            ->orderByRaw('(r."registrationBenchOrder" = 0)')
+            ->orderBy('r.registrationBenchOrder')
             ->orderBy('r.registrationCreated')
             ->orderBy('r.registrationID')
             ->select('r.*', 'm.memberEmail', 'm.memberNameFirst', 'm.memberCode')
@@ -144,6 +146,8 @@ class RegistrationController extends Controller
                 ->where('gameID', $nextGame->gameID)
                 ->where('registrationBench', 1)
                 ->where('registrationStatus', 1)
+                ->orderByRaw('("registrationBenchOrder" = 0)')
+                ->orderBy('registrationBenchOrder')
                 ->orderBy('registrationCreated')
                 ->orderBy('registrationID')
                 ->pluck('registrationID');

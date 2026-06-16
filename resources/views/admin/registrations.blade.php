@@ -139,13 +139,14 @@
                 <th>First registered</th>
                 <th>Last updated</th>
                 <th>Status</th>
+                <th style="width:96px;">Bench order</th>
             </tr>
         </thead>
         <tbody>
             @foreach($registrations as $r)
             @php
-                $regTime     = \Carbon\Carbon::parse($r->registrationCreated);
-                $editTime    = \Carbon\Carbon::parse($r->registrationEdited);
+                $regTime     = \Carbon\Carbon::parse($r->registrationCreated)->timezone('Australia/Adelaide');
+                $editTime    = \Carbon\Carbon::parse($r->registrationEdited)->timezone('Australia/Adelaide');
                 $wasEdited   = abs($regTime->diffInSeconds($editTime)) > 5;
             @endphp
             <tr>
@@ -198,6 +199,30 @@
                         <span class="status-badge" style="background:#f4f4f4; color:#888;">Unknown</span>
                     @endif
                 </td>
+                <td>
+                    @if($r->registrationStatus == 1 && $r->registrationBench == 1)
+                    @php
+                        $isFirstBench = $r->benchSequence <= 1;
+                        $isLastBench  = $r->benchSequence >= $benchCount;
+                    @endphp
+                    <div style="display:flex; gap:4px;">
+                        <form method="POST" action="/admin/registrations/{{ $game->gameID }}/bench/{{ $r->memberID }}/move/up" style="margin:0;">
+                            @csrf
+                            <button type="submit" title="Move up" {{ $isFirstBench ? 'disabled' : '' }}
+                                style="background:#fff8ec; border:1px solid #e68a46; border-radius:6px; color:#a0620a; padding:3px 9px; font-size:12px; cursor:{{ $isFirstBench ? 'default' : 'pointer' }}; {{ $isFirstBench ? 'opacity:0.3;' : '' }}">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                        </form>
+                        <form method="POST" action="/admin/registrations/{{ $game->gameID }}/bench/{{ $r->memberID }}/move/down" style="margin:0;">
+                            @csrf
+                            <button type="submit" title="Move down" {{ $isLastBench ? 'disabled' : '' }}
+                                style="background:#fff8ec; border:1px solid #e68a46; border-radius:6px; color:#a0620a; padding:3px 9px; font-size:12px; cursor:{{ $isLastBench ? 'default' : 'pointer' }}; {{ $isLastBench ? 'opacity:0.3;' : '' }}">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                        </form>
+                    </div>
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>
@@ -231,7 +256,7 @@
         <tbody>
             @foreach($events as $e)
             @php
-                $eventTime = \Carbon\Carbon::parse($e->created_at);
+                $eventTime = \Carbon\Carbon::parse($e->created_at)->timezone('Australia/Adelaide');
                 $typeClass = 'event-' . $e->eventType;
                 $typeLabels = [
                     'registered'       => 'Registered',

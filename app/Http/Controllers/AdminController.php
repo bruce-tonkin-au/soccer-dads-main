@@ -63,7 +63,7 @@ class AdminController extends Controller
                 ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
                 ->where('g.gameVisible', 1)
                 ->where('g.gameSeasonID', $currentSeason->seasonID)
-                ->where('g.gameDate', '>=', now()->toDateString())
+                ->whereRaw('g."gameDate" >= (NOW() AT TIME ZONE \'Australia/Adelaide\')::date')
                 ->orderBy('g.gameDate', 'asc')
                 ->orderBy('g.gameID', 'asc')
                 ->select('g.*', 's.seasonName')
@@ -71,6 +71,7 @@ class AdminController extends Controller
         }
 
         $registrations = null;
+        $benchRegistrations = null;
         $recentUnregistered = null;
         $notGoingRegistrations = null;
         if ($nextGame) {
@@ -80,6 +81,19 @@ class AdminController extends Controller
                 ->where('r.registrationStatus', 1)
                 ->where('r.registrationBench', 0)
                 ->orderBy('m.memberNameLast')
+                ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
+                ->get();
+
+            // Bench players, in queue order (B1, B2, …).
+            $benchRegistrations = DB::table('game-registrations as r')
+                ->join('members as m', 'r.memberID', '=', 'm.memberID')
+                ->where('r.gameID', $nextGame->gameID)
+                ->where('r.registrationStatus', 1)
+                ->where('r.registrationBench', 1)
+                ->orderByRaw('(r."registrationBenchOrder" = 0)')
+                ->orderBy('r.registrationBenchOrder')
+                ->orderBy('r.registrationCreated')
+                ->orderBy('r.registrationID')
                 ->select('m.memberID', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
                 ->get();
 
@@ -105,6 +119,7 @@ class AdminController extends Controller
 
             if ($recentGameIds->isNotEmpty()) {
                 $registeredIds = $registrations->pluck('memberID')
+                    ->merge($benchRegistrations->pluck('memberID'))
                     ->merge($notGoingRegistrations->pluck('memberID'))
                     ->unique();
 
@@ -121,7 +136,7 @@ class AdminController extends Controller
             }
         }
 
-        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'recentUnregistered', 'notGoingRegistrations'));
+        return view('admin.dashboard', compact('stats', 'nextGame', 'registrations', 'benchRegistrations', 'recentUnregistered', 'notGoingRegistrations'));
     }
 
     // PLAYERS
@@ -689,7 +704,7 @@ class AdminController extends Controller
             $nextGame = DB::table('games')
                 ->where('gameVisible', 1)
                 ->where('gameSeasonID', $currentSeason->seasonID)
-                ->where('gameDate', '>=', now()->toDateString())
+                ->whereRaw('"gameDate" >= (NOW() AT TIME ZONE \'Australia/Adelaide\')::date')
                 ->orderBy('gameDate', 'asc')
                 ->orderBy('gameID', 'asc')
                 ->first();
@@ -724,16 +739,31 @@ class AdminController extends Controller
             ->select('r.*', 'm.memberNameFirst', 'm.memberNameLast', 'm.memberSlug')
             ->get();
 
-        // Assign registration sequence: rank active registrations by registrationCreated
+        // Bench queue order (B1, B2, …): explicit registrationBenchOrder when set,
+        // otherwise registrationCreated — matches the promotion order. Maps
+        // registrationID => 1-based bench position.
+        $benchRank = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('registrationStatus', 1)
+            ->where('registrationBench', 1)
+            ->orderByRaw('("registrationBenchOrder" = 0)')
+            ->orderBy('registrationBenchOrder')
+            ->orderBy('registrationCreated')
+            ->orderBy('registrationID')
+            ->pluck('registrationID')
+            ->flip()
+            ->map(fn ($i) => $i + 1);
+
+        // Assign registration sequence: active players ranked by registrationCreated,
+        // bench players by the bench queue order computed above.
         $activeSeq = 0;
-        $benchSeq  = 0;
-        $registrations = $registrations->map(function ($r) use (&$activeSeq, &$benchSeq) {
+        $registrations = $registrations->map(function ($r) use (&$activeSeq, $benchRank) {
             $r->activeSequence = null;
             $r->benchSequence  = null;
             if ($r->registrationStatus == 1 && $r->registrationBench == 0) {
                 $r->activeSequence = ++$activeSeq;
             } elseif ($r->registrationStatus == 1 && $r->registrationBench == 1) {
-                $r->benchSequence = ++$benchSeq;
+                $r->benchSequence = $benchRank[$r->registrationID] ?? null;
             }
             return $r;
         });
@@ -752,6 +782,47 @@ class AdminController extends Controller
         return view('admin.registrations', compact(
             'game', 'allGames', 'registrations', 'events', 'isNextGame', 'nextGame'
         ));
+    }
+
+    // Move a bench player up or down the queue by swapping with the adjacent
+    // bench player, then normalise registrationBenchOrder to 1..N so the order
+    // is explicit. Affects B1/B2 labels, the member-facing position and who is
+    // promoted first. Does NOT touch registrationEdited (not a status change).
+    public function moveBench($gameID, $memberID, $direction)
+    {
+        $bench = DB::table('game-registrations')
+            ->where('gameID', $gameID)
+            ->where('registrationStatus', 1)
+            ->where('registrationBench', 1)
+            ->orderByRaw('("registrationBenchOrder" = 0)')
+            ->orderBy('registrationBenchOrder')
+            ->orderBy('registrationCreated')
+            ->orderBy('registrationID')
+            ->get(['registrationID', 'memberID']);
+
+        $ids = $bench->pluck('registrationID')->values()->all();
+        $pos = $bench->search(fn ($r) => $r->memberID == $memberID);
+
+        if ($pos === false) {
+            return redirect('/admin/registrations/' . $gameID);
+        }
+
+        $swap = $direction === 'up' ? $pos - 1 : $pos + 1;
+        if ($swap < 0 || $swap >= count($ids)) {
+            return redirect('/admin/registrations/' . $gameID);
+        }
+
+        [$ids[$pos], $ids[$swap]] = [$ids[$swap], $ids[$pos]];
+
+        DB::transaction(function () use ($ids) {
+            foreach ($ids as $i => $registrationID) {
+                DB::table('game-registrations')
+                    ->where('registrationID', $registrationID)
+                    ->update(['registrationBenchOrder' => $i + 1]);
+            }
+        });
+
+        return redirect('/admin/registrations/' . $gameID)->with('success', 'Bench order updated.');
     }
 
     public function resetNight($gameID)
