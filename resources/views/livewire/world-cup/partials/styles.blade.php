@@ -11,8 +11,6 @@
     .wc-tab:hover { color:#262c39; }
     .wc-tab.active { color:#262c39; border-bottom-color:#458bc8; }
 
-    .wc-section-title { font-size:18px; font-weight:800; color:#262c39; margin-bottom:1rem; }
-
     .wc-empty { text-align:center; background:#f6f7f9; border:1px solid #eceef1; border-radius:16px; padding:3.5rem 2rem; }
     .wc-empty .wc-emoji { font-size:44px; }
     .wc-empty h3 { font-size:22px; color:#262c39; margin:.75rem 0 .35rem; }

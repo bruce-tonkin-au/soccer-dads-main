@@ -12,8 +12,6 @@
             @include('livewire.world-cup.partials.live')
             @include('livewire.world-cup.partials.tabs')
 
-            <div class="wc-section-title">Card Ladder 🟨🟥</div>
-
             @if ($ladder->isEmpty())
                 <div class="wc-empty">
                     <div class="wc-emoji">📋</div>
