@@ -2,11 +2,7 @@
     @include('livewire.world-cup.partials.styles')
 
     <div class="wc-page">
-        <div class="wc-hero" style="background:linear-gradient(to right, #458bc8, #7bba56, #e68a46);">
-            <div class="container">
-                <h1 style="color:#fff;">World Cup 2026</h1>
-            </div>
-        </div>
+        <x-page-header title="World Cup 2026" />
 
         <div class="wc-wrap">
             @include('livewire.world-cup.partials.live')

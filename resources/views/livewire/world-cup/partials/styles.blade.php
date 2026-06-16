@@ -1,8 +1,5 @@
 <style>
     .wc-page { background:#fff; }
-    .wc-hero { background:#262c39; padding:3.5rem 2rem 3rem; }
-    .wc-hero .container { max-width:1100px; margin:0 auto; padding:0 2rem; }
-    .wc-hero h1 { font-family:'GetShow'; font-weight:normal; font-size:60px; line-height:1.05; color:#fff; }
 
     .wc-wrap { max-width:1100px; margin:0 auto; padding:2.5rem 2rem 4rem; }
 
@@ -79,7 +76,6 @@
     .wc-live-stakes { margin-top:12px; border-top:1px dashed #86efac; padding-top:10px; text-align:center; }
 
     @media (max-width:600px) {
-        .wc-hero h1 { font-size:42px; }
         .wc-tab { padding:12px 14px; }
     }
 </style>

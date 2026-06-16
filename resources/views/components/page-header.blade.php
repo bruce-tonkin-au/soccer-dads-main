@@ -6,7 +6,7 @@
     .sd-page-header {
         background: linear-gradient(to right, #3b82c4, #4aaa6e, #c8a83c);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        padding: 40px 0;
+        padding: 48px 0;
     }
     .sd-page-header h1 {
         margin: 0;
