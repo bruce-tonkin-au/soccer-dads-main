@@ -16,7 +16,10 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AdminStoreController;
 use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\NewsletterController;
-use App\Livewire\WorldCupLadder;
+use App\Livewire\WorldCup\WcLadder;
+use App\Livewire\WorldCup\WcResults;
+use App\Livewire\WorldCup\WcUpcoming;
+use App\Livewire\WorldCup\WcCards;
 
 // Admin auth
 Route::get('/admin/login', [AdminController::class, 'showLogin']);
@@ -136,7 +139,11 @@ Route::get('/seasons', [SeasonsController::class, 'index']);
 Route::get('/seasons/{seasonKey}', [SeasonsController::class, 'show']);
 Route::get('/seasons/{seasonKey}/{gameRound}', [SeasonsController::class, 'night']);
 
-Route::get('/worldcup', WorldCupLadder::class);
+Route::redirect('/worldcup', '/worldcup/ladder');
+Route::get('/worldcup/ladder', WcLadder::class)->name('worldcup.ladder');
+Route::get('/worldcup/results', WcResults::class)->name('worldcup.results');
+Route::get('/worldcup/upcoming', WcUpcoming::class)->name('worldcup.upcoming');
+Route::get('/worldcup/cards', WcCards::class)->name('worldcup.cards');
 
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/contact', [ContactController::class, 'index']);

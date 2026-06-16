@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\WcCard;
 use App\Models\WcFixture;
 use App\Models\WcGoal;
 use App\Models\WcPlayer;
@@ -35,6 +36,7 @@ class SyncWcResults extends Command
 
         $updated = 0;
         $goalsInserted = 0;
+        $cardsInserted = 0;
         $playersNotFound = [];
 
         foreach ($fixtures as $fixture) {
@@ -80,7 +82,11 @@ class SyncWcResults extends Command
                 $goalsInserted += $inserted;
                 $playersNotFound = array_merge($playersNotFound, $missing);
 
-                $this->line("Fixture #{$fixture->fixtureID}: live {$homeScore}-{$awayScore} ({$statusShort}); {$inserted} new goal(s).");
+                [$cardsAdded, $cardMissing] = $this->syncCards($fixture, $data['events'] ?? [], rebuild: false);
+                $cardsInserted += $cardsAdded;
+                $playersNotFound = array_merge($playersNotFound, $cardMissing);
+
+                $this->line("Fixture #{$fixture->fixtureID}: live {$homeScore}-{$awayScore} ({$statusShort}); {$inserted} new goal(s), {$cardsAdded} new card(s).");
                 continue;
             }
 
@@ -98,7 +104,11 @@ class SyncWcResults extends Command
                 $goalsInserted += $inserted;
                 $playersNotFound = array_merge($playersNotFound, $missing);
 
-                $this->line("Fixture #{$fixture->fixtureID}: completed {$homeScore}-{$awayScore}; {$inserted} goal(s) recorded.");
+                [$cardsAdded, $cardMissing] = $this->syncCards($fixture, $data['events'] ?? [], rebuild: true);
+                $cardsInserted += $cardsAdded;
+                $playersNotFound = array_merge($playersNotFound, $cardMissing);
+
+                $this->line("Fixture #{$fixture->fixtureID}: completed {$homeScore}-{$awayScore}; {$inserted} goal(s), {$cardsAdded} card(s) recorded.");
                 continue;
             }
 
@@ -107,9 +117,10 @@ class SyncWcResults extends Command
 
         $this->newLine();
         $summary = sprintf(
-            '%d fixture(s) updated, %d goal(s) inserted, %d player(s) not found.',
+            '%d fixture(s) updated, %d goal(s) inserted, %d card(s) inserted, %d player(s) not found.',
             $updated,
             $goalsInserted,
+            $cardsInserted,
             count($playersNotFound),
         );
         $this->info($summary);
@@ -223,6 +234,120 @@ class SyncWcResults extends Command
                         'teamID'      => $g['teamID'],
                         'minute'      => $g['minute'],
                         'is_own_goal' => $g['is_own_goal'],
+                    ]);
+                    $inserted++;
+                }
+            }
+        };
+
+        if ($rebuild) {
+            DB::transaction($process);
+        } else {
+            $process();
+        }
+
+        return [$inserted, $missing];
+    }
+
+    /**
+     * Insert wc_cards rows for a fixture's card events, returning
+     * [insertedCount, [unmatchedPlayerNames]].
+     *
+     * Mirrors syncGoals: de-duplicated against existing rows so it is safe to
+     * call repeatedly while live (additive only). When $rebuild is true (final
+     * whistle) the fixture's cards are cleared first so the API is authoritative.
+     *
+     * A 2nd yellow that produces a red ('Yellow Red Card') is stored as a single
+     * red row with is_second_yellow = true — it counts as a red only, never an
+     * extra yellow.
+     *
+     * @param  array<int, array<string, mixed>>  $events
+     * @return array{0:int,1:array<int,string>}
+     */
+    private function syncCards(WcFixture $fixture, array $events, bool $rebuild = false): array
+    {
+        $candidates = WcPlayer::query()
+            ->when(
+                $fixture->home_team_id || $fixture->away_team_id,
+                fn ($q) => $q->whereIn('teamID', array_filter([$fixture->home_team_id, $fixture->away_team_id])),
+            )
+            ->get(['playerID', 'teamID', 'name']);
+
+        $missing = [];
+
+        // Resolve each API card event to a normalised row.
+        $cards = [];
+        foreach ($events as $event) {
+            if (($event['type'] ?? null) !== 'Card') {
+                continue;
+            }
+
+            $detail = $event['detail'] ?? '';
+            [$type, $isSecondYellow] = match ($detail) {
+                'Yellow Card'     => ['yellow', false],
+                'Red Card'        => ['red', false],
+                'Yellow Red Card' => ['red', true],
+                default           => [null, false],
+            };
+            if ($type === null) {
+                continue; // Unknown card detail — skip.
+            }
+
+            $playerName = $event['player']['name'] ?? null;
+            if (! $playerName) {
+                continue;
+            }
+
+            $player = $this->matchPlayer($playerName, $candidates);
+            if (! $player) {
+                $missing[] = $playerName . ' (fixture #' . $fixture->fixtureID . ')';
+                Log::warning('wc:sync-results — player not found for card', [
+                    'fixtureID'       => $fixture->fixtureID,
+                    'api_football_id' => $fixture->api_football_id,
+                    'player'          => $playerName,
+                    'detail'          => $detail,
+                ]);
+                continue;
+            }
+
+            $cards[] = [
+                'playerID'         => $player->playerID,
+                'teamID'           => $player->teamID,
+                'type'             => $type,
+                'is_second_yellow' => $isSecondYellow,
+            ];
+        }
+
+        $inserted = 0;
+
+        $process = function () use (&$inserted, $fixture, $cards, $rebuild) {
+            if ($rebuild) {
+                WcCard::where('fixtureID', $fixture->fixtureID)->delete();
+            }
+
+            // Insert by shortfall: group by player + type + 2nd-yellow and add
+            // only as many rows as the API now reports beyond what is stored.
+            $groups = collect($cards)->groupBy(
+                fn ($c) => $c['playerID'] . '|' . $c['type'] . '|' . ($c['is_second_yellow'] ? '1' : '0'),
+            );
+
+            foreach ($groups as $group) {
+                $group = $group->values();
+                $first = $group->first();
+
+                $existing = WcCard::where('fixtureID', $fixture->fixtureID)
+                    ->where('playerID', $first['playerID'])
+                    ->where('type', $first['type'])
+                    ->where('is_second_yellow', $first['is_second_yellow'])
+                    ->count();
+
+                foreach ($group->slice($existing) as $c) {
+                    WcCard::create([
+                        'fixtureID'        => $fixture->fixtureID,
+                        'playerID'         => $c['playerID'],
+                        'teamID'           => $c['teamID'],
+                        'type'             => $c['type'],
+                        'is_second_yellow' => $c['is_second_yellow'],
                     ]);
                     $inserted++;
                 }
