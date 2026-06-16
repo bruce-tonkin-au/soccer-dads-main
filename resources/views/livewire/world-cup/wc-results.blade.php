@@ -38,6 +38,10 @@
                                 <div class="wc-scorers">⚽ {{ $result['scorers'] }}</div>
                             @endif
 
+                            @if ($result['cards'] !== '')
+                                <div class="wc-scorers">{{ $result['cards'] }}</div>
+                            @endif
+
                             @if (! empty($result['awards']))
                                 <div class="wc-block">
                                     <div class="lbl">Points awarded</div>

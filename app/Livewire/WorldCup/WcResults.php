@@ -2,6 +2,7 @@
 
 namespace App\Livewire\WorldCup;
 
+use App\Models\WcCard;
 use App\Models\WcEntry;
 use App\Models\WcFixture;
 use App\Models\WcGoal;
@@ -58,8 +59,16 @@ class WcResults extends WcPage
             ->get()
             ->groupBy('fixtureID');
 
-        return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams, $players, $points, $goalsByFixture) {
+        // Cards for the same fixtures, eager-loaded with player — no N+1.
+        $cardsByFixture = WcCard::query()
+            ->whereIn('fixtureID', $fixtures->pluck('fixtureID'))
+            ->with('player')
+            ->get()
+            ->groupBy('fixtureID');
+
+        return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams, $players, $points, $goalsByFixture, $cardsByFixture) {
             $goals = $goalsByFixture[$fixture->fixtureID] ?? collect();
+            $cards = $cardsByFixture[$fixture->fixtureID] ?? collect();
 
             $awards = [];
 
@@ -110,8 +119,23 @@ class WcResults extends WcPage
                 'home_score' => $fixture->home_score,
                 'away_score' => $fixture->away_score,
                 'scorers' => $this->scorerLine($goals),
+                'cards' => $this->cardLine($cards),
                 'awards' => $awards,
             ];
         });
+    }
+
+    /**
+     * Card line for a fixture, e.g. "🟨 Smith · 🟨 Jones · 🟥 Vidal". Yellows
+     * first, then reds (a 2nd-yellow red shows as a red). Empty when no cards.
+     */
+    protected function cardLine(Collection $cards): string
+    {
+        $order = ['yellow' => 0, 'red' => 1];
+
+        return $cards
+            ->sortBy(fn (WcCard $c) => $order[$c->type] ?? 2)
+            ->map(fn (WcCard $c) => ($c->type === 'red' ? '🟥' : '🟨') . ' ' . ($c->player?->name ?? 'Player'))
+            ->implode(' · ');
     }
 }

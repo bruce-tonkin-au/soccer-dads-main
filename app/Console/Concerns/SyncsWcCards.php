@@ -157,6 +157,25 @@ trait SyncsWcCards
             return $contains;
         }
 
+        // 2.5 Token-set match: same name words in any order. Handles surname-first
+        // vs given-name-first ordering, e.g. API "Gi-Hyuk Lee" vs stored
+        // "Lee Gi-hyuk". Hyphens are treated as separators here so "Gi-hyuk"
+        // and "Gi Hyuk" compare equal. Only accepted when it resolves uniquely.
+        $tokenise = fn (string $n) => collect(explode(' ', str_replace('-', ' ', $n)))
+            ->filter()
+            ->sort()
+            ->values()
+            ->all();
+        $targetTokens = $tokenise($target);
+        if (count($targetTokens) > 1) {
+            $tokenMatches = $candidates->filter(
+                fn (WcPlayer $p) => $tokenise($this->normalizeName($p->name)) === $targetTokens,
+            );
+            if ($tokenMatches->count() === 1) {
+                return $tokenMatches->first();
+            }
+        }
+
         // 3. Last-name match when unambiguous (e.g. "M. Rashford" -> "Rashford").
         $targetLast = Str::afterLast($target, ' ');
         if ($targetLast !== '') {
