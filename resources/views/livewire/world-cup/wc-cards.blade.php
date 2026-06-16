@@ -56,6 +56,12 @@
                                                     <span>{{ $team['name'] }}</span>
                                                     @if ($team['group_letter'])<span class="grp">{{ $team['group_letter'] }}</span>@endif
                                                 </div>
+                                                @if ($team['yellow_count'] > 0 || $team['red_count'] > 0)
+                                                    <div class="wc-line" style="margin-top:2px;">
+                                                        @if ($team['yellow_count'] > 0)<span class="wc-badge-card wc-badge-yellow">🟨 {{ $team['yellow_count'] }}</span>@endif
+                                                        @if ($team['red_count'] > 0)<span class="wc-badge-card wc-badge-red">🟥 {{ $team['red_count'] }}</span>@endif
+                                                    </div>
+                                                @endif
                                             @else
                                                 <span class="wc-muted">—</span>
                                             @endif

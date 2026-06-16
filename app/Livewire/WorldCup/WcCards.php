@@ -34,10 +34,15 @@ class WcCards extends WcPage
     {
         [$entries, $teams, $players, $memberNames] = $this->loadEntries();
 
-        $teamCardPoints = $this->teamCardPointsMap($cardPoints);
+        // teamID => ['yellow' => int, 'red' => int], one bulk query. Drives both
+        // the per-team card points and the per-team counts shown under each team.
+        $teamCardCounts = $this->teamCardCounts();
+        $teamCardPoints = $teamCardCounts->map(
+            fn (array $c) => $c['yellow'] * $cardPoints['yellow'] + $c['red'] * $cardPoints['red'],
+        );
         [$playerYellow, $playerRed] = $this->playerCardCounts();
 
-        $enriched = $entries->map(function (WcEntry $entry) use ($teams, $players, $teamCardPoints, $playerYellow, $playerRed, $memberNames) {
+        $enriched = $entries->map(function (WcEntry $entry) use ($teams, $players, $teamCardCounts, $teamCardPoints, $playerYellow, $playerRed, $memberNames) {
             $topTeamId = $entry->entryTeams->firstWhere('tier', 1)?->teamID;
             $bottomTeamId = $entry->entryTeams->firstWhere('tier', 2)?->teamID;
 
@@ -63,8 +68,8 @@ class WcCards extends WcPage
                 'entryID' => $entry->entryID,
                 'entry_name' => $entry->entry_name,
                 'member_name' => $memberNames[$entry->memberID] ?? $entry->entry_name,
-                'top_team' => $this->teamRow($teams[$topTeamId] ?? null),
-                'bottom_team' => $this->teamRow($teams[$bottomTeamId] ?? null),
+                'top_team' => $this->teamCardRow($teams[$topTeamId] ?? null, $topTeamId, $teamCardCounts),
+                'bottom_team' => $this->teamCardRow($teams[$bottomTeamId] ?? null, $bottomTeamId, $teamCardCounts),
                 'players' => $playerRows->all(),
                 'card_points' => $cardPts,
             ];
@@ -92,32 +97,39 @@ class WcCards extends WcPage
     }
 
     /**
-     * Points earned by each team from cards: yellow (not a 2nd-yellow) × yellow
-     * points + red × red points, grouped by team in two bulk queries.
-     *
-     * @param  array{yellow:int,red:int}  $cardPoints
+     * Yellow / red card counts per team in a single grouped query. Yellow
+     * excludes the booking that became a 2nd-yellow red; red includes 2nd
+     * yellows. Returns teamID => ['yellow' => int, 'red' => int].
      */
-    protected function teamCardPointsMap(array $cardPoints): Collection
+    protected function teamCardCounts(): Collection
     {
-        $yellow = WcCard::query()
-            ->where('type', 'yellow')
-            ->where('is_second_yellow', false)
-            ->selectRaw('"teamID", count(*) as c')
+        return WcCard::query()
+            ->selectRaw('"teamID",
+                count(*) filter (where type = \'yellow\' and is_second_yellow = false) as yellow,
+                count(*) filter (where type = \'red\') as red')
             ->groupBy('teamID')
-            ->pluck('c', 'teamID');
+            ->get()
+            ->keyBy('teamID')
+            ->map(fn ($r) => ['yellow' => (int) $r->yellow, 'red' => (int) $r->red]);
+    }
 
-        $red = WcCard::query()
-            ->where('type', 'red')
-            ->selectRaw('"teamID", count(*) as c')
-            ->groupBy('teamID')
-            ->pluck('c', 'teamID');
+    /**
+     * A team row (flag / name / group) augmented with its yellow & red card
+     * counts for display under the team name. Null when the entry has no team
+     * for that tier (e.g. before the draw).
+     */
+    protected function teamCardRow(?WcTeam $team, ?int $teamId, Collection $counts): ?array
+    {
+        $row = $this->teamRow($team);
+        if ($row === null) {
+            return null;
+        }
 
-        $teamIds = $yellow->keys()->merge($red->keys())->unique();
+        $c = $counts[$teamId] ?? ['yellow' => 0, 'red' => 0];
+        $row['yellow_count'] = $c['yellow'];
+        $row['red_count'] = $c['red'];
 
-        return $teamIds->mapWithKeys(fn ($teamId) => [
-            $teamId => (int) ($yellow[$teamId] ?? 0) * $cardPoints['yellow']
-                + (int) ($red[$teamId] ?? 0) * $cardPoints['red'],
-        ]);
+        return $row;
     }
 
     /**
