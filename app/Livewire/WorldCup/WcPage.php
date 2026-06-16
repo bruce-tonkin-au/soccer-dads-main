@@ -23,6 +23,19 @@ use Livewire\Component;
 abstract class WcPage extends Component
 {
     /**
+     * Route name of the page that mounted this component (e.g. 'worldcup.ladder').
+     * Captured once at mount so the tab highlight stays correct across Livewire
+     * re-renders / polls — request()->routeIs() points at the /livewire/update
+     * endpoint during those requests, not the original page route.
+     */
+    public ?string $activeTab = null;
+
+    public function mount(): void
+    {
+        $this->activeTab = request()->route()?->getName();
+    }
+
+    /**
      * @return array{team_goal:int,player_goal:int}
      */
     protected function pointsKey(): array
@@ -82,7 +95,7 @@ abstract class WcPage extends Component
      *
      * @param  array{team_goal:int,player_goal:int}  $points
      */
-    protected function entryRow(WcEntry $entry, Collection $teams, Collection $players, Collection $teamPoints, $goalCounts, array $points, array $memberNames): array
+    protected function entryRow(WcEntry $entry, Collection $teams, Collection $players, Collection $teamPoints, $goalCounts, array $points, array $memberNames, ?Collection $teamGoalMap = null): array
     {
         $topTeamId = $entry->entryTeams->firstWhere('tier', 1)?->teamID;
         $bottomTeamId = $entry->entryTeams->firstWhere('tier', 2)?->teamID;
@@ -113,8 +126,8 @@ abstract class WcPage extends Component
             'entry_name' => $entry->entry_name,
             'member_name' => $memberNames[$entry->memberID] ?? $entry->entry_name,
             'draw_completed' => (bool) $entry->draw_completed,
-            'top_team' => $this->teamRow($teams[$topTeamId] ?? null),
-            'bottom_team' => $this->teamRow($teams[$bottomTeamId] ?? null),
+            'top_team' => $this->teamRow($teams[$topTeamId] ?? null, $topTeamId, $teamGoalMap),
+            'bottom_team' => $this->teamRow($teams[$bottomTeamId] ?? null, $bottomTeamId, $teamGoalMap),
             'players' => $playerRows->all(),
             'team_ids' => $teamIds,
             'player_ids' => $playerRows->pluck('playerID')->all(),
@@ -141,7 +154,12 @@ abstract class WcPage extends Component
             ->map(fn ($goals) => (int) $goals * $points['team_goal']);
     }
 
-    protected function teamRow(?WcTeam $team): ?array
+    /**
+     * Base team row (flag / name / group). When a teamID and bulk goal map are
+     * supplied, also carries goal_count — non-own-goals scored by that team —
+     * for the ⚽ badge under the team name on the ladder.
+     */
+    protected function teamRow(?WcTeam $team, ?int $teamId = null, ?Collection $teamGoalMap = null): ?array
     {
         if (! $team) {
             return null;
@@ -152,6 +170,7 @@ abstract class WcPage extends Component
             'name' => $team->name,
             'code' => $team->code,
             'group_letter' => $team->group_letter,
+            'goal_count' => (int) ($teamGoalMap[$teamId] ?? 0),
         ];
     }
 

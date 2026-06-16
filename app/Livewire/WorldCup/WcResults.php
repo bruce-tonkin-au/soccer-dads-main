@@ -6,10 +6,16 @@ use App\Models\WcCard;
 use App\Models\WcEntry;
 use App\Models\WcFixture;
 use App\Models\WcGoal;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Livewire\WithPagination;
 
 class WcResults extends WcPage
 {
+    use WithPagination;
+
+    protected int $perPage = 10;
+
     public function render()
     {
         $pointsKey = $this->pointsKey();
@@ -39,7 +45,7 @@ class WcResults extends WcPage
      *
      * @param  array{team_goal:int,player_goal:int}  $points
      */
-    protected function buildResults(Collection $enriched, Collection $teams, Collection $players, array $points): Collection
+    protected function buildResults(Collection $enriched, Collection $teams, Collection $players, array $points): LengthAwarePaginator
     {
         $fixtures = WcFixture::query()
             ->where('status', 'completed')
@@ -47,26 +53,24 @@ class WcResults extends WcPage
             ->whereNotNull('away_score')
             ->with(['homeTeam', 'awayTeam'])
             ->orderByDesc('match_datetime')
-            ->get();
+            ->paginate($this->perPage);
 
-        if ($fixtures->isEmpty()) {
-            return collect();
-        }
+        $fixtureIds = $fixtures->pluck('fixtureID');
 
         $goalsByFixture = WcGoal::query()
-            ->whereIn('fixtureID', $fixtures->pluck('fixtureID'))
+            ->whereIn('fixtureID', $fixtureIds)
             ->with('player')
             ->get()
             ->groupBy('fixtureID');
 
         // Cards for the same fixtures, eager-loaded with player — no N+1.
         $cardsByFixture = WcCard::query()
-            ->whereIn('fixtureID', $fixtures->pluck('fixtureID'))
+            ->whereIn('fixtureID', $fixtureIds)
             ->with('player')
             ->get()
             ->groupBy('fixtureID');
 
-        return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams, $players, $points, $goalsByFixture, $cardsByFixture) {
+        return $fixtures->through(function (WcFixture $fixture) use ($enriched, $teams, $players, $points, $goalsByFixture, $cardsByFixture) {
             $goals = $goalsByFixture[$fixture->fixtureID] ?? collect();
             $cards = $cardsByFixture[$fixture->fixtureID] ?? collect();
 

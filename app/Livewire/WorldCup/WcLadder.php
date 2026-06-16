@@ -23,7 +23,15 @@ class WcLadder extends WcPage
             ->groupBy('playerID')
             ->pluck('goals', 'playerID');
 
-        $enriched = $entries->map(fn (WcEntry $e) => $this->entryRow($e, $teams, $players, $teamPoints, $goalCounts, $pointsKey, $memberNames));
+        // teamID => goals scored (own goals excluded), one bulk query. Drives the
+        // ⚽ count shown under each top-24 / bottom-24 team name.
+        $teamGoalMap = WcGoal::query()
+            ->where('is_own_goal', false)
+            ->selectRaw('"teamID", count(*) as goals')
+            ->groupBy('teamID')
+            ->pluck('goals', 'teamID');
+
+        $enriched = $entries->map(fn (WcEntry $e) => $this->entryRow($e, $teams, $players, $teamPoints, $goalCounts, $pointsKey, $memberNames, $teamGoalMap));
 
         return view('livewire.world-cup.wc-ladder', [
             'pointsKey' => $pointsKey,

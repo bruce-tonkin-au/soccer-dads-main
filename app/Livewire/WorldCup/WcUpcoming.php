@@ -5,10 +5,16 @@ namespace App\Livewire\WorldCup;
 use App\Models\WcEntry;
 use App\Models\WcFixture;
 use App\Models\WcGoal;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Livewire\WithPagination;
 
 class WcUpcoming extends WcPage
 {
+    use WithPagination;
+
+    protected int $perPage = 10;
+
     public function render()
     {
         $pointsKey = $this->pointsKey();
@@ -36,16 +42,15 @@ class WcUpcoming extends WcPage
      * Next scheduled fixtures (soonest first), each annotated with the entries
      * that have a team — or a player — involved in the match.
      */
-    protected function buildUpcoming(Collection $enriched, Collection $teams): Collection
+    protected function buildUpcoming(Collection $enriched, Collection $teams): LengthAwarePaginator
     {
         $fixtures = WcFixture::query()
             ->where('status', 'scheduled')
             ->with(['homeTeam', 'awayTeam'])
             ->orderBy('match_datetime')
-            ->limit(10)
-            ->get();
+            ->paginate($this->perPage);
 
-        return $fixtures->map(function (WcFixture $fixture) use ($enriched, $teams) {
+        return $fixtures->through(function (WcFixture $fixture) use ($enriched, $teams) {
             $fixtureTeamIds = array_values(array_filter([$fixture->home_team_id, $fixture->away_team_id]));
 
             $teamWatchers = [];

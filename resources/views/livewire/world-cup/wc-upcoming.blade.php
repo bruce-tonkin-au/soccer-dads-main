@@ -55,6 +55,8 @@
                         </div>
                     @endforeach
                 </div>
+
+                @include('livewire.world-cup.partials.pagination', ['paginator' => $upcoming])
             @endif
         </div>
     </div>

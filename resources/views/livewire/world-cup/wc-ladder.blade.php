@@ -52,6 +52,11 @@
                                                     <span>{{ $team['name'] }}</span>
                                                     @if ($team['group_letter'])<span class="grp">{{ $team['group_letter'] }}</span>@endif
                                                 </div>
+                                                @if ($team['goal_count'] > 0)
+                                                    <div class="wc-line" style="margin-top:2px;">
+                                                        <span class="wc-badge">⚽ {{ $team['goal_count'] }}</span>
+                                                    </div>
+                                                @endif
                                             @else
                                                 <span class="wc-muted">—</span>
                                             @endif

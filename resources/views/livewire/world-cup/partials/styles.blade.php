@@ -58,6 +58,12 @@
     .wc-key { text-align:center; color:#667085; font-size:14px; border-top:1px solid #eceef1; padding-top:1.75rem; margin-top:1rem; }
     .wc-key strong { color:#262c39; }
 
+    .wc-pagination { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:1.5rem; }
+    .wc-page-btn { padding:8px 16px; font-size:13px; font-weight:700; color:#262c39; background:#f4f4f4; border:1px solid #eceef1; border-radius:9px; cursor:pointer; }
+    .wc-page-btn:hover:not(:disabled) { background:#eceef1; }
+    .wc-page-btn:disabled { opacity:.45; cursor:default; }
+    .wc-page-info { font-size:13px; color:#667085; font-weight:600; }
+
     /* Live Now */
     .wc-live { margin-bottom:2.25rem; }
     .wc-live-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
