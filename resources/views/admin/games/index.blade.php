@@ -73,6 +73,65 @@
     </table>
 </div>
 
+{{-- Season ladder --}}
+@if($ladder->isNotEmpty())
+<div class="admin-card">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.5rem;">
+        <h2 style="margin-bottom:0;">Season ladder</h2>
+        <span style="font-size:12px; color:#888;">Sorted by average points per game</span>
+    </div>
+    <p style="font-size:13px; color:#888; margin-bottom:1rem;">
+        Title contenders must have played {{ $threshold }} {{ \Illuminate\Support\Str::plural('game', $threshold) }}
+        (season average {{ number_format($avgGamesPlayed, 1) }} rounded up).
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:48px;">Rank</th>
+                <th>Player</th>
+                <th style="text-align:center;">Games played</th>
+                <th style="text-align:center;">Total points</th>
+                <th style="text-align:right;">Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($ladder as $i => $p)
+            <tr style="{{ $p->eligible ? '' : 'color:#bbb;' }}">
+                <td style="font-weight:600;{{ $p->eligible ? '' : 'color:#bbb;' }}">{{ $i + 1 }}</td>
+                <td style="{{ $p->eligible ? '' : 'color:#bbb;' }}">
+                    {{ $p->name }}
+                    @unless($p->eligible)
+                    <span style="font-size:11px; color:#c0392b; background:#fff3f3; border:1px solid #f3c6c6; border-radius:10px; padding:1px 7px; margin-left:6px; white-space:nowrap;">
+                        ineligible — {{ $p->gamesPlayed }} {{ \Illuminate\Support\Str::plural('game', $p->gamesPlayed) }}
+                    </span>
+                    @endunless
+                </td>
+                <td style="text-align:center;">{{ $p->gamesPlayed }}</td>
+                <td style="text-align:center;">{{ $p->totalPoints }}</td>
+                <td style="text-align:right; font-weight:600;">{{ number_format($p->average, 2) }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+{{-- Average progression chart (title-eligible players only) --}}
+@if(count($chartSeries) > 0)
+<div class="admin-card">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1rem;">
+        <h2 style="margin-bottom:0;">Average progression</h2>
+        <span style="font-size:12px; color:#888;">Title-eligible players only ({{ count($chartSeries) }} plotted)</span>
+    </div>
+    <canvas id="ladderChart" height="120"></canvas>
+</div>
+@endif
+@else
+<div class="admin-card">
+    <h2 style="margin-bottom:0.5rem;">Season ladder</h2>
+    <p style="font-size:14px; color:#888;">No results recorded for this season yet.</p>
+</div>
+@endif
+
 {{-- Charge players modal --}}
 <div id="charge-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:16px; padding:2rem; max-width:580px; width:90%; max-height:85vh; display:flex; flex-direction:column; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
@@ -309,5 +368,52 @@
 }());
 </script>
 @endpush
+
+{{-- Average progression chart — reuses the Chart.js CDN pattern from seasons/night.blade.php --}}
+@if(!empty($chartSeries))
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function () {
+    var labels = @json($chartLabels);
+    var series = @json($chartSeries);
+    var canvas = document.getElementById('ladderChart');
+    if (!canvas || !window.Chart) return;
+
+    var datasets = series.map(function (s, i) {
+        var color = 'hsl(' + Math.round((i * 360) / series.length) + ', 65%, 50%)';
+        return {
+            label: s.name,
+            data: s.data,
+            borderColor: color,
+            backgroundColor: color,
+            borderWidth: 2,
+            pointRadius: 2,
+            tension: 0.2,
+            fill: false,
+            spanGaps: false,
+        };
+    });
+
+    new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: { labels: labels, datasets: datasets },
+        options: {
+            responsive: true,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                tooltip: { mode: 'index', intersect: false },
+            },
+            scales: {
+                y: { title: { display: true, text: 'Average points / game' }, suggestedMin: 1, suggestedMax: 3 },
+                x: { title: { display: true, text: 'Round' } },
+            },
+        },
+    });
+}());
+</script>
+@endpush
+@endif
 
 @endsection

@@ -296,7 +296,92 @@ class AdminController extends Controller
                 ->pluck('gameID')
             : collect();
 
-        return view('admin.games.index', compact('season', 'games', 'gamesWithTeams', 'chargedGameIDs'));
+        $ladderData = $this->buildSeasonLadder($seasonID, $games);
+
+        return view('admin.games.index', array_merge(
+            compact('season', 'games', 'gamesWithTeams', 'chargedGameIDs'),
+            $ladderData
+        ));
+    }
+
+    /**
+     * Season ladder + average-progression series, read from results only.
+     * results: one row per player per game; resultPoints is the 3/2/1 (3=win,
+     * 2=mid, 1=low). Returns the sorted ladder (each row flagged ->eligible),
+     * the live eligibility threshold, the pre-round average games-played, and
+     * the Chart.js labels/series (title-eligible players only).
+     */
+    private function buildSeasonLadder($seasonID, $games)
+    {
+        $results = DB::table('results as r')
+            ->join('members as m', 'r.resultMemberID', '=', 'm.memberID')
+            ->where('r.resultSeasonID', $seasonID)
+            ->where('r.resultActive', 1)
+            ->select('r.resultMemberID', 'r.resultGameID', 'r.resultPoints',
+                     'm.memberNameFirst', 'm.memberNameLast')
+            ->get();
+
+        // Per-player aggregates: games played, total points, average.
+        $ladder = $results->groupBy('resultMemberID')->map(function ($rows) {
+            $first       = $rows->first();
+            $gamesPlayed = $rows->pluck('resultGameID')->unique()->count();
+            $totalPoints = (int) $rows->sum('resultPoints');
+            return (object) [
+                'memberID'    => (int) $first->resultMemberID,
+                'name'        => trim($first->memberNameFirst . ' ' . $first->memberNameLast),
+                'gamesPlayed' => $gamesPlayed,
+                'totalPoints' => $totalPoints,
+                'average'     => $gamesPlayed > 0 ? $totalPoints / $gamesPlayed : 0,
+            ];
+        })->values();
+
+        // Eligibility threshold: ceil of the average games-played across all
+        // listed players (everyone here has >= 1 game). Recomputed live.
+        $playerCount    = $ladder->count();
+        $avgGamesPlayed = $playerCount > 0 ? $ladder->sum('gamesPlayed') / $playerCount : 0;
+        $threshold      = (int) ceil($avgGamesPlayed);
+
+        // Sort by average DESC, then games played DESC (tiebreak). Flag eligibility
+        // in place — ineligible players keep their average-sorted position.
+        $ladder = $ladder->sort(function ($a, $b) {
+            return [$b->average, $b->gamesPlayed] <=> [$a->average, $a->gamesPlayed];
+        })->values()->map(function ($p) use ($threshold) {
+            $p->eligible = $p->gamesPlayed >= $threshold;
+            return $p;
+        });
+
+        // Rounds that actually have results, in round order, for the X axis.
+        $roundByGameId = $games->pluck('gameRound', 'gameID');
+        $playedGameIds = $games->pluck('gameID')
+            ->filter(fn ($id) => $results->contains('resultGameID', $id))
+            ->values();
+        $chartLabels = $playedGameIds->map(fn ($id) => 'R' . $roundByGameId[$id])->all();
+
+        // Per member, per game points, for the cumulative-average series.
+        $pointsByMemberGame = [];
+        foreach ($results as $row) {
+            $pointsByMemberGame[(int) $row->resultMemberID][(int) $row->resultGameID] = (int) $row->resultPoints;
+        }
+
+        // One line per title-eligible player: cumulative average (cumulative
+        // points / cumulative games) after each played round; null before their
+        // first game so the line only starts once they've played.
+        $chartSeries = $ladder->filter(fn ($p) => $p->eligible)->map(function ($p) use ($playedGameIds, $pointsByMemberGame) {
+            $cumPoints = 0;
+            $cumGames  = 0;
+            $data      = [];
+            foreach ($playedGameIds as $gid) {
+                $gid = (int) $gid;
+                if (isset($pointsByMemberGame[$p->memberID][$gid])) {
+                    $cumPoints += $pointsByMemberGame[$p->memberID][$gid];
+                    $cumGames++;
+                }
+                $data[] = $cumGames > 0 ? round($cumPoints / $cumGames, 2) : null;
+            }
+            return ['name' => $p->name, 'data' => $data];
+        })->values()->all();
+
+        return compact('ladder', 'threshold', 'avgGamesPlayed', 'chartLabels', 'chartSeries');
     }
 
     public function createGame($seasonID)
