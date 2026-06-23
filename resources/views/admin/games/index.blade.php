@@ -44,6 +44,9 @@
                     <a href="/admin/teams/{{ $game->gameID }}" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-users"></i> Teams
                     </a>
+                    <a href="/admin/registrations/{{ $game->gameID }}" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
+                        <i class="fa-solid fa-clipboard-check"></i> Registrations
+                    </a>
                     <a href="/admin/print/{{ $game->gameID }}" target="_blank" class="btn btn-secondary" style="padding:6px 12px; font-size:13px;">
                         <i class="fa-solid fa-print"></i> Print
                     </a>
