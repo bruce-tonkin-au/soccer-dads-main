@@ -609,7 +609,10 @@ class AdminController extends Controller
             'created_at'           => now(),
         ]);
 
-        return redirect('/admin')->with('success', 'Player promoted to active.');
+        if (request()->wantsJson()) {
+            return response()->json(['success' => true]);
+        }
+        return redirect()->back()->with('success', 'Player promoted to active.');
     }
 
     public function demotePlayer($gameID, $memberID)
@@ -643,7 +646,7 @@ class AdminController extends Controller
         if (request()->wantsJson()) {
             return response()->json(['success' => true]);
         }
-        return redirect('/admin')->with('success', 'Player marked as not going.');
+        return redirect()->back()->with('success', 'Player marked as not going.');
     }
 
     public function registerPlayer($gameID, $memberID)
@@ -779,8 +782,45 @@ class AdminController extends Controller
 
         $isNextGame = $nextGame && $nextGame->gameID == $gameID;
 
+        // Games played THIS SEASON per member — priority for the final round.
+        // results.resultSeasonID is the game's season (games.gameSeasonID); resultActive = 1.
+        $seasonGamesPlayed = DB::table('results')
+            ->where('resultSeasonID', $game->gameSeasonID)
+            ->where('resultActive', 1)
+            ->groupBy('resultMemberID')
+            ->select('resultMemberID', DB::raw('COUNT(DISTINCT "resultGameID") as "gamesPlayed"'))
+            ->pluck('gamesPlayed', 'resultMemberID');
+
+        // Members already in this game's registration list (any status) — excluded from the pool.
+        $registeredMemberIDs = DB::table('game-registrations')
+            ->where('gameID', $game->gameID)
+            ->pluck('memberID');
+
+        // Active members who played this season but aren't registered for this game,
+        // ordered by most games played first (priority), then surname.
+        $unregistered = collect();
+        if ($seasonGamesPlayed->isNotEmpty()) {
+            $unregistered = DB::table('members')
+                ->where('memberActive', 1)
+                ->whereIn('memberID', $seasonGamesPlayed->keys())
+                ->when($registeredMemberIDs->isNotEmpty(),
+                    fn ($q) => $q->whereNotIn('memberID', $registeredMemberIDs))
+                ->select('memberID', 'memberNameFirst', 'memberNameLast', 'memberSlug')
+                ->get()
+                ->map(function ($m) use ($seasonGamesPlayed) {
+                    $m->gamesPlayed = (int) ($seasonGamesPlayed[$m->memberID] ?? 0);
+                    return $m;
+                })
+                ->sortBy([
+                    ['gamesPlayed', 'desc'],
+                    ['memberNameLast', 'asc'],
+                    ['memberNameFirst', 'asc'],
+                ])
+                ->values();
+        }
+
         return view('admin.registrations', compact(
-            'game', 'allGames', 'registrations', 'events', 'isNextGame', 'nextGame'
+            'game', 'allGames', 'registrations', 'events', 'isNextGame', 'nextGame', 'unregistered'
         ));
     }
 

@@ -230,6 +230,30 @@
     @endif
 </div>
 
+{{-- Not yet registered — played this season (priority pool for the final round) --}}
+@if($unregistered->isNotEmpty())
+<div class="admin-card" id="unregistered-card">
+    <h2>Not yet registered — played this season (<span id="unregistered-count">{{ $unregistered->count() }}</span>)</h2>
+    <p style="font-size:12px; color:#888; margin-bottom:12px;">
+        Ordered by games played this season (priority for the final round), then surname.
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;" id="unregistered-list">
+        @foreach($unregistered as $r)
+        <div style="display:inline-flex; align-items:center; gap:6px; background:transparent; border:1.5px dashed #ccc; border-radius:20px; padding:4px 4px 4px 13px; font-size:13px; color:#888;" data-player-chip>
+            <a href="/admin/players/{{ $r->memberID }}/edit" style="color:#888; text-decoration:none;">{{ $r->memberNameFirst }} {{ $r->memberNameLast }}</a>
+            <span title="Games played this season" style="font-size:11px; font-weight:700; color:#bbb;">{{ $r->gamesPlayed }}</span>
+            <form method="POST" action="/admin/registrations/{{ $game->gameID }}/register/{{ $r->memberID }}" style="margin:0;" class="js-register-form">
+                @csrf
+                <button type="submit" title="Register for game" style="background:none; border:none; cursor:pointer; color:#ccc; padding:4px 8px; font-size:12px; border-radius:12px;" onmouseover="this.style.color='#7bba56'" onmouseout="this.style.color='#ccc'">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </form>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 {{-- Registration event log --}}
 <div class="admin-card">
     <h2>Registration event log</h2>
@@ -297,5 +321,44 @@
     </table>
     @endif
 </div>
+
+@push('scripts')
+<script>
+(function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    function postAction(url) {
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: '_token=' + encodeURIComponent(csrfToken),
+        }).then(function (r) { return r.json(); });
+    }
+
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!form.classList.contains('js-register-form')) return;
+        e.preventDefault();
+
+        var chip = form.closest('[data-player-chip]');
+        postAction(form.action).then(function (data) {
+            if (!data.success) return;
+            if (chip) chip.remove();
+
+            var list  = document.getElementById('unregistered-list');
+            var count = document.getElementById('unregistered-count');
+            var card  = document.getElementById('unregistered-card');
+            var remaining = list ? list.querySelectorAll('[data-player-chip]').length : 0;
+            if (count) count.textContent = remaining;
+            if (card && remaining === 0) card.style.display = 'none';
+        });
+    });
+}());
+</script>
+@endpush
 
 @endsection
