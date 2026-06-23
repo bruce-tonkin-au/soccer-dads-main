@@ -80,9 +80,12 @@
         <h2 style="margin-bottom:0;">Season ladder</h2>
         <span style="font-size:12px; color:#888;">Sorted by average points per game</span>
     </div>
-    <p style="font-size:13px; color:#888; margin-bottom:1rem;">
+    <p style="font-size:13px; color:#888; margin-bottom:0.25rem;">
         Title contenders must have played {{ $threshold }} {{ \Illuminate\Support\Str::plural('game', $threshold) }}
         (season average {{ number_format($avgGamesPlayed, 1) }} rounded up).
+    </p>
+    <p style="font-size:13px; color:#888; margin-bottom:1rem;">
+        Tied averages are split by total team points earned across nights played.
     </p>
     <table>
         <thead>
@@ -92,6 +95,7 @@
                 <th style="text-align:center;">Games played</th>
                 <th style="text-align:center;">Total points</th>
                 <th style="text-align:right;">Average</th>
+                <th style="text-align:center;">Team pts</th>
             </tr>
         </thead>
         <tbody>
@@ -109,6 +113,7 @@
                 <td style="text-align:center;">{{ $p->gamesPlayed }}</td>
                 <td style="text-align:center;">{{ $p->totalPoints }}</td>
                 <td style="text-align:right; font-weight:600;">{{ number_format($p->average, 2) }}</td>
+                <td style="text-align:center;">{{ $p->teamPoints }}</td>
             </tr>
             @endforeach
         </tbody>
