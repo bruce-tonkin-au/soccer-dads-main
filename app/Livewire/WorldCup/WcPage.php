@@ -39,38 +39,37 @@ abstract class WcPage extends Component
 
     /**
      * Tournament stages, ordered earliest → latest round. Maps the raw
-     * wc_fixtures.stage value to the human label shown in the progress bar.
+     * wc_fixtures.stage value to its full label (used in the summary line) and
+     * a short label (used for the condensed timeline nodes on the progress bar).
      */
     private const STAGES = [
-        'group'         => 'Group Stage',
-        'round_of_32'   => 'Round of 32',
-        'round_of_16'   => 'Round of 16',
-        'quarter_final' => 'Quarter-final',
-        'semi_final'    => 'Semi-final',
-        'final'         => 'Final',
+        'group'         => ['label' => 'Group Stage',    'short' => 'Group'],
+        'round_of_32'   => ['label' => 'Round of 32',    'short' => 'R32'],
+        'round_of_16'   => ['label' => 'Round of 16',    'short' => 'R16'],
+        'quarter_final' => ['label' => 'Quarter-finals', 'short' => 'QF'],
+        'semi_final'    => ['label' => 'Semi-finals',    'short' => 'SF'],
+        'final'         => ['label' => 'Final',          'short' => 'Final'],
     ];
 
     /**
-     * Progress summary for the accent bar shown on every World Cup page,
-     * derived entirely from wc_fixtures (no hardcoded counts). The current
-     * stage is the earliest one that still has an unplayed fixture; the
+     * Progress summary for the stage timeline + accent bar shown on every World
+     * Cup page, derived entirely from wc_fixtures (no hardcoded counts). The
+     * current stage is the earliest one that still has an unplayed fixture; the
+     * bar / "X of Y games played" text track that stage only. `stages` lists
+     * every stage that has fixture rows (so stages appear in the timeline as
+     * their fixtures are added), each tagged completed / current / future. The
      * "next stage starts" date is the earliest scheduled kickoff of the
      * following stage, in Adelaide time. Cached 60s so wire:poll refreshes
      * don't re-query. Returns null when there are no fixtures at all.
      *
-     * @return array{total:int,completed:int,live:int,stage_label:string,next_label:?string,next_start:?string}|null
+     * @return array{stage_label:string,current_total:int,current_completed:int,current_live:int,next_label:?string,next_start:?string,stages:array<int,array{key:string,label:string,short:string,total:int,completed:int,state:string}>}|null
      */
     public function tournamentProgress(): ?array
     {
         return Cache::remember('wc.tournament_progress', 60, function () {
-            $total = WcFixture::query()->count();
-
-            if ($total === 0) {
+            if (WcFixture::query()->doesntExist()) {
                 return null;
             }
-
-            $completed = WcFixture::query()->where('status', 'completed')->count();
-            $live = WcFixture::query()->where('status', 'live')->count();
 
             $stageTotals = WcFixture::query()
                 ->selectRaw('stage, count(*) as total')
@@ -82,6 +81,12 @@ abstract class WcPage extends Component
                 ->selectRaw('stage, count(*) as remaining')
                 ->groupBy('stage')
                 ->pluck('remaining', 'stage');
+
+            $stageLive = WcFixture::query()
+                ->where('status', 'live')
+                ->selectRaw('stage, count(*) as live')
+                ->groupBy('stage')
+                ->pluck('live', 'stage');
 
             // Walk the stages in order: the current stage is the first one that
             // exists and still has an unplayed fixture; the next stage is the
@@ -112,6 +117,34 @@ abstract class WcPage extends Component
                 }
             }
 
+            // One timeline entry per stage that has fixtures, in round order. A
+            // stage is "completed" once all its fixtures are played, "current"
+            // for the active stage, otherwise "future".
+            $stages = [];
+            foreach (self::STAGES as $key => $labels) {
+                if (! isset($stageTotals[$key])) {
+                    continue;
+                }
+                $stageTotal = (int) $stageTotals[$key];
+                $stageDone = $stageTotal - (int) ($stageRemaining[$key] ?? 0);
+                $state = $stageDone >= $stageTotal
+                    ? 'completed'
+                    : ($key === $currentStage ? 'current' : 'future');
+
+                $stages[] = [
+                    'key'       => $key,
+                    'label'     => $labels['label'],
+                    'short'     => $labels['short'],
+                    'total'     => $stageTotal,
+                    'completed' => $stageDone,
+                    'state'     => $state,
+                ];
+            }
+
+            $currentTotal = (int) ($stageTotals[$currentStage] ?? 0);
+            $currentCompleted = $currentTotal - (int) ($stageRemaining[$currentStage] ?? 0);
+            $currentLive = (int) ($stageLive[$currentStage] ?? 0);
+
             $nextStart = null;
             if ($nextStage !== null) {
                 $earliest = WcFixture::query()
@@ -123,12 +156,13 @@ abstract class WcPage extends Component
             }
 
             return [
-                'total'       => $total,
-                'completed'   => $completed,
-                'live'        => $live,
-                'stage_label' => self::STAGES[$currentStage] ?? 'World Cup',
-                'next_label'  => $nextStage !== null ? self::STAGES[$nextStage] : null,
-                'next_start'  => $nextStart,
+                'stage_label'       => self::STAGES[$currentStage]['label'] ?? 'World Cup',
+                'current_total'     => $currentTotal,
+                'current_completed' => $currentCompleted,
+                'current_live'      => $currentLive,
+                'next_label'        => $nextStage !== null ? self::STAGES[$nextStage]['label'] : null,
+                'next_start'        => $nextStart,
+                'stages'            => $stages,
             ];
         });
     }
