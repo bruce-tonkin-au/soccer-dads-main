@@ -5,6 +5,7 @@
         <x-page-header title="World Cup 2026" />
 
         <div class="wc-wrap">
+            @include('livewire.world-cup.partials.progress')
             @include('livewire.world-cup.partials.live')
             @include('livewire.world-cup.partials.tabs')
 

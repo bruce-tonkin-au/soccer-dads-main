@@ -11,7 +11,9 @@ use App\Models\WcPlayer;
 use App\Models\WcSetting;
 use App\Models\WcTeam;
 use App\Support\MemberDirectory;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
 /**
@@ -33,6 +35,102 @@ abstract class WcPage extends Component
     public function mount(): void
     {
         $this->activeTab = request()->route()?->getName();
+    }
+
+    /**
+     * Tournament stages, ordered earliest → latest round. Maps the raw
+     * wc_fixtures.stage value to the human label shown in the progress bar.
+     */
+    private const STAGES = [
+        'group'         => 'Group Stage',
+        'round_of_32'   => 'Round of 32',
+        'round_of_16'   => 'Round of 16',
+        'quarter_final' => 'Quarter-final',
+        'semi_final'    => 'Semi-final',
+        'final'         => 'Final',
+    ];
+
+    /**
+     * Progress summary for the accent bar shown on every World Cup page,
+     * derived entirely from wc_fixtures (no hardcoded counts). The current
+     * stage is the earliest one that still has an unplayed fixture; the
+     * "next stage starts" date is the earliest scheduled kickoff of the
+     * following stage, in Adelaide time. Cached 60s so wire:poll refreshes
+     * don't re-query. Returns null when there are no fixtures at all.
+     *
+     * @return array{total:int,completed:int,live:int,stage_label:string,next_label:?string,next_start:?string}|null
+     */
+    public function tournamentProgress(): ?array
+    {
+        return Cache::remember('wc.tournament_progress', 60, function () {
+            $total = WcFixture::query()->count();
+
+            if ($total === 0) {
+                return null;
+            }
+
+            $completed = WcFixture::query()->where('status', 'completed')->count();
+            $live = WcFixture::query()->where('status', 'live')->count();
+
+            $stageTotals = WcFixture::query()
+                ->selectRaw('stage, count(*) as total')
+                ->groupBy('stage')
+                ->pluck('total', 'stage');
+
+            $stageRemaining = WcFixture::query()
+                ->where('status', '!=', 'completed')
+                ->selectRaw('stage, count(*) as remaining')
+                ->groupBy('stage')
+                ->pluck('remaining', 'stage');
+
+            // Walk the stages in order: the current stage is the first one that
+            // exists and still has an unplayed fixture; the next stage is the
+            // following one that exists.
+            $currentStage = null;
+            $nextStage = null;
+            foreach (array_keys(self::STAGES) as $key) {
+                if (! isset($stageTotals[$key])) {
+                    continue;
+                }
+                if ($currentStage === null) {
+                    if ((int) ($stageRemaining[$key] ?? 0) > 0) {
+                        $currentStage = $key;
+                    }
+                } else {
+                    $nextStage = $key;
+                    break;
+                }
+            }
+
+            // Every fixture played → label by the last stage that exists.
+            if ($currentStage === null) {
+                foreach (array_reverse(array_keys(self::STAGES)) as $key) {
+                    if (isset($stageTotals[$key])) {
+                        $currentStage = $key;
+                        break;
+                    }
+                }
+            }
+
+            $nextStart = null;
+            if ($nextStage !== null) {
+                $earliest = WcFixture::query()
+                    ->where('stage', $nextStage)
+                    ->min('match_datetime');
+                $nextStart = $earliest
+                    ? Carbon::parse($earliest)->timezone('Australia/Adelaide')->format('M j')
+                    : null;
+            }
+
+            return [
+                'total'       => $total,
+                'completed'   => $completed,
+                'live'        => $live,
+                'stage_label' => self::STAGES[$currentStage] ?? 'World Cup',
+                'next_label'  => $nextStage !== null ? self::STAGES[$nextStage] : null,
+                'next_start'  => $nextStart,
+            ];
+        });
     }
 
     /**

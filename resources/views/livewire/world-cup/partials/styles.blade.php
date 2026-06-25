@@ -64,6 +64,16 @@
     .wc-page-btn:disabled { opacity:.45; cursor:default; }
     .wc-page-info { font-size:13px; color:#667085; font-weight:600; }
 
+    /* Tournament progress accent bar */
+    .wc-progress { margin-bottom:2rem; }
+    .wc-progress-text { font-size:13px; color:#667085; margin-bottom:8px; letter-spacing:.01em; }
+    .wc-progress-text strong { color:#262c39; font-weight:800; }
+    .wc-progress-text .sep { color:#c2c6cd; margin:0 6px; }
+    .wc-progress-bar { display:flex; height:8px; border-radius:6px; overflow:hidden; background:#eceef1; }
+    .wc-progress-done { background:linear-gradient(90deg,#3b82c4,#4aaa6e); height:100%; }
+    .wc-progress-live { background:#22c55e; height:100%; animation:wc-prog-pulse 1.2s ease-in-out infinite; }
+    @keyframes wc-prog-pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+
     /* Live Now */
     .wc-live { margin-bottom:2.25rem; }
     .wc-live-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
