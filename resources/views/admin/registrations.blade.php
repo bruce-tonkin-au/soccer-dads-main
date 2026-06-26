@@ -140,6 +140,7 @@
                 <th>Last updated</th>
                 <th>Status</th>
                 <th style="width:96px;">Bench order</th>
+                <th style="width:60px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -221,6 +222,21 @@
                             </button>
                         </form>
                     </div>
+                    @endif
+                </td>
+                <td>
+                    @if($r->registrationStatus == 1)
+                    <form method="POST" action="/admin/registrations/{{ $game->gameID }}/demote/{{ $r->memberID }}" style="margin:0;"
+                          class="js-demote-form"
+                          data-member-id="{{ $r->memberID }}"
+                          data-player-name="{{ $r->memberNameFirst }} {{ $r->memberNameLast }}">
+                        @csrf
+                        <button type="submit" title="Deregister (mark not going)"
+                            style="background:#fff3f3; border:1px solid #e24b4a; border-radius:6px; color:#c0392b; padding:3px 9px; font-size:12px; cursor:pointer;"
+                            onmouseover="this.style.background='#ffe8e8'" onmouseout="this.style.background='#fff3f3'">
+                            <i class="fa-solid fa-user-xmark"></i>
+                        </button>
+                    </form>
                     @endif
                 </td>
             </tr>
@@ -341,6 +357,17 @@
 
     document.addEventListener('submit', function (e) {
         var form = e.target;
+
+        if (form.classList.contains('js-demote-form')) {
+            e.preventDefault();
+            var name = form.dataset.playerName || 'this player';
+            if (!confirm('Deregister ' + name + ' from this game?')) return;
+            postAction(form.action).then(function (data) {
+                if (data.success) window.location.reload();
+            });
+            return;
+        }
+
         if (!form.classList.contains('js-register-form')) return;
         e.preventDefault();
 
