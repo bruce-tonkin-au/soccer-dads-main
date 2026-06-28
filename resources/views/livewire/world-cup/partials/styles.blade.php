@@ -28,6 +28,9 @@
     .wc-line .flag { font-size:18px; }
     .wc-line .grp { font-size:11px; font-weight:700; color:#9aa1ad; }
     .wc-muted { color:#667085; }
+    .wc-elim { opacity:.45; }
+    .wc-elim .wc-tname { text-decoration:line-through; }
+    .wc-elim .flag { text-decoration:line-through; }
     .wc-badge { display:inline-flex; align-items:center; gap:3px; background:#e24b4a; color:#fff; font-size:11px; font-weight:700; padding:1px 7px; border-radius:9px; }
     .wc-badge-card { display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:700; padding:1px 6px; border-radius:9px; }
     .wc-badge-yellow { background:#fef3c7; color:#92670c; }

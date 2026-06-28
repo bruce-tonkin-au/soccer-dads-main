@@ -32,9 +32,48 @@ abstract class WcPage extends Component
      */
     public ?string $activeTab = null;
 
+    /**
+     * Memoized set of eliminated teamIDs (teamID => index, for fast has()).
+     * Resolved lazily once per request by eliminatedTeamIds().
+     */
+    protected ?Collection $eliminatedTeamIds = null;
+
     public function mount(): void
     {
         $this->activeTab = request()->route()?->getName();
+    }
+
+    /**
+     * Teams that are out of the tournament, derived purely from wc_fixtures: a
+     * team is eliminated once the knockout draw exists and it has no fixture in
+     * the current knockout round. We key off `round_of_32` — the first knockout
+     * stage — so the strikethrough turns on as soon as that stage is seeded and
+     * needs no manual "qualified" flag. Returns teamID => index for has().
+     */
+    protected function eliminatedTeamIds(): Collection
+    {
+        if ($this->eliminatedTeamIds !== null) {
+            return $this->eliminatedTeamIds;
+        }
+
+        $r32 = WcFixture::query()
+            ->where('stage', 'round_of_32')
+            ->get(['home_team_id', 'away_team_id']);
+
+        // Before the knockout draw is seeded, nobody is eliminated.
+        if ($r32->isEmpty()) {
+            return $this->eliminatedTeamIds = collect();
+        }
+
+        $alive = $r32
+            ->flatMap(fn (WcFixture $f) => [$f->home_team_id, $f->away_team_id])
+            ->filter()
+            ->unique();
+
+        return $this->eliminatedTeamIds = WcTeam::query()
+            ->whereNotIn('teamID', $alive)
+            ->pluck('teamID')
+            ->flip();
     }
 
     /**
@@ -246,6 +285,7 @@ abstract class WcPage extends Component
                     'flag' => $player?->team?->flag,
                     'team_id' => $player?->teamID,
                     'team_name' => $player?->team?->name,
+                    'eliminated' => $player?->teamID !== null && $this->eliminatedTeamIds()->has($player->teamID),
                     'goal_count' => (int) ($goalCounts[$ep->playerID] ?? 0),
                 ];
             })
@@ -302,6 +342,7 @@ abstract class WcPage extends Component
             'name' => $team->name,
             'code' => $team->code,
             'group_letter' => $team->group_letter,
+            'eliminated' => $teamId !== null && $this->eliminatedTeamIds()->has($teamId),
             'goal_count' => (int) ($teamGoalMap[$teamId] ?? 0),
         ];
     }

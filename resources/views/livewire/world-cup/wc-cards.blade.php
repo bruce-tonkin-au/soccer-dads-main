@@ -48,9 +48,9 @@
                                         <td>
                                             @php $team = $row[$key]; @endphp
                                             @if ($team)
-                                                <div class="wc-line">
+                                                <div class="wc-line @if($team['eliminated']) wc-elim @endif">
                                                     <span class="flag">{{ $team['flag'] }}</span>
-                                                    <span>{{ $team['name'] }}</span>
+                                                    <span class="wc-tname">{{ $team['name'] }}</span>
                                                     @if ($team['group_letter'])<span class="grp">{{ $team['group_letter'] }}</span>@endif
                                                 </div>
                                                 @if ($team['yellow_count'] > 0 || $team['red_count'] > 0)
@@ -66,9 +66,9 @@
                                     @endforeach
                                     <td>
                                         @forelse ($row['players'] as $player)
-                                            <div class="wc-line">
+                                            <div class="wc-line @if($player['eliminated']) wc-elim @endif">
                                                 <span class="flag">{{ $player['flag'] }}</span>
-                                                <span>{{ $player['name'] }}</span>
+                                                <span class="wc-tname">{{ $player['name'] }}</span>
                                                 @if ($player['yellow_count'] > 0)<span class="wc-badge-card wc-badge-yellow">🟨 {{ $player['yellow_count'] }}</span>@endif
                                                 @if ($player['red_count'] > 0)<span class="wc-badge-card wc-badge-red">🟥 {{ $player['red_count'] }}</span>@endif
                                             </div>

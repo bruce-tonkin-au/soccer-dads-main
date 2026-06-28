@@ -58,6 +58,7 @@ class WcCards extends WcPage
                         'playerID' => $ep->playerID,
                         'name' => $player?->name ?? '—',
                         'flag' => $player?->team?->flag,
+                        'eliminated' => $player?->teamID !== null && $this->eliminatedTeamIds()->has($player->teamID),
                         'yellow_count' => (int) ($playerYellow[$ep->playerID] ?? 0),
                         'red_count' => (int) ($playerRed[$ep->playerID] ?? 0),
                     ];
@@ -120,7 +121,7 @@ class WcCards extends WcPage
      */
     protected function teamCardRow(?WcTeam $team, ?int $teamId, Collection $counts): ?array
     {
-        $row = $this->teamRow($team);
+        $row = $this->teamRow($team, $teamId);
         if ($row === null) {
             return null;
         }
