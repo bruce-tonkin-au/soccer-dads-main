@@ -5,8 +5,8 @@ namespace App\Filament\Resources\WcTeams\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -42,9 +42,8 @@ class WcTeamsTable
                     ->label('FIFA')
                     ->sortable()
                     ->toggleable(),
-                IconColumn::make('qualified')
-                    ->boolean()
-                    ->toggleable(),
+                ToggleColumn::make('qualified')
+                    ->label('In Tournament'),
             ])
             ->filters([
                 SelectFilter::make('seed_tier')

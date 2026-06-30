@@ -13,6 +13,11 @@ class WcTeamForm
     {
         return $schema
             ->components([
+                Toggle::make('qualified')
+                    ->label('In Tournament')
+                    ->helperText('Switch off to mark this team as eliminated — they will appear struck through on the ladder. Auto-derived from knockout fixtures once those are loaded, so manual overrides become unnecessary as the draw fills in.')
+                    ->inline(false)
+                    ->default(true),
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -43,8 +48,6 @@ class WcTeamForm
                 Select::make('group_position')
                     ->label('Group position')
                     ->options([1 => 1, 2 => 2, 3 => 3, 4 => 4]),
-                Toggle::make('qualified')
-                    ->default(true),
             ]);
     }
 }

@@ -44,11 +44,16 @@ abstract class WcPage extends Component
     }
 
     /**
-     * Teams that are out of the tournament, derived purely from wc_fixtures: a
-     * team is eliminated once the knockout draw exists and it has no fixture in
-     * the current knockout round. We key off `round_of_32` — the first knockout
-     * stage — so the strikethrough turns on as soon as that stage is seeded and
-     * needs no manual "qualified" flag. Returns teamID => index for has().
+     * Teams that are out of the tournament. A team is eliminated when EITHER
+     * an admin has flipped wc_teams.qualified to false (manual override, used
+     * before knockout fixtures land), OR the next knockout stage exists and
+     * the team has no fixture in it. The union means the manual toggle works
+     * straight away and is harmlessly redundant once the draw fills in.
+     *
+     * Per-request memoised (no persistent cache), so flipping the admin
+     * toggle is reflected on the next page load.
+     *
+     * Returns teamID => index for has().
      */
     protected function eliminatedTeamIds(): Collection
     {
@@ -56,23 +61,32 @@ abstract class WcPage extends Component
             return $this->eliminatedTeamIds;
         }
 
+        // Manual eliminations from the admin toggle.
+        $manual = WcTeam::query()
+            ->where('qualified', false)
+            ->pluck('teamID');
+
+        // Fixture-derived eliminations: once round_of_32 is seeded, any team
+        // missing from it is out. Before that, this set is empty.
         $r32 = WcFixture::query()
             ->where('stage', 'round_of_32')
             ->get(['home_team_id', 'away_team_id']);
 
-        // Before the knockout draw is seeded, nobody is eliminated.
-        if ($r32->isEmpty()) {
-            return $this->eliminatedTeamIds = collect();
+        $fixtureBased = collect();
+        if ($r32->isNotEmpty()) {
+            $alive = $r32
+                ->flatMap(fn (WcFixture $f) => [$f->home_team_id, $f->away_team_id])
+                ->filter()
+                ->unique();
+
+            $fixtureBased = WcTeam::query()
+                ->whereNotIn('teamID', $alive)
+                ->pluck('teamID');
         }
 
-        $alive = $r32
-            ->flatMap(fn (WcFixture $f) => [$f->home_team_id, $f->away_team_id])
-            ->filter()
-            ->unique();
-
-        return $this->eliminatedTeamIds = WcTeam::query()
-            ->whereNotIn('teamID', $alive)
-            ->pluck('teamID')
+        return $this->eliminatedTeamIds = $manual
+            ->merge($fixtureBased)
+            ->unique()
             ->flip();
     }
 
