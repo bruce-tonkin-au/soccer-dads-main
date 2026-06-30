@@ -48,8 +48,19 @@ trait SyncsWcGoals
                 continue;
             }
 
-            $detail = $event['detail'] ?? '';
+            $detail   = $event['detail'] ?? '';
+            $comments = (string) ($event['comments'] ?? '');
             if ($detail === 'Missed Penalty') {
+                continue;
+            }
+
+            // Penalty shootout goals don't count toward the fantasy match
+            // total — wc_fixtures.home_score/away_score stores the result
+            // after 90+ET, before the shootout — so wc_goals should mirror
+            // that. API-Football emits shootout events in the same `events`
+            // array with comments = 'Penalty Shootout' (and usually a null
+            // elapsed minute); some responses also use detail directly.
+            if ($detail === 'Penalty Shootout' || stripos($comments, 'Penalty Shootout') !== false) {
                 continue;
             }
 
