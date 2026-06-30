@@ -16,6 +16,7 @@ class WcGoal extends Model
         'teamID',
         'minute',
         'is_own_goal',
+        'is_shootout',
     ];
 
     protected $casts = [
@@ -24,6 +25,7 @@ class WcGoal extends Model
         'teamID'      => 'integer',
         'minute'      => 'integer',
         'is_own_goal' => 'boolean',
+        'is_shootout' => 'boolean',
     ];
 
     public function fixture(): BelongsTo

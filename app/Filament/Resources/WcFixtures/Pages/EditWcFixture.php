@@ -22,17 +22,21 @@ class EditWcFixture extends EditRecord
 
     /**
      * Collapse existing wc_goals into repeater rows: one row per distinct
-     * (player, own-goal) pair, with the goal count.
+     * (player, own-goal, shootout) triple, with the goal count. Shootout is
+     * part of the key so a player's regular goal and shootout pen don't merge.
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['goals'] = WcGoal::where('fixtureID', $this->record->fixtureID)
             ->get()
-            ->groupBy(fn (WcGoal $goal) => $goal->playerID . '|' . ($goal->is_own_goal ? '1' : '0'))
+            ->groupBy(fn (WcGoal $goal) => $goal->playerID
+                . '|' . ($goal->is_own_goal ? '1' : '0')
+                . '|' . ($goal->is_shootout ? '1' : '0'))
             ->map(fn ($group) => [
                 'playerID' => $group->first()->playerID,
                 'count' => $group->count(),
                 'is_own_goal' => (bool) $group->first()->is_own_goal,
+                'is_shootout' => (bool) $group->first()->is_shootout,
             ])
             ->values()
             ->all();
@@ -68,6 +72,10 @@ class EditWcFixture extends EditRecord
 
                 $count = max(1, (int) ($row['count'] ?? 1));
                 $isOwnGoal = (bool) ($row['is_own_goal'] ?? false);
+                // is_shootout has no form control — it round-trips silently
+                // through mutateFormDataBeforeFill so admin Save doesn't clear
+                // the flag on shootout rows loaded from the API sync.
+                $isShootout = (bool) ($row['is_shootout'] ?? false);
                 $scorerTeamId = $teamByPlayer[$playerID] ?? null;
 
                 // Own goals are credited to the OPPONENT (the benefiting side),
@@ -83,6 +91,7 @@ class EditWcFixture extends EditRecord
                         'teamID' => $teamID,
                         'minute' => null,
                         'is_own_goal' => $isOwnGoal,
+                        'is_shootout' => $isShootout,
                     ]);
                 }
             }

@@ -54,15 +54,14 @@ trait SyncsWcGoals
                 continue;
             }
 
-            // Penalty shootout goals don't count toward the fantasy match
-            // total — wc_fixtures.home_score/away_score stores the result
-            // after 90+ET, before the shootout — so wc_goals should mirror
-            // that. API-Football emits shootout events in the same `events`
-            // array with comments = 'Penalty Shootout' (and usually a null
-            // elapsed minute); some responses also use detail directly.
-            if ($detail === 'Penalty Shootout' || stripos($comments, 'Penalty Shootout') !== false) {
-                continue;
-            }
+            // Shootout goals are stored but flagged: wc_fixtures stores the
+            // pre-shootout (90+ET) score, so points/ladder code filters them
+            // out via is_shootout = false — but they still appear on the
+            // results page with a (pen) marker. API-Football emits them in
+            // the same events array with comments = 'Penalty Shootout' (and
+            // usually a null elapsed minute); some responses also use detail.
+            $isShootout = ($detail === 'Penalty Shootout'
+                || stripos($comments, 'Penalty Shootout') !== false);
 
             $playerName = $event['player']['name'] ?? null;
             if (! $playerName) {
@@ -92,6 +91,7 @@ trait SyncsWcGoals
                 'teamID'      => $isOwnGoal ? $this->benefitingTeamId($fixture, $player->teamID) : $player->teamID,
                 'minute'      => $minute,
                 'is_own_goal' => $isOwnGoal,
+                'is_shootout' => $isShootout,
             ];
         }
 
@@ -104,11 +104,15 @@ trait SyncsWcGoals
                 WcGoal::where('fixtureID', $fixture->fixtureID)->delete();
             }
 
-            // Insert by shortfall, not existence: group by player + own-goal and
-            // add only as many rows as the API now reports beyond what is already
-            // stored. So a player who scored twice gets two rows, while
-            // re-polling a live match never duplicates.
-            $groups = collect($goals)->groupBy(fn ($g) => $g['playerID'] . '|' . ($g['is_own_goal'] ? '1' : '0'));
+            // Insert by shortfall, not existence: group by player + own-goal +
+            // shootout and add only as many rows as the API now reports beyond
+            // what is already stored. So a player who scored twice gets two
+            // rows, while re-polling a live match never duplicates. Shootout
+            // is part of the key so a player's regular goal and shootout pen
+            // don't collapse into one bucket.
+            $groups = collect($goals)->groupBy(fn ($g) => $g['playerID']
+                . '|' . ($g['is_own_goal'] ? '1' : '0')
+                . '|' . ($g['is_shootout'] ? '1' : '0'));
 
             foreach ($groups as $group) {
                 $group = $group->values();
@@ -117,6 +121,7 @@ trait SyncsWcGoals
                 $existing = WcGoal::where('fixtureID', $fixture->fixtureID)
                     ->where('playerID', $first['playerID'])
                     ->where('is_own_goal', $first['is_own_goal'])
+                    ->where('is_shootout', $first['is_shootout'])
                     ->count();
 
                 foreach ($group->slice($existing) as $g) {
@@ -126,6 +131,7 @@ trait SyncsWcGoals
                         'teamID'      => $g['teamID'],
                         'minute'      => $g['minute'],
                         'is_own_goal' => $g['is_own_goal'],
+                        'is_shootout' => $g['is_shootout'],
                     ]);
                     $inserted++;
                 }

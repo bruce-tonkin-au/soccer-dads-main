@@ -313,13 +313,15 @@ abstract class WcPage extends Component
      * Points earned by each team: one point (× points_team_goal) for every goal
      * credited to the team. Own goals ARE included — wc_goals.teamID already
      * holds the team that benefits, so grouping by teamID counts each team's
-     * goals-for (matching the scoreline).
+     * goals-for (matching the scoreline). Shootout goals are excluded; they
+     * don't contribute to the 90+ET score that drives team points.
      *
      * @param  array{team_goal:int,player_goal:int}  $points
      */
     protected function teamPointsMap(array $points): Collection
     {
         return WcGoal::query()
+            ->where('is_shootout', false)
             ->selectRaw('"teamID", count(*) as goals')
             ->groupBy('teamID')
             ->pluck('goals', 'teamID')
@@ -348,11 +350,15 @@ abstract class WcPage extends Component
     }
 
     /**
-     * Human-readable scorer line for a fixture, e.g. "Jiménez (2), Giménez · OG: Tau".
+     * Human-readable scorer line for a fixture, e.g.
+     * "Jiménez (2), Giménez, Müller (pen), Sané (pen) · OG: Tau".
+     * Regular goals are grouped per scorer with a count; shootout pens stay
+     * inline with a (pen) suffix so the line reflects the full sequence even
+     * though the pens don't award points.
      */
     protected function scorerLine(Collection $goals): string
     {
-        $normal = $goals->where('is_own_goal', false)
+        $normal = $goals->where('is_own_goal', false)->where('is_shootout', false)
             ->groupBy('playerID')
             ->map(function ($group) {
                 $name = $group->first()->player?->name ?? 'Player';
@@ -362,13 +368,18 @@ abstract class WcPage extends Component
             })
             ->values();
 
-        $own = $goals->where('is_own_goal', true)
+        $shootout = $goals->where('is_shootout', true)
+            ->map(fn (WcGoal $g) => ($g->player?->name ?? 'Player') . ' (pen)')
+            ->values();
+
+        $own = $goals->where('is_own_goal', true)->where('is_shootout', false)
             ->map(fn (WcGoal $g) => $g->player?->name ?? 'Player')
             ->values();
 
         $parts = [];
-        if ($normal->isNotEmpty()) {
-            $parts[] = $normal->implode(', ');
+        $scorers = $normal->merge($shootout);
+        if ($scorers->isNotEmpty()) {
+            $parts[] = $scorers->implode(', ');
         }
         if ($own->isNotEmpty()) {
             $parts[] = 'OG: ' . $own->implode(', ');

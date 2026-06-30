@@ -50,13 +50,17 @@ class HomeController extends Controller
 
         // Team goals include own goals (teamID is the credited/benefiting team);
         // player goals exclude them (an own goal doesn't reward its scorer).
+        // Both exclude shootout goals — wc_fixtures stores the pre-shootout
+        // (90+ET) score, so the leaders ranking must match.
         $teamGoals = DB::table('wc_goals')
+            ->where('is_shootout', false)
             ->groupBy('teamID')
             ->selectRaw('"teamID", count(*) as goals')
             ->pluck('goals', 'teamID');
 
         $goalCounts = DB::table('wc_goals')
             ->where('is_own_goal', false)
+            ->where('is_shootout', false)
             ->groupBy('playerID')
             ->selectRaw('"playerID", count(*) as goals')
             ->pluck('goals', 'playerID');

@@ -24,6 +24,7 @@ class WcUpcoming extends WcPage
         $teamPoints = $this->teamPointsMap($pointsKey);
         $goalCounts = WcGoal::query()
             ->where('is_own_goal', false)
+            ->where('is_shootout', false)
             ->selectRaw('"playerID", count(*) as goals')
             ->groupBy('playerID')
             ->pluck('goals', 'playerID');

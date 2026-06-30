@@ -25,6 +25,7 @@ class WcResults extends WcPage
         $teamPoints = $this->teamPointsMap($pointsKey);
         $goalCounts = WcGoal::query()
             ->where('is_own_goal', false)
+            ->where('is_shootout', false)
             ->selectRaw('"playerID", count(*) as goals')
             ->groupBy('playerID')
             ->pluck('goals', 'playerID');
@@ -78,7 +79,8 @@ class WcResults extends WcPage
 
             // Team-goal points: per team credited with a goal this match. Own
             // goals ARE included — wc_goals.teamID holds the benefiting team.
-            $byTeam = $goals->groupBy('teamID');
+            // Shootout goals are excluded (they don't award points).
+            $byTeam = $goals->where('is_shootout', false)->groupBy('teamID');
             foreach ($byTeam as $teamId => $teamGoals) {
                 $count = $teamGoals->count();
                 $teamName = $teams[$teamId]->name ?? 'Team';
@@ -95,8 +97,12 @@ class WcResults extends WcPage
                 }
             }
 
-            // Player-goal points: per scorer (non own goal) in this match.
-            $byScorer = $goals->where('is_own_goal', false)->groupBy('playerID');
+            // Player-goal points: per scorer (non own goal, non shootout) in
+            // this match.
+            $byScorer = $goals
+                ->where('is_own_goal', false)
+                ->where('is_shootout', false)
+                ->groupBy('playerID');
             foreach ($byScorer as $playerId => $playerGoals) {
                 $count = $playerGoals->count();
                 $playerName = $players[$playerId]?->name ?? $playerGoals->first()->player?->name ?? 'Player';

@@ -63,7 +63,9 @@ class WcEntry extends Model
      * Live sweepstake points for this entry: one point (× the configurable
      * scoring values from wc_settings) for every goal scored by an assigned
      * team, plus one for every goal scored by an assigned player. Own goals
-     * are excluded. Bulk-counted — no per-fixture queries.
+     * are excluded for players (they don't reward the scorer). Shootout goals
+     * are excluded for both — wc_fixtures stores the pre-shootout (90+ET)
+     * score, so points must match. Bulk-counted — no per-fixture queries.
      */
     public function calculatePoints(): int
     {
@@ -76,11 +78,13 @@ class WcEntry extends Model
         // (benefiting) team — but excluded for players below.
         $teamGoals = empty($teamIds) ? 0 : WcGoal::query()
             ->whereIn('teamID', $teamIds)
+            ->where('is_shootout', false)
             ->count();
 
         $playerGoals = empty($playerIds) ? 0 : WcGoal::query()
             ->whereIn('playerID', $playerIds)
             ->where('is_own_goal', false)
+            ->where('is_shootout', false)
             ->count();
 
         return ($teamGoals * $scoring['team_goal']) + ($playerGoals * $scoring['player_goal']);

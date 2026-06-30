@@ -19,15 +19,18 @@ class WcLadder extends WcPage
         $teamPoints = $this->teamPointsMap($pointsKey);
         $goalCounts = WcGoal::query()
             ->where('is_own_goal', false)
+            ->where('is_shootout', false)
             ->selectRaw('"playerID", count(*) as goals')
             ->groupBy('playerID')
             ->pluck('goals', 'playerID');
 
         // teamID => goals-for, one bulk query. Own goals ARE counted: wc_goals.teamID
         // already holds the benefiting team, so grouping by teamID gives each team's
-        // true goal tally (matching the scoreline and teamPointsMap). Drives the ⚽
+        // true goal tally (matching the scoreline and teamPointsMap). Shootout goals
+        // are excluded — they don't appear on the 90+ET scoreline. Drives the ⚽
         // count shown under each top-24 / bottom-24 team name.
         $teamGoalMap = WcGoal::query()
+            ->where('is_shootout', false)
             ->selectRaw('"teamID", count(*) as goals')
             ->groupBy('teamID')
             ->pluck('goals', 'teamID');
