@@ -21,7 +21,12 @@ class RatingsTable
             // One row per rated player (grouped aggregate), like the legacy
             // summary screen — so pagination over groups is disabled.
             ->paginated(false)
-            ->defaultSort('compositeRating', 'desc')
+            // Order is baked into the grouped query below (orderByRaw on the
+            // composite expression). Filament's default key-sort tie-breaker
+            // would append ORDER BY "player-ratings"."ratingID" — a column that
+            // is neither grouped nor aggregated (and the table is aliased "r"),
+            // which Postgres rejects — so disable it.
+            ->defaultKeySort(false)
             ->modifyQueryUsing(fn (Builder $query): Builder => $query
                 ->from('player-ratings as r')
                 ->join('members as m', 'r.ratedMemberID', '=', 'm.memberID')
@@ -37,7 +42,10 @@ class RatingsTable
                     DB::raw('ROUND(AVG(r."ratingDefending"), 1) as "avgDefending"'),
                     DB::raw('ROUND(AVG(r."ratingOverall"), 1) as "avgOverall"'),
                     DB::raw('ROUND((AVG(r."ratingGoal") + AVG(r."ratingPassing") + AVG(r."ratingWork") + AVG(r."ratingDefending") + AVG(r."ratingOverall")) / 5 * 24.75, 0) as "compositeRating"')
-                ))
+                )
+                // Order by the raw composite expression (not the selected alias)
+                // so Postgres can resolve it inside the grouped query.
+                ->orderByRaw('ROUND((AVG(r."ratingGoal") + AVG(r."ratingPassing") + AVG(r."ratingWork") + AVG(r."ratingDefending") + AVG(r."ratingOverall")) / 5 * 24.75, 0) DESC'))
             ->columns([
                 TextColumn::make('memberNameLast')
                     ->label('Player')
@@ -46,49 +54,42 @@ class RatingsTable
                 TextColumn::make('ratingCount')
                     ->label('Ratings')
                     ->alignCenter()
-                    ->color('gray')
-                    ->sortable(),
+                    ->color('gray'),
                 TextColumn::make('avgGoal')
                     ->label('Goal')
                     ->alignCenter()
                     ->badge()
                     ->color(Color::Green)
-                    ->formatStateUsing(fn ($state): string => $state . '/4')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => $state . '/4'),
                 TextColumn::make('avgPassing')
                     ->label('Passing')
                     ->alignCenter()
                     ->badge()
                     ->color(Color::Blue)
-                    ->formatStateUsing(fn ($state): string => $state . '/4')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => $state . '/4'),
                 TextColumn::make('avgWork')
                     ->label('Work')
                     ->alignCenter()
                     ->badge()
                     ->color(Color::Orange)
-                    ->formatStateUsing(fn ($state): string => $state . '/4')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => $state . '/4'),
                 TextColumn::make('avgDefending')
                     ->label('Defending')
                     ->alignCenter()
                     ->badge()
                     ->color(Color::Purple)
-                    ->formatStateUsing(fn ($state): string => $state . '/4')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => $state . '/4'),
                 TextColumn::make('avgOverall')
                     ->label('Overall')
                     ->alignCenter()
                     ->badge()
                     ->color(Color::Amber)
-                    ->formatStateUsing(fn ($state): string => $state . '/4')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state): string => $state . '/4'),
                 TextColumn::make('compositeRating')
                     ->label('Composite')
                     ->alignCenter()
                     ->weight(FontWeight::Bold)
-                    ->size(TextSize::Large)
-                    ->sortable(),
+                    ->size(TextSize::Large),
             ])
             ->recordActions([
                 Action::make('detail')
