@@ -102,8 +102,8 @@
                 this.$refs.preview.innerHTML = this.renderMerge(html);
             },
 
-            // Mirrors the legacy renderMerge(): substitute {{tag}} with the
-            // sample player's values, escaping the value.
+            // Mirrors the legacy renderMerge(): substitute each merge tag with
+            // the sample player's values, escaping the value.
             renderMerge(text) {
                 let out = text || '';
                 for (const [key, val] of Object.entries(this.sampleValues)) {
