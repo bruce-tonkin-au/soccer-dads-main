@@ -23,6 +23,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('manage')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->brandName('Soccer Dads Admin')
             ->login()
             ->colors([
