@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\Members\Schemas\MemberForm;
 use App\Filament\Admin\Resources\Members\Tables\MembersTable;
 use App\Models\Member;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -18,6 +19,8 @@ class MemberResource extends Resource
     protected static ?string $model = Member::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Members';
 
     protected static ?int $navigationSort = 1;
 

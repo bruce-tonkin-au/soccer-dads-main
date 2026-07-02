@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Pages;
 use App\Services\RegistrationActions;
 use App\Services\RegistrationsQuery;
 use BackedEnum;
+use UnitEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Livewire\Attributes\Url;
@@ -15,7 +16,9 @@ class Registrations extends Page
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?int $navigationSort = 9;
+    protected static string|UnitEnum|null $navigationGroup = 'Play';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Registrations';
 

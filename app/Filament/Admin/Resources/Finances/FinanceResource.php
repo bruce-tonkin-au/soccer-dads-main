@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\Finances\Pages\ListFinances;
 use App\Filament\Admin\Resources\Finances\Tables\FinancesTable;
 use App\Models\Account;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 
@@ -15,7 +16,9 @@ class FinanceResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static ?int $navigationSort = 8;
+    protected static string|UnitEnum|null $navigationGroup = 'Manage';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Finances';
 

@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\Messages\Schemas\MessageForm;
 use App\Filament\Admin\Resources\Messages\Tables\MessagesTable;
 use App\Models\Message;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -19,7 +20,9 @@ class MessageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-envelope';
 
-    protected static ?int $navigationSort = 5;
+    protected static string|UnitEnum|null $navigationGroup = 'Manage';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'messageSubject';
 
