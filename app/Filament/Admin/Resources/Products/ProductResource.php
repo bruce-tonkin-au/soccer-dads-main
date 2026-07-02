@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Products\Schemas\ProductForm;
 use App\Filament\Admin\Resources\Products\Tables\ProductsTable;
 use App\Models\Product;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -20,7 +21,9 @@ class ProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?int $navigationSort = 6;
+    protected static string|UnitEnum|null $navigationGroup = 'Commerce';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'productName';
 

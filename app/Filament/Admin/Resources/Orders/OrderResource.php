@@ -8,6 +8,7 @@ use App\Filament\Admin\Resources\Orders\Schemas\OrderForm;
 use App\Filament\Admin\Resources\Orders\Tables\OrdersTable;
 use App\Models\Order;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -18,7 +19,9 @@ class OrderResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
 
-    protected static ?int $navigationSort = 7;
+    protected static string|UnitEnum|null $navigationGroup = 'Commerce';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'orderID';
 
