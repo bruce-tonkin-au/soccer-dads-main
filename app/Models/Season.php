@@ -21,6 +21,7 @@ class Season extends Model
         'seasonName',
         'seasonLink',
         'seasonVisible',
+        'nightID',
     ];
 
     protected $casts = [
