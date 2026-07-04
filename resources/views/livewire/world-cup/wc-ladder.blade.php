@@ -30,7 +30,7 @@
                         </thead>
                         <tbody>
                             @foreach ($ladder as $row)
-                                <tr class="@if($row['position'] && $row['position'] <= 3) wc-r{{ $row['position'] }} @endif">
+                                <tr class="@if($row['position'] && $row['position'] <= 2) wc-r{{ $row['position'] }} @endif">
                                     <td class="wc-pos">
                                         @if (! $row['position'])
                                             <span class="wc-muted">—</span>
