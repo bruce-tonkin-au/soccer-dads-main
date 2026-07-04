@@ -317,8 +317,11 @@ class AdminController extends Controller
     {
         $results = DB::table('results as r')
             ->join('members as m', 'r.resultMemberID', '=', 'm.memberID')
+            ->join('games as g', 'r.resultGameID', '=', 'g.gameID')
             ->where('r.resultSeasonID', $seasonID)
             ->where('r.resultActive', 1)
+            ->where('g.gameVisible', 1)      // exclude hidden/future placeholder rounds (e.g. Round 11)
+            ->where('g.is_test', false)      // exclude test games
             ->select('r.resultMemberID', 'r.resultGameID', 'r.resultTeamID', 'r.resultPoints',
                      'm.memberNameFirst', 'm.memberNameLast')
             ->get();
