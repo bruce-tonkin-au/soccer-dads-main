@@ -20,7 +20,6 @@
     .wc-table tbody tr:last-child td { border-bottom:none; }
     .wc-table tbody tr.wc-r1 { background:rgba(245,193,66,.10); }
     .wc-table tbody tr.wc-r2 { background:rgba(160,168,180,.12); }
-    .wc-table tbody tr.wc-r3 { background:rgba(196,122,72,.10); }
 
     .wc-pos { font-size:22px; font-weight:800; color:#262c39; text-align:center; width:54px; }
     .wc-entry { font-weight:700; color:#262c39; font-size:15px; }
