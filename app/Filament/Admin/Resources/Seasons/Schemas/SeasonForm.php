@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Seasons\Schemas;
 
+use App\Models\Night;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -17,6 +18,15 @@ class SeasonForm
                     ->required()
                     ->maxLength(255)
                     ->placeholder('e.g. Season 1, 2026'),
+                Select::make('nightID')
+                    ->label('Night')
+                    ->options(fn (): array => Night::query()
+                        ->where('nightActive', 1)
+                        ->orderBy('nightSort')
+                        ->pluck('nightName', 'nightID')
+                        ->all())
+                    ->required()
+                    ->helperText('Which night this season belongs to (e.g. Friday, Tuesday).'),
                 TextInput::make('seasonLink')
                     ->label('Season link (URL code)')
                     ->required()

@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\Members\Schemas;
 
 use App\Models\Member;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -53,6 +54,15 @@ class MemberForm
                     ->default(1)
                     ->required()
                     ->selectablePlaceholder(false),
+                CheckboxList::make('nights')
+                    ->label('Night access')
+                    ->helperText('Which nights this player can access. The player can hide a night themselves later.')
+                    ->relationship(
+                        name: 'nights',
+                        titleAttribute: 'nightName',
+                        modifyQueryUsing: fn ($query) => $query->where('nightActive', 1),
+                    )
+                    ->pivotData(['allowed' => 1]),
                 DatePicker::make('memberBirthday')
                     ->label('Birthday')
                     ->native(false)
