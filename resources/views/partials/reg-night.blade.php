@@ -2,8 +2,8 @@
     One night's registration card — header + attendance + child, all in a single
     bordered card. Rendered once per block from registration.blade.php.
     Expects: $block (night, game, registration, activePlayers, benchPosition,
-    child, childRegistration), $member, and optionally $multi (bool) + $accent
-    (hex colour for the card's top border when the member has 2+ nights).
+    child, childRegistration), $member, and optionally $multi (bool). The card's
+    top-border accent is derived per-night via App\Support\NightColour.
 
     PRESENTATIONAL ONLY — the hidden gameID/childID fields and POST targets are
     unchanged; the resolver and update() mutation logic are untouched.
@@ -18,7 +18,9 @@
     $childRegistration = $block['childRegistration'];
 
     $multi  = $multi ?? false;
-    $accent = $accent ?? null;
+    // Accent is per-night (Friday = blue, Tuesday = green) and always applied,
+    // whether the member has one night or two.
+    $accent = \App\Support\NightColour::accent($night->nightName);
 
     $onBench  = $registration && $registration->registrationStatus == 1 && $registration->registrationBench == 1;
     $isActive = $registration && $registration->registrationStatus == 1 && $registration->registrationBench == 0;
@@ -32,7 +34,7 @@
     $confirmChild  = $child ? 'Register ' . $child->memberNameFirst . ' for ' . strtoupper($night->nightName) . ' ' . $when . $where . '?' : '';
 @endphp
 
-<div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; overflow:hidden; @if($accent) border-top:4px solid {{ $accent }}; @endif">
+<div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; overflow:hidden; border-top:4px solid {{ $accent }};">
 
     {{-- Header strip --}}
     <div style="background:#262c39; padding:1.5rem; color:#fff; text-align:center;">

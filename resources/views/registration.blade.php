@@ -8,10 +8,6 @@
     // Widen the container when the member has more than one night so the
     // self-contained cards can sit side by side; otherwise keep the narrow layout.
     $multi = $blocks->count() > 1;
-
-    // Distinct accents per card so two nights are visually unmistakable
-    // (site palette: blue, green, gold). Only applied when multi.
-    $accents = ['#458bc8', '#7bba56', '#e68a46'];
 @endphp
 
 <style>
@@ -67,12 +63,11 @@
     {{-- One self-contained card per accessible night with an upcoming game --}}
     @if($blocks->isNotEmpty())
     <div class="reg-nights {{ $multi ? 'reg-nights--multi' : '' }}">
-        @foreach($blocks as $i => $block)
+        @foreach($blocks as $block)
             @include('partials.reg-night', [
                 'block'  => $block,
                 'member' => $member,
                 'multi'  => $multi,
-                'accent' => $multi ? $accents[$i % count($accents)] : null,
             ])
         @endforeach
     </div>
