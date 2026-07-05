@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MemberNightResolver;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -25,93 +26,64 @@ class RegistrationController extends Controller
      */
     private function resolveNightBlocks(object $member)
     {
-        $nights = DB::table('member_nights as mn')
-            ->join('nights as n', 'mn.nightID', '=', 'n.nightID')
-            ->where('mn.memberID', $member->memberID)
-            ->where('mn.allowed', 1)
-            ->where('mn.hidden', 0)
-            ->where('n.nightActive', 1)
-            ->orderBy('n.nightSort')
-            ->select('n.*')
-            ->get();
-
         // The member's active child is per-member, not per-night — resolve once.
         $child = DB::table('members')
             ->where('memberParent', $member->memberID)
             ->where('memberActive', 1)
             ->first();
 
-        $blocks = collect();
+        // Accessible nights + their next game come from the shared resolver so
+        // /reg and the message page can never disagree on what a member sees.
+        return app(MemberNightResolver::class)
+            ->nightsWithNextGame($member)
+            ->map(function ($pair) use ($member, $child): array {
+                $night = $pair->night;
+                $game  = $pair->game;
 
-        foreach ($nights as $night) {
-            $game = $this->nextGameForNight($night->nightID);
-            if (!$game) continue;
-
-            $registration = DB::table('game-registrations')
-                ->where('gameID', $game->gameID)
-                ->where('memberID', $member->memberID)
-                ->first();
-
-            $childRegistration = null;
-            if ($child) {
-                $childRegistration = DB::table('game-registrations')
+                $registration = DB::table('game-registrations')
                     ->where('gameID', $game->gameID)
-                    ->where('memberID', $child->memberID)
+                    ->where('memberID', $member->memberID)
                     ->first();
-            }
 
-            $activePlayers = DB::table('game-registrations')
-                ->where('gameID', $game->gameID)
-                ->where('registrationStatus', 1)
-                ->where('registrationBench', 0)
-                ->count();
+                $childRegistration = null;
+                if ($child) {
+                    $childRegistration = DB::table('game-registrations')
+                        ->where('gameID', $game->gameID)
+                        ->where('memberID', $child->memberID)
+                        ->first();
+                }
 
-            $benchPosition = null;
-            if ($registration && $registration->registrationBench == 1 && $registration->registrationStatus == 1) {
-                $benchIds = DB::table('game-registrations')
+                $activePlayers = DB::table('game-registrations')
                     ->where('gameID', $game->gameID)
-                    ->where('registrationBench', 1)
                     ->where('registrationStatus', 1)
-                    ->orderByRaw('("registrationBenchOrder" = 0)')
-                    ->orderBy('registrationBenchOrder')
-                    ->orderBy('registrationCreated')
-                    ->orderBy('registrationID')
-                    ->pluck('registrationID');
-                $idx = $benchIds->search($registration->registrationID);
-                $benchPosition = $idx !== false ? $idx + 1 : 1;
-            }
+                    ->where('registrationBench', 0)
+                    ->count();
 
-            $blocks->push([
-                'night'             => $night,
-                'game'              => $game,
-                'registration'      => $registration,
-                'activePlayers'     => $activePlayers,
-                'benchPosition'     => $benchPosition,
-                'child'             => $child,
-                'childRegistration' => $childRegistration,
-            ]);
-        }
+                $benchPosition = null;
+                if ($registration && $registration->registrationBench == 1 && $registration->registrationStatus == 1) {
+                    $benchIds = DB::table('game-registrations')
+                        ->where('gameID', $game->gameID)
+                        ->where('registrationBench', 1)
+                        ->where('registrationStatus', 1)
+                        ->orderByRaw('("registrationBenchOrder" = 0)')
+                        ->orderBy('registrationBenchOrder')
+                        ->orderBy('registrationCreated')
+                        ->orderBy('registrationID')
+                        ->pluck('registrationID');
+                    $idx = $benchIds->search($registration->registrationID);
+                    $benchPosition = $idx !== false ? $idx + 1 : 1;
+                }
 
-        return $blocks;
-    }
-
-    /**
-     * The soonest upcoming visible game for a night: gameVisible = 1, in a
-     * visible season belonging to that night (seasons.nightID = $nightID),
-     * dated today or later (Adelaide). Mirrors the old getNextGame
-     * game-selection, but scoped by night instead of by newest season.
-     */
-    private function nextGameForNight(int $nightID): ?object
-    {
-        return DB::table('games as g')
-            ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
-            ->where('g.gameVisible', 1)
-            ->where('s.seasonVisible', 1)
-            ->where('s.nightID', $nightID)
-            ->whereRaw('g."gameDate" >= (NOW() AT TIME ZONE \'Australia/Adelaide\')::date')
-            ->orderByRaw('g."gameDate" ASC')
-            ->select('g.*', 's.seasonName')
-            ->first();
+                return [
+                    'night'             => $night,
+                    'game'              => $game,
+                    'registration'      => $registration,
+                    'activePlayers'     => $activePlayers,
+                    'benchPosition'     => $benchPosition,
+                    'child'             => $child,
+                    'childRegistration' => $childRegistration,
+                ];
+            });
     }
 
     private function logEvent(int $gameID, int $memberID, string $eventType, ?int $sequence = null): void
