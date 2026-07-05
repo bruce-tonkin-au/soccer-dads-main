@@ -4,15 +4,38 @@
 
 @section('content')
 
-<div style="max-width:560px; margin:3rem auto; padding:0 1.5rem;">
+@php
+    // Widen the container when the member has more than one night so the
+    // self-contained cards can sit side by side; otherwise keep the narrow layout.
+    $multi = $blocks->count() > 1;
 
-    {{-- Header --}}
-    <div style="text-align:center; margin-bottom:2rem;">
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:0.25rem;">
-            {{ $member->memberNameFirst }}!
-        </h1>
-        <p style="font-size:14px; color:#888;">Game registration</p>
-    </div>
+    // Distinct accents per card so two nights are visually unmistakable
+    // (site palette: blue, green, gold). Only applied when multi.
+    $accents = ['#458bc8', '#7bba56', '#e68a46'];
+@endphp
+
+<style>
+    .reg-nights {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        align-items: start;
+    }
+    @media (min-width: 768px) {
+        .reg-nights.reg-nights--multi { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+
+{{-- Site gradient header (same bar as the Seasons page), member name as title --}}
+<x-page-header :title="$member->memberNameFirst . '!'" />
+
+{{-- Match the Seasons page: bottom PADDING on the content wrapper (not a margin,
+     which collapses) gives a reliable gap above the shared site footer. --}}
+<div style="padding:2.5rem 1.5rem 4rem;">
+<div style="max-width:{{ $multi ? '960px' : '560px' }}; margin:0 auto;">
+
+    <p style="text-align:center; font-size:14px; color:#888; margin-bottom:2rem;">Game registration</p>
 
     @if(session('success'))
     <div style="background:#f0fdf4; border:1px solid #7bba56; border-radius:8px; padding:12px 16px; margin-bottom:1.5rem; font-size:14px; color:#262c39;">
@@ -41,99 +64,29 @@
     </div>
     @endif
 
-    {{-- Game details --}}
-    <div style="background:#262c39; border-radius:16px; padding:1.5rem; margin-bottom:1.5rem; color:#fff; text-align:center;">
-        <div style="font-size:12px; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Next game</div>
-        <div style="font-size:22px; font-weight:600; margin-bottom:4px;">
-            {{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }}
-        </div>
-        <div style="font-size:14px; color:rgba(255,255,255,0.6);">
-            Round {{ $nextGame->gameRound }} · {{ $nextGame->seasonName }}
-        </div>
-        <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1); font-size:13px; color:rgba(255,255,255,0.5);">
-            {{ $activePlayers }}/18 players registered
-            @if($activePlayers >= 18)
-            · <span style="color:#e68a46;">Game is full</span>
-            @endif
-        </div>
-    </div>
-
-    {{-- Parent attendance form --}}
-    @php
-        $onBench = $registration && $registration->registrationStatus == 1 && $registration->registrationBench == 1;
-        $isActive = $registration && $registration->registrationStatus == 1 && $registration->registrationBench == 0;
-    @endphp
-
-    @if($onBench)
-    <div style="background:#fff8ee; border:1px solid #e68a46; border-radius:16px; padding:1.5rem; margin-bottom:1rem;">
-        <p style="font-size:15px; font-weight:600; color:#262c39; margin-bottom:0.5rem;">
-            <i class="fa-solid fa-clock" style="color:#e68a46;"></i> You're on the reserves bench
-        </p>
-        <p style="font-size:14px; color:#666; margin-bottom:1rem;">
-            You're #{{ $benchPosition }} in the queue. You'll be automatically moved to the active list if a spot opens up.
-        </p>
-        <form method="POST" action="/reg/{{ $member->memberCode }}">
-            @csrf
-            <button type="submit" name="status" value="2"
-                style="width:100%; padding:14px; border-radius:12px; border:2px solid #e8e8e8; background:#fff; cursor:pointer; font-size:14px; font-weight:600; color:#888;">
-                <i class="fa-solid fa-circle-xmark" style="color:#e24b4a;"></i> Remove me from the bench
-            </button>
-        </form>
+    {{-- One self-contained card per accessible night with an upcoming game --}}
+    @if($blocks->isNotEmpty())
+    <div class="reg-nights {{ $multi ? 'reg-nights--multi' : '' }}">
+        @foreach($blocks as $i => $block)
+            @include('partials.reg-night', [
+                'block'  => $block,
+                'member' => $member,
+                'multi'  => $multi,
+                'accent' => $multi ? $accents[$i % count($accents)] : null,
+            ])
+        @endforeach
     </div>
     @else
-    <form method="POST" action="/reg/{{ $member->memberCode }}">
-        @csrf
-        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; padding:1.5rem; margin-bottom:1rem;">
-        <p style="font-size:15px; font-weight:600; color:#262c39; margin-bottom:1rem;">Are you coming?</p>
-
-        @if($activePlayers >= 18 && !$isActive)
-        <div style="background:#fff8ee; border:1px solid #e68a46; border-radius:8px; padding:12px 16px; font-size:14px; color:#262c39; margin-bottom:1rem;">
-            <i class="fa-solid fa-clock" style="color:#e68a46;"></i>
-            The game is full — registering will add you to the reserves bench.
-        </div>
-        @endif
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <button type="submit" name="status" value="1"
-                style="padding:16px; border-radius:12px; border:2px solid {{ $isActive ? '#7bba56' : '#e8e8e8' }}; background:{{ $isActive ? '#f0fdf4' : '#fff' }}; cursor:pointer; font-size:15px; font-weight:600; color:#262c39;">
-                <i class="fa-solid fa-circle-check" style="color:#7bba56; display:block; font-size:24px; margin-bottom:6px;"></i>
-                Yes, I'm in!
-            </button>
-            <button type="submit" name="status" value="2"
-                style="padding:16px; border-radius:12px; border:2px solid {{ ($registration?->registrationStatus == 2) ? '#e24b4a' : '#e8e8e8' }}; background:{{ ($registration?->registrationStatus == 2) ? '#fff3f3' : '#fff' }}; cursor:pointer; font-size:15px; font-weight:600; color:#262c39;">
-                <i class="fa-solid fa-circle-xmark" style="color:#e24b4a; display:block; font-size:24px; margin-bottom:6px;"></i>
-                Can't make it
-            </button>
-        </div>
-        </div>
-    </form>
+    {{-- Empty state: no accessible night has an upcoming game, OR the member has
+         no night access at all. Same calm message either way — never an error. --}}
+    <div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; padding:2.5rem 1.5rem; margin-bottom:1.5rem; text-align:center;">
+        <div style="font-size:32px; margin-bottom:0.5rem;">⚽</div>
+        <p style="font-size:16px; font-weight:600; color:#262c39; margin-bottom:0.25rem;">No upcoming games right now</p>
+        <p style="font-size:14px; color:#888;">Check back soon — we'll show your next game here as soon as it's scheduled.</p>
+    </div>
     @endif
 
-{{-- Child attendance form --}}
-@if($child && $isActive)
-<form method="POST" action="/reg/{{ $member->memberCode }}">
-    @csrf
-    <input type="hidden" name="childID" value="{{ $child->memberID }}">
-    <div style="background:#fff; border:1px solid #e8e8e8; border-radius:16px; padding:1.5rem; margin-bottom:1rem;">
-        <p style="font-size:15px; font-weight:600; color:#262c39; margin-bottom:4px;">Is {{ $child->memberNameFirst }} coming?</p>
-        <p style="font-size:13px; color:#888; margin-bottom:1rem;">Your child can only attend if you're also attending.</p>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-            <button type="submit" name="childStatus" value="1"
-                style="padding:16px; border-radius:12px; border:2px solid {{ ($childRegistration?->registrationStatus == 1 && !$childRegistration?->registrationBench) ? '#7bba56' : '#e8e8e8' }}; background:{{ ($childRegistration?->registrationStatus == 1 && !$childRegistration?->registrationBench) ? '#f0fdf4' : '#fff' }}; cursor:pointer; font-size:15px; font-weight:600; color:#262c39;">
-                <i class="fa-solid fa-circle-check" style="color:#7bba56; display:block; font-size:24px; margin-bottom:6px;"></i>
-                Yes!
-            </button>
-            <button type="submit" name="childStatus" value="2"
-                style="padding:16px; border-radius:12px; border:2px solid {{ ($childRegistration?->registrationStatus == 2) ? '#e24b4a' : '#e8e8e8' }}; background:{{ ($childRegistration?->registrationStatus == 2) ? '#fff3f3' : '#fff' }}; cursor:pointer; font-size:15px; font-weight:600; color:#262c39;">
-                <i class="fa-solid fa-circle-xmark" style="color:#e24b4a; display:block; font-size:24px; margin-bottom:6px;"></i>
-                Not this time
-            </button>
-        </div>
-    </div>
-</form>
-@endif
-
-    {{-- Account balance --}}
+    {{-- Account balance (per member — single figure below the sections) --}}
     <div style="background:#f8f8f8; border-radius:16px; padding:1.5rem; display:flex; align-items:center; justify-content:space-between;">
         <div>
             <div style="font-size:12px; color:#888; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Account balance</div>
@@ -146,6 +99,7 @@
         </a>
     </div>
 
+</div>
 </div>
 
 @endsection
