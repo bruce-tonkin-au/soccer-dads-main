@@ -83,6 +83,7 @@
                 <thead>
                     <tr>
                         <th>Season</th>
+                        <th>Night</th>
                         <th>Sessions</th>
                         <th>Goals</th>
                         <th>Winner</th>
@@ -97,6 +98,7 @@
                         <td>
                             <span style="font-weight:600; color:#262c39;">{{ $season->seasonName }}</span>
                         </td>
+                        <td style="color:#888;">{{ $season->night }}</td>
                         <td style="color:#888;">{{ $season->sessions }}</td>
                         <td style="color:#888;">
                             @if($season->goals > 0)
@@ -148,7 +150,7 @@
             pageLength: 25,
             order: [],
             columnDefs: [
-                { orderable: false, targets: 6 }
+                { orderable: false, targets: 7 }
             ],
             language: {
                 search: 'Search:',

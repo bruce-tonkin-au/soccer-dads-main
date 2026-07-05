@@ -9,9 +9,13 @@ class SeasonsController extends Controller
     public function index()
     {
         $seasons = DB::table('seasons')
-            ->where('seasonVisible', 1)
+            ->where('seasonListed', 1)   // public list is gated by seasonListed, NOT seasonVisible
             ->orderBy('seasonID', 'desc')
             ->get();
+
+        // Night name per season (seasons.nightID → nights.nightName), same
+        // lookup style as the awards join below.
+        $allNights = DB::table('nights')->pluck('nightName', 'nightID');
 
         // Get all games at once
         $allGames = DB::table('games')
@@ -53,7 +57,7 @@ class SeasonsController extends Controller
             ->get()
             ->keyBy('memberID');
 
-        $seasons = $seasons->map(function ($season) use ($allGames, $allGoals, $allAwards, $awardMembers) {
+        $seasons = $seasons->map(function ($season) use ($allGames, $allGoals, $allAwards, $awardMembers, $allNights) {
             $games = $allGames[$season->seasonID] ?? collect();
             $gameIDs = $games->pluck('gameID');
             $sessions = $games->count();
@@ -83,6 +87,7 @@ class SeasonsController extends Controller
                 'seasonID'   => $season->seasonID,
                 'seasonLink' => $season->seasonLink,
                 'seasonName' => $season->seasonName,
+                'night'      => ($season->nightID && isset($allNights[$season->nightID])) ? $allNights[$season->nightID] : '—',
                 'sessions'   => $sessions,
                 'goals'      => $goals,
                 'winner'     => $winner,
