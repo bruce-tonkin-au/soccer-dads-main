@@ -39,6 +39,9 @@ class MemberNightResolver
                 return $game ? (object) ['night' => $night, 'game' => $game] : null;
             })
             ->filter()
+            // Soonest game first — so a both-nights member sees whichever night's
+            // game is nearer at the top (both /reg and the message page inherit this).
+            ->sortBy(fn ($pair) => $pair->game->gameDate)
             ->values();
     }
 

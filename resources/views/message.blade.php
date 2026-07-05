@@ -174,7 +174,8 @@
             default => 'th',
         };
     @endphp
-    <div class="card">
+    {{-- Per-night top accent (Friday = blue, Tuesday = green), same mapping as /reg. --}}
+    <div class="card" style="border-top:4px solid {{ \App\Support\NightColour::accent($block['night']->nightName) }};">
         <div class="card-title"><i class="fa-solid fa-calendar"></i> {{ $block['night']->nightName }} — next game</div>
         <div class="next-game-date">{{ \Carbon\Carbon::parse($game->gameDate)->format('l j F Y') }}</div>
         <div class="next-game-sub">{{ $game->seasonName }} · Round {{ $game->gameRound }}</div>
