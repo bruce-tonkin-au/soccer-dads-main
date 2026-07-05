@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\MemberNightResolver;
 use App\Support\MessageMerge;
 
 class MessageController extends Controller
@@ -20,61 +21,54 @@ class MessageController extends Controller
             ->where('memberActive', 1)
             ->firstOrFail();
 
-        $currentSeason = DB::table('seasons')
-            ->where('seasonVisible', 1)
-            ->orderBy('seasonID', 'desc')
-            ->first();
+        // Per-night game blocks — one per night this member can access, via the
+        // shared resolver (same as /reg). A member who has not been granted a
+        // night (e.g. Tuesday) never sees it here.
+        $gameBlocks = app(MemberNightResolver::class)
+            ->nightsWithNextGame($member)
+            ->map(function ($pair) use ($member): array {
+                $game = $pair->game;
 
-        $nextGame = null;
-        if ($currentSeason) {
-            $nextGame = DB::table('games as g')
-                ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
-                ->where('g.gameVisible', 1)
-                ->where('g.gameSeasonID', $currentSeason->seasonID)
-                ->whereNotExists(function ($q) {
-                    $q->select(DB::raw(1))->from('scoring')
-                      ->whereColumn('scoring.gameID', 'g.gameID')
-                      ->whereNotNull('scoring.scoringEnded');
-                })
-                ->orderBy('g.gameID', 'asc')
-                ->select('g.*', 's.seasonName')
-                ->first();
-        }
+                $registration = DB::table('game-registrations')
+                    ->where('gameID', $game->gameID)
+                    ->where('memberID', $member->memberID)
+                    ->first();
 
-        $registration = null;
-        $atCapacity   = false;
-        $onBench      = false;
-        $benchPosition = null;
-        if ($nextGame) {
-            $registration = DB::table('game-registrations')
-                ->where('gameID', $nextGame->gameID)
-                ->where('memberID', $member->memberID)
-                ->first();
-
-            $activeCount = DB::table('game-registrations')
-                ->where('gameID', $nextGame->gameID)
-                ->where('registrationStatus', 1)
-                ->where('registrationBench', 0)
-                ->count();
-
-            $atCapacity = $activeCount >= 18;
-
-            $onBench = $registration
-                && $registration->registrationStatus == 1
-                && $registration->registrationBench == 1;
-
-            if ($onBench) {
-                $benchIds = DB::table('game-registrations')
-                    ->where('gameID', $nextGame->gameID)
-                    ->where('registrationBench', 1)
+                $activeCount = DB::table('game-registrations')
+                    ->where('gameID', $game->gameID)
                     ->where('registrationStatus', 1)
-                    ->orderBy('registrationCreated')
-                    ->orderBy('registrationID')
-                    ->pluck('registrationID');
-                $idx = $benchIds->search($registration->registrationID);
-                $benchPosition = $idx !== false ? $idx + 1 : 1;
-            }
-        }
+                    ->where('registrationBench', 0)
+                    ->count();
+
+                $onBench = $registration
+                    && $registration->registrationStatus == 1
+                    && $registration->registrationBench == 1;
+
+                $benchPosition = null;
+                if ($onBench) {
+                    $benchIds = DB::table('game-registrations')
+                        ->where('gameID', $game->gameID)
+                        ->where('registrationBench', 1)
+                        ->where('registrationStatus', 1)
+                        ->orderBy('registrationCreated')
+                        ->orderBy('registrationID')
+                        ->pluck('registrationID');
+                    $idx = $benchIds->search($registration->registrationID);
+                    $benchPosition = $idx !== false ? $idx + 1 : 1;
+                }
+
+                return [
+                    'night'         => $pair->night,
+                    'game'          => $game,
+                    'registration'  => $registration,
+                    'isActive'      => $registration
+                        && $registration->registrationStatus == 1
+                        && $registration->registrationBench == 0,
+                    'onBench'       => $onBench,
+                    'atCapacity'    => $activeCount >= 18,
+                    'benchPosition' => $benchPosition,
+                ];
+            });
 
         $lastRating = DB::table('player-ratings')
             ->where('raterMemberID', $member->memberID)
@@ -88,8 +82,7 @@ class MessageController extends Controller
         $message->messageSubject = MessageMerge::render($message->messageSubject, $member);
 
         return view('message', compact(
-            'message', 'member', 'nextGame', 'registration',
-            'needsPeerReview', 'atCapacity', 'onBench', 'benchPosition'
+            'message', 'member', 'gameBlocks', 'needsPeerReview'
         ));
     }
 

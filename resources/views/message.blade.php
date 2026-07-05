@@ -155,36 +155,43 @@
         <div class="message-body" style="margin-bottom:0;">{!! $message->messageBody !!}</div>
     </div>
 
-    {{-- Next game --}}
-    @if($nextGame)
+    {{-- Next game — one card per night this member can access (per-night resolver,
+         same as /reg). A member without access to a night never sees it here. --}}
+    @foreach($gameBlocks as $block)
+    @php
+        $game          = $block['game'];
+        $registration  = $block['registration'];
+        $isActive      = $block['isActive'];
+        $onBench       = $block['onBench'];
+        $atCapacity    = $block['atCapacity'];
+        $benchPosition = $block['benchPosition'];
+        $suffix = match(true) {
+            $benchPosition === null => '',
+            ($benchPosition % 100) >= 11 && ($benchPosition % 100) <= 13 => 'th',
+            ($benchPosition % 10) === 1 => 'st',
+            ($benchPosition % 10) === 2 => 'nd',
+            ($benchPosition % 10) === 3 => 'rd',
+            default => 'th',
+        };
+    @endphp
     <div class="card">
-        <div class="card-title"><i class="fa-solid fa-calendar"></i> Next game</div>
-        <div class="next-game-date">{{ \Carbon\Carbon::parse($nextGame->gameDate)->format('l j F Y') }}</div>
-        <div class="next-game-sub">{{ $nextGame->seasonName }} · Round {{ $nextGame->gameRound }}</div>
-
-        @php
-            $isActive = $registration && $registration->registrationStatus == 1 && $registration->registrationBench == 0;
-            $suffix = match(true) {
-                $benchPosition === null => '',
-                ($benchPosition % 100) >= 11 && ($benchPosition % 100) <= 13 => 'th',
-                ($benchPosition % 10) === 1 => 'st',
-                ($benchPosition % 10) === 2 => 'nd',
-                ($benchPosition % 10) === 3 => 'rd',
-                default => 'th',
-            };
-        @endphp
+        <div class="card-title"><i class="fa-solid fa-calendar"></i> {{ $block['night']->nightName }} — next game</div>
+        <div class="next-game-date">{{ \Carbon\Carbon::parse($game->gameDate)->format('l j F Y') }}</div>
+        <div class="next-game-sub">{{ $game->seasonName }} · Round {{ $game->gameRound }}</div>
 
         @if($isActive)
         {{-- Scenario 1: registered and playing --}}
         <div class="reg-buttons">
             <form method="POST" action="/reg/{{ $member->memberCode }}">
                 @csrf
+                <input type="hidden" name="gameID" value="{{ $game->gameID }}">
                 <button type="submit" name="status" value="1" class="btn btn-active-yes">
                     <i class="fa-solid fa-circle-check" style="color:#7bba56;"></i> I'm in
                 </button>
             </form>
             <form method="POST" action="/reg/{{ $member->memberCode }}">
                 @csrf
+                <input type="hidden" name="gameID" value="{{ $game->gameID }}">
                 <button type="submit" name="status" value="2" class="btn">
                     <i class="fa-solid fa-circle-xmark" style="color:#e24b4a;"></i> Can't make it
                 </button>
@@ -203,6 +210,7 @@
         </div>
         <form method="POST" action="/reg/{{ $member->memberCode }}">
             @csrf
+            <input type="hidden" name="gameID" value="{{ $game->gameID }}">
             <button type="submit" name="status" value="2"
                 style="background:none; border:1px solid #ddd; border-radius:8px; padding:8px 16px; font-size:13px; color:#888; cursor:pointer; width:100%;">
                 <i class="fa-solid fa-circle-xmark" style="color:#e24b4a;"></i> Remove me from the bench
@@ -221,6 +229,7 @@
         </div>
         <form method="POST" action="/reg/{{ $member->memberCode }}">
             @csrf
+            <input type="hidden" name="gameID" value="{{ $game->gameID }}">
             <button type="submit" name="status" value="1"
                 style="display:inline-flex; align-items:center; gap:8px; background:#e68a46; color:#fff; border:none; padding:12px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; width:100%; justify-content:center;">
                 <i class="fa-solid fa-clock"></i> Join the reserves bench
@@ -232,6 +241,7 @@
         <div class="reg-buttons">
             <form method="POST" action="/reg/{{ $member->memberCode }}">
                 @csrf
+                <input type="hidden" name="gameID" value="{{ $game->gameID }}">
                 <button type="submit" name="status" value="1"
                     class="btn {{ ($registration?->registrationStatus == 1) ? 'btn-active-yes' : '' }}">
                     <i class="fa-solid fa-circle-check" style="color:#7bba56;"></i> I'm in
@@ -239,6 +249,7 @@
             </form>
             <form method="POST" action="/reg/{{ $member->memberCode }}">
                 @csrf
+                <input type="hidden" name="gameID" value="{{ $game->gameID }}">
                 <button type="submit" name="status" value="2"
                     class="btn {{ ($registration?->registrationStatus == 2) ? 'btn-active-no' : '' }}">
                     <i class="fa-solid fa-circle-xmark" style="color:#e24b4a;"></i> Can't make it
@@ -247,7 +258,7 @@
         </div>
         @endif
     </div>
-    @endif
+    @endforeach
 
     {{-- Peer review nudge --}}
     @if($needsPeerReview)
