@@ -28,6 +28,7 @@ class Member extends Model
         'memberActive',
         'memberParent',
         'memberBirthday',
+        'memberCountry',
     ];
 
     protected $casts = [
