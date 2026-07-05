@@ -8,17 +8,106 @@ use Illuminate\Support\Facades\Mail;
 
 class RegistrationController extends Controller
 {
-    private function getNextGame()
+    /**
+     * The single source of truth for which nights + games a member may register
+     * for. Returns one "block" per accessible night that has an upcoming game.
+     * Both show() and update() use this, so the rendered page and the POST
+     * handler can never disagree about what a member is allowed to touch.
+     *
+     * Accessible night: member_nights.allowed = 1 AND hidden = 0 AND the night
+     * is active, ordered by nightSort. Each night's next game is resolved by
+     * nextGameForNight() and nights with no upcoming game are skipped.
+     *
+     * @return \Illuminate\Support\Collection<int,array{
+     *   night:object, game:object, registration:?object, activePlayers:int,
+     *   benchPosition:?int, child:?object, childRegistration:?object
+     * }>
+     */
+    private function resolveNightBlocks(object $member)
     {
-        $currentSeason = DB::table('seasons')
-            ->where('seasonVisible', 1)
-            ->orderBy('seasonID', 'desc')
+        $nights = DB::table('member_nights as mn')
+            ->join('nights as n', 'mn.nightID', '=', 'n.nightID')
+            ->where('mn.memberID', $member->memberID)
+            ->where('mn.allowed', 1)
+            ->where('mn.hidden', 0)
+            ->where('n.nightActive', 1)
+            ->orderBy('n.nightSort')
+            ->select('n.*')
+            ->get();
+
+        // The member's active child is per-member, not per-night — resolve once.
+        $child = DB::table('members')
+            ->where('memberParent', $member->memberID)
+            ->where('memberActive', 1)
             ->first();
 
+        $blocks = collect();
+
+        foreach ($nights as $night) {
+            $game = $this->nextGameForNight($night->nightID);
+            if (!$game) continue;
+
+            $registration = DB::table('game-registrations')
+                ->where('gameID', $game->gameID)
+                ->where('memberID', $member->memberID)
+                ->first();
+
+            $childRegistration = null;
+            if ($child) {
+                $childRegistration = DB::table('game-registrations')
+                    ->where('gameID', $game->gameID)
+                    ->where('memberID', $child->memberID)
+                    ->first();
+            }
+
+            $activePlayers = DB::table('game-registrations')
+                ->where('gameID', $game->gameID)
+                ->where('registrationStatus', 1)
+                ->where('registrationBench', 0)
+                ->count();
+
+            $benchPosition = null;
+            if ($registration && $registration->registrationBench == 1 && $registration->registrationStatus == 1) {
+                $benchIds = DB::table('game-registrations')
+                    ->where('gameID', $game->gameID)
+                    ->where('registrationBench', 1)
+                    ->where('registrationStatus', 1)
+                    ->orderByRaw('("registrationBenchOrder" = 0)')
+                    ->orderBy('registrationBenchOrder')
+                    ->orderBy('registrationCreated')
+                    ->orderBy('registrationID')
+                    ->pluck('registrationID');
+                $idx = $benchIds->search($registration->registrationID);
+                $benchPosition = $idx !== false ? $idx + 1 : 1;
+            }
+
+            $blocks->push([
+                'night'             => $night,
+                'game'              => $game,
+                'registration'      => $registration,
+                'activePlayers'     => $activePlayers,
+                'benchPosition'     => $benchPosition,
+                'child'             => $child,
+                'childRegistration' => $childRegistration,
+            ]);
+        }
+
+        return $blocks;
+    }
+
+    /**
+     * The soonest upcoming visible game for a night: gameVisible = 1, in a
+     * visible season belonging to that night (seasons.nightID = $nightID),
+     * dated today or later (Adelaide). Mirrors the old getNextGame
+     * game-selection, but scoped by night instead of by newest season.
+     */
+    private function nextGameForNight(int $nightID): ?object
+    {
         return DB::table('games as g')
             ->join('seasons as s', 'g.gameSeasonID', '=', 's.seasonID')
             ->where('g.gameVisible', 1)
-            ->where('g.gameSeasonID', $currentSeason->seasonID)
+            ->where('s.seasonVisible', 1)
+            ->where('s.nightID', $nightID)
             ->whereRaw('g."gameDate" >= (NOW() AT TIME ZONE \'Australia/Adelaide\')::date')
             ->orderByRaw('g."gameDate" ASC')
             ->select('g.*', 's.seasonName')
@@ -107,58 +196,17 @@ class RegistrationController extends Controller
 
         if (!$member) abort(404);
 
-        $nextGame = $this->getNextGame();
+        // One section per accessible night with an upcoming game (single source
+        // of truth — the same resolver validates the POST in update()).
+        $blocks = $this->resolveNightBlocks($member);
 
-        if (!$nextGame) abort(404);
-
-        $registration = DB::table('game-registrations')
-            ->where('gameID', $nextGame->gameID)
-            ->where('memberID', $member->memberID)
-            ->first();
-
-        $child = DB::table('members')
-            ->where('memberParent', $member->memberID)
-            ->where('memberActive', 1)
-            ->first();
-
-        $childRegistration = null;
-        if ($child) {
-            $childRegistration = DB::table('game-registrations')
-                ->where('gameID', $nextGame->gameID)
-                ->where('memberID', $child->memberID)
-                ->first();
-        }
-
+        // Account balance is per member, not per night — a single figure below.
         $balance = DB::table('account')
             ->where('memberID', $member->memberID)
             ->where('accountVisible', 1)
             ->sum('accountValue');
 
-        $activePlayers = DB::table('game-registrations')
-            ->where('gameID', $nextGame->gameID)
-            ->where('registrationStatus', 1)
-            ->where('registrationBench', 0)
-            ->count();
-
-        $benchPosition = null;
-        if ($registration && $registration->registrationBench == 1 && $registration->registrationStatus == 1) {
-            $benchIds = DB::table('game-registrations')
-                ->where('gameID', $nextGame->gameID)
-                ->where('registrationBench', 1)
-                ->where('registrationStatus', 1)
-                ->orderByRaw('("registrationBenchOrder" = 0)')
-                ->orderBy('registrationBenchOrder')
-                ->orderBy('registrationCreated')
-                ->orderBy('registrationID')
-                ->pluck('registrationID');
-            $idx = $benchIds->search($registration->registrationID);
-            $benchPosition = $idx !== false ? $idx + 1 : 1;
-        }
-
-        return view('registration', compact(
-            'member', 'nextGame', 'registration', 'child',
-            'childRegistration', 'balance', 'activePlayers', 'benchPosition'
-        ));
+        return view('registration', compact('member', 'blocks', 'balance'));
     }
 
     public function update(Request $request, $memberCode)
@@ -169,8 +217,16 @@ class RegistrationController extends Controller
 
         if (!$member) abort(404);
 
-        $nextGame = $this->getNextGame();
-        if (!$nextGame) abort(404);
+        // Never trust the posted gameID: it must be the resolved game for one of
+        // the member's own accessible night blocks. This is the same resolver
+        // show() uses, so a member can only POST to games they can actually see.
+        $gameID = (int) $request->input('gameID');
+        $block  = $this->resolveNightBlocks($member)
+            ->first(fn ($b) => (int) $b['game']->gameID === $gameID);
+
+        if (!$block) abort(403);
+
+        $nextGame = $block['game']; // keep the name so the transaction below is unchanged
 
         $status      = $request->input('status');
         $childID     = $request->input('childID');
