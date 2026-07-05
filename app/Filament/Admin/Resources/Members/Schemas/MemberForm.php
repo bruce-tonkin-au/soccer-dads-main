@@ -31,6 +31,32 @@ class MemberForm
                     ->label('Mobile number')
                     ->tel()
                     ->maxLength(255),
+                Select::make('memberCountry')
+                    ->label('Country')
+                    ->options([
+                        'AU' => 'Australia',
+                        'NZ' => 'New Zealand',
+                        'GB' => 'United Kingdom',
+                        'IE' => 'Ireland',
+                        'US' => 'United States',
+                        'CA' => 'Canada',
+                        'ZA' => 'South Africa',
+                        'IN' => 'India',
+                        'DE' => 'Germany',
+                        'FR' => 'France',
+                        'IT' => 'Italy',
+                        'ES' => 'Spain',
+                        'NL' => 'Netherlands',
+                        'BR' => 'Brazil',
+                        'AR' => 'Argentina',
+                        'JP' => 'Japan',
+                        'CN' => 'China',
+                        'PH' => 'Philippines',
+                    ])
+                    ->default('AU')
+                    ->searchable()
+                    ->native(false)
+                    ->helperText('2-letter country code used for the flag on the players list.'),
                 Select::make('memberParent')
                     ->label('Parent member (if child)')
                     ->options(fn (?Member $record): array => Member::query()
@@ -44,7 +70,10 @@ class MemberForm
                         ])
                         ->all())
                     ->searchable()
-                    ->placeholder('None'),
+                    ->placeholder('None')
+                    // Legacy data stores 0 for "no parent" — treat 0 as None and
+                    // never write it back (save null when None is chosen).
+                    ->dehydrateStateUsing(fn ($state) => (filled($state) && (int) $state !== 0) ? $state : null),
                 Select::make('memberActive')
                     ->label('Status')
                     ->options([
