@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Season extends Model
 {
@@ -27,4 +28,9 @@ class Season extends Model
     protected $casts = [
         'seasonVisible' => 'integer',
     ];
+
+    public function night(): BelongsTo
+    {
+        return $this->belongsTo(Night::class, 'nightID', 'nightID');
+    }
 }
