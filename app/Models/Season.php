@@ -22,11 +22,13 @@ class Season extends Model
         'seasonName',
         'seasonLink',
         'seasonVisible',
+        'seasonListed',
         'nightID',
     ];
 
     protected $casts = [
         'seasonVisible' => 'integer',
+        'seasonListed'  => 'integer',
     ];
 
     public function night(): BelongsTo
