@@ -372,6 +372,14 @@ abstract class WcPage extends Component
      */
     protected function scorerLine(Collection $goals): string
     {
+        // Work on a base collection: the string-valued chains below must not
+        // stay typed as an Eloquent collection. When a filter yields no rows
+        // (e.g. a 0-0 knockout decided on penalties — no regulation goals,
+        // only shootout entries), an empty Eloquent collection survives the
+        // map(), and merge() then calls getKey() on the shootout strings and
+        // fatals ("Call to a member function getKey() on string").
+        $goals = $goals->toBase();
+
         $normal = $goals->where('is_own_goal', false)->where('is_shootout', false)
             ->groupBy('playerID')
             ->map(function ($group) {
