@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\Members\Tables;
 
 use App\Models\Member;
-use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
@@ -45,6 +44,13 @@ class MembersTable
                     ->label('Code')
                     ->badge()
                     ->color('gray')
+                    // Links to the public registration page. Leaves the admin, so
+                    // open in a new tab — Filament emits target="_blank", which
+                    // modern browsers treat as implicit rel="noopener".
+                    ->url(fn (Member $record): ?string => filled($record->memberCode)
+                        ? url('/reg/' . $record->memberCode)
+                        : null)
+                    ->openUrlInNewTab()
                     ->searchable(),
                 // Envelope mailto link, only rendered when the member has an email.
                 IconColumn::make('memberEmail')
@@ -74,12 +80,20 @@ class MembersTable
                     ->icon(fn ($state): string => $state ? 'heroicon-o-check-circle' : 'heroicon-o-clock')
                     ->tooltip(fn (Member $record): ?string => $record->memberClaimed
                         ? 'Claimed ' . ($record->memberClaimedAt?->format('j M Y'))
-                        : null)
-                    // Unclaimed rows: click the cell to copy the claim link (same URL
-                    // as the copyClaimLink action). Claimed rows are not copyable.
-                    ->copyable(fn (Member $record): bool => ! $record->memberClaimed)
-                    ->copyableState(fn (Member $record): string => url('/claim/' . $record->memberCode))
-                    ->copyMessage('Claim link copied'),
+                        : null),
+                // Legacy timestamp columns (members has no created_at/updated_at):
+                // memberCreated is set on insert, memberEdited is bumped by a DB
+                // trigger on update. Shown in the club's display timezone.
+                TextColumn::make('memberCreated')
+                    ->label('Created')
+                    ->dateTime('d M Y', 'Australia/Adelaide')
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('memberEdited')
+                    ->label('Updated')
+                    ->dateTime('d M Y', 'Australia/Adelaide')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 SelectFilter::make('memberActive')
@@ -101,16 +115,6 @@ class MembersTable
                     }),
             ])
             ->recordActions([
-                Action::make('copyClaimLink')
-                    ->label('Copy claim link')
-                    ->icon('heroicon-o-link')
-                    ->color('gray')
-                    ->visible(fn (Member $record): bool => ! $record->memberClaimed)
-                    // Client-side clipboard copy — no server round-trip needed.
-                    ->action(function (): void {})
-                    ->extraAttributes(fn (Member $record): array => [
-                        'x-on:click' => "navigator.clipboard && navigator.clipboard.writeText('" . url('/claim/' . $record->memberCode) . "')",
-                    ]),
                 EditAction::make(),
             ])
             ->toolbarActions([
