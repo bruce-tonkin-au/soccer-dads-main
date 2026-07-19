@@ -63,13 +63,22 @@ class WcLadder extends WcPage
                 });
         }
 
-        return $enriched
+        $sorted = $enriched
             ->sortByDesc('total_points')
-            ->values()
-            ->map(function (array $row, int $index) {
-                $row['position'] = $index + 1;
+            ->values();
 
-                return $row;
-            });
+        // Standard competition ranking ("1224"): rank = 1 + the number of
+        // entries with STRICTLY more points. Tied entries share a rank (both
+        // 27s => 2nd) and the next distinct score skips the consumed positions
+        // (two 2nds consume ranks 2 & 3, so the next is 4th). Display order
+        // within a tie is preserved by the stable sortByDesc above; only the
+        // position number is de-duplicated.
+        return $sorted->map(function (array $row) use ($sorted) {
+            $row['position'] = 1 + $sorted
+                ->where('total_points', '>', $row['total_points'])
+                ->count();
+
+            return $row;
+        });
     }
 }
