@@ -66,7 +66,10 @@ class PlayersController extends Controller
             $player->games   = $gameCounts[$player->memberID]   ?? 0;
             $player->awards  = $awards;
             return $player;
-        });
+        })
+        // Public list: only show players who have actually played a game.
+        ->filter(fn($player) => $player->games >= 1)
+        ->values();
 
         return view('players', compact('players'));
     }
@@ -173,10 +176,13 @@ class PlayersController extends Controller
 
         $seasonsIndex = DB::table('seasons')
             ->whereIn('seasonID', $allSeasonIDs)
+            ->where('seasonListed', 1)   // hide unlisted seasons, same rule as the public Seasons page
             ->get()
             ->keyBy('seasonID');
 
-        $seasonBreakdown = $allSeasonIDs->map(function ($seasonID) use ($goalsIndex, $assistsIndex, $gamesIndex, $seasonsIndex) {
+        $seasonBreakdown = $allSeasonIDs
+            ->filter(fn($seasonID) => $seasonsIndex->has($seasonID))
+            ->map(function ($seasonID) use ($goalsIndex, $assistsIndex, $gamesIndex, $seasonsIndex) {
             return (object)[
                 'seasonID'   => $seasonID,
                 'seasonName' => $seasonsIndex[$seasonID]->seasonName ?? 'Unknown',
