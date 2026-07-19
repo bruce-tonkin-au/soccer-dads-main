@@ -5,9 +5,12 @@ namespace App\Filament\Admin\Resources\Members\Schemas;
 use App\Models\Member;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 
 class MemberForm
 {
@@ -15,6 +18,16 @@ class MemberForm
     {
         return $schema
             ->components([
+                // Registration code + public /reg link, with copy-to-clipboard.
+                // Only shown once the player has a code (i.e. on the edit screen).
+                Section::make('Registration')
+                    ->description('Public registration link for this player.')
+                    ->visible(fn (?Member $record): bool => filled($record?->memberCode))
+                    ->schema([
+                        Placeholder::make('registration_link')
+                            ->hiddenLabel()
+                            ->content(fn (?Member $record): HtmlString => self::registrationLinkHtml($record)),
+                    ]),
                 TextInput::make('memberNameFirst')
                     ->label('First name')
                     ->required()
@@ -97,5 +110,32 @@ class MemberForm
                     ->native(false)
                     ->displayFormat('j M Y'),
             ]);
+    }
+
+    /**
+     * The player's code and their full public /reg URL, with a copy-to-clipboard
+     * button. Uses the same client-side navigator.clipboard pattern as the list.
+     */
+    protected static function registrationLinkHtml(?Member $record): HtmlString
+    {
+        $code = e($record?->memberCode ?? '');
+        $url  = e(url('/reg/' . ($record?->memberCode ?? '')));
+
+        return new HtmlString(<<<HTML
+            <div x-data="{ copied: false }" class="flex flex-wrap items-center gap-3 text-sm">
+                <span class="inline-flex items-center gap-2">
+                    <span class="text-gray-500 dark:text-gray-400">Code</span>
+                    <span class="rounded-md bg-gray-100 px-2 py-0.5 font-mono font-semibold text-gray-700 dark:bg-white/10 dark:text-gray-200">{$code}</span>
+                </span>
+                <a href="{$url}" target="_blank" rel="noopener"
+                   class="font-mono text-primary-600 underline decoration-dotted hover:decoration-solid dark:text-primary-400">{$url}</a>
+                <button type="button"
+                    x-on:click="navigator.clipboard && navigator.clipboard.writeText('{$url}'); copied = true; setTimeout(() => copied = false, 1500)"
+                    class="inline-flex items-center gap-1 rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/5">
+                    <span x-show="!copied">Copy link</span>
+                    <span x-show="copied" x-cloak class="text-success-600 dark:text-success-400">Copied!</span>
+                </button>
+            </div>
+            HTML);
     }
 }
