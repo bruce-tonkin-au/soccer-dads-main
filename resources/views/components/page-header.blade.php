@@ -1,4 +1,4 @@
-@props(['title'])
+@props(['title', 'back' => null, 'backLabel' => 'Back'])
 
 @once
 @push('styles')
@@ -17,6 +17,21 @@
         color: #fff;
         text-align: left;
     }
+    .sd-page-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+    }
+    .sd-page-header-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        margin-bottom: 1rem;
+    }
     @media (max-width: 600px) {
         .sd-page-header h1 { font-size: 48px; }
     }
@@ -26,6 +41,14 @@
 
 <div class="sd-page-header">
     <div class="container">
-        <h1>{{ $title }}</h1>
+        @if($back)
+        <a href="{{ $back }}" class="sd-page-header-back">
+            <i class="fa-solid fa-chevron-left"></i> {{ $backLabel }}
+        </a>
+        @endif
+        <div class="sd-page-header-row">
+            <h1>{{ $title }}</h1>
+            {{ $slot }}
+        </div>
     </div>
 </div>

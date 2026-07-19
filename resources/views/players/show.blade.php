@@ -5,19 +5,6 @@
 @push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <style>
-    /* Hero */
-    .player-show-hero {
-        background: #262c39;
-        padding: 4rem 2rem 3rem;
-    }
-    .player-show-hero h1 {
-        font-family: 'GetShow';
-        font-weight: normal;
-        font-size: 72px;
-        color: #fff;
-        line-height: 1;
-        margin: 0.75rem 0 0;
-    }
     .player-show-body {
         padding: 3rem 2rem 4rem;
     }
@@ -33,7 +20,9 @@
         border-radius: 12px;
         padding: 1.5rem 1.25rem;
         text-align: center;
-        color: #fff;
+        background: #f4f4f5;
+        border: 1px solid #d4d4d8;
+        color: #262c39;
     }
     .stat-card-value {
         font-size: 48px;
@@ -44,7 +33,7 @@
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        opacity: 0.8;
+        color: #888;
         margin-top: 10px;
     }
 
@@ -137,12 +126,8 @@
         vertical-align: middle;
     }
 
-    @media (max-width: 900px) {
-        .player-show-hero h1 { font-size: 52px; }
-    }
     @media (max-width: 600px) {
         .stat-cards { grid-template-columns: 1fr; }
-        .player-show-hero h1 { font-size: 40px; }
         .stat-card-value { font-size: 36px; }
         .dates-grid { grid-template-columns: 1fr !important; }
     }
@@ -151,35 +136,27 @@
 
 @section('content')
 
-<div class="player-show-hero">
-    <div class="container">
-        <a href="/players" style="font-size:13px; color:rgba(255,255,255,0.5); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:1.5rem;">
-            <i class="fa-solid fa-chevron-left"></i> All players
-        </a>
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:1.5rem;">
-            <h1>{{ $member->memberNameFirst }} {{ $member->memberNameLast }}</h1>
-            @if($member->memberPhoto)
-            <img src="{{ Storage::url($member->memberPhoto) }}"
-                 style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,0.2); flex-shrink:0;">
-            @endif
-        </div>
-    </div>
-</div>
+<x-page-header :title="$member->memberNameFirst . ' ' . $member->memberNameLast" back="/players" back-label="All players">
+    @if($member->memberPhoto)
+    <img src="{{ Storage::url($member->memberPhoto) }}"
+         style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,0.2); flex-shrink:0;">
+    @endif
+</x-page-header>
 
 <div class="player-show-body">
     <div class="container">
 
         {{-- Stat cards --}}
         <div class="stat-cards">
-            <div class="stat-card" style="background:#458bc8;">
+            <div class="stat-card">
                 <div class="stat-card-value">{{ $gamesPlayed }}</div>
                 <div class="stat-card-label">Games Played</div>
             </div>
-            <div class="stat-card" style="background:#7bba56;">
+            <div class="stat-card">
                 <div class="stat-card-value">{{ $goals }}</div>
                 <div class="stat-card-label">Goals</div>
             </div>
-            <div class="stat-card" style="background:#e68a46;">
+            <div class="stat-card">
                 <div class="stat-card-value">{{ $assists }}</div>
                 <div class="stat-card-label">Assists</div>
             </div>

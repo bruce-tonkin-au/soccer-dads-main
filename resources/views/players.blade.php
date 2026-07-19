@@ -94,22 +94,26 @@
                     @foreach($players as $player)
                     <tr style="cursor:pointer;" onclick="window.location='/players/{{ $player->memberSlug }}'">
                         <td style="font-weight:600;">{{ $player->memberNameFirst }} {{ $player->memberNameLast }}</td>
-                        <td style="color:#888;">{{ $player->games }}</td>
-                        <td style="color:#888;">
+                        <td style="color:#888;" data-order="{{ $player->games }}">{{ $player->games }}</td>
+                        <td style="color:#888;" data-order="{{ $player->goals }}">
                             @if($player->goals > 0)
                             <i class="fa-solid fa-futbol" style="color:#e68a46; margin-right:4px;"></i>{{ $player->goals }}
                             @else
                             —
                             @endif
                         </td>
-                        <td style="color:#888;">
+                        <td style="color:#888;" data-order="{{ $player->assists }}">
                             @if($player->assists > 0)
                             <i class="fa-solid fa-people-arrows" style="color:#458bc8; margin-right:4px;"></i>{{ $player->assists }}
                             @else
                             —
                             @endif
                         </td>
-                        <td>
+                        @php
+                            // Weighted award score: 1st = 3pts, 2nd = 2pts, 3rd = 1pt.
+                            $awardScore = collect($player->awards)->sum(fn($a) => 4 - $a['position']);
+                        @endphp
+                        <td data-order="{{ $awardScore }}">
                             @if(!empty($player->awards))
                                 @foreach($player->awards as $award)
                                 @php
@@ -143,10 +147,10 @@
         $('#players-table').DataTable({
             pageLength: 10,
             stateSave: true,
-            order: [[0, 'asc']],
+            order: [[1, 'desc']],
             columnDefs: [
-                { type: 'num', targets: [1, 2, 3] },
-                { orderable: false, targets: [4, 5] }
+                { type: 'num', targets: [1, 2, 3, 4] },
+                { orderable: false, targets: [5] }
             ],
             language: {
                 search: 'Search:',
