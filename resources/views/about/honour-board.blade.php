@@ -90,17 +90,44 @@
             'media'     => $mediaCoordinators[$year] ?? null,
         ];
     }
+
+    // Resolve each distinct committee name to a public player profile.
+    // Only link when first + last name uniquely identifies ONE active member;
+    // if there's no match, or more than one, fall back to plain text (never guess).
+    $names = collect($committee)
+        ->flatMap(fn($r) => [$r['chair'], $r['vice'], $r['treasurer'], $r['media']])
+        ->filter()
+        ->unique()
+        ->values();
+
+    $profileSlug = [];
+    foreach ($names as $name) {
+        $parts = preg_split('/\s+/', trim($name), 2);
+        $first = $parts[0] ?? '';
+        $last  = $parts[1] ?? '';
+        $slugs = DB::table('members')
+            ->where('memberActive', 1)
+            ->whereRaw('LOWER(TRIM("memberNameFirst")) = ?', [strtolower($first)])
+            ->whereRaw('LOWER(TRIM("memberNameLast")) = ?', [strtolower($last)])
+            ->pluck('memberSlug');
+        $profileSlug[$name] = $slugs->count() === 1 ? $slugs->first() : null;
+    }
+
+    // Render a name cell: subtle link when resolved, plain text (or —) otherwise.
+    $renderName = function ($name) use ($profileSlug) {
+        if (!$name) {
+            return '<span style="color:#ccc;">—</span>';
+        }
+        $safe = e($name);
+        $slug = $profileSlug[$name] ?? null;
+        if ($slug) {
+            return '<a href="/players/' . e($slug) . '" style="color:#262c39; text-decoration:none; font-weight:500; border-bottom:1px solid rgba(38,44,57,0.2);">' . $safe . '</a>';
+        }
+        return $safe;
+    };
 @endphp
 
-<div style="background:#262c39; padding:4rem 2rem;">
-    <div class="container">
-        <a href="/about" style="font-size:13px; color:rgba(255,255,255,0.5); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:1.5rem;">
-            <i class="fa-solid fa-chevron-left"></i> About
-        </a>
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#fff; margin-bottom:0.5rem;">Honour Board</h1>
-        <p style="font-size:16px; color:rgba(255,255,255,0.6);">Committee members since 2011.</p>
-    </div>
-</div>
+<x-page-header title="Honour Board" />
 
 <div style="padding:3rem 2rem 4rem;">
     <div class="container">
@@ -119,10 +146,10 @@
                     @foreach($committee as $row)
                     <tr>
                         <td><span style="font-weight:600; color:#262c39;">{{ $row['year'] }}</span></td>
-                        <td>@if($row['chair']){{ $row['chair'] }}@else<span style="color:#ccc;">—</span>@endif</td>
-                        <td>@if($row['vice']){{ $row['vice'] }}@else<span style="color:#ccc;">—</span>@endif</td>
-                        <td>@if($row['treasurer']){{ $row['treasurer'] }}@else<span style="color:#ccc;">—</span>@endif</td>
-                        <td>@if($row['media']){{ $row['media'] }}@else<span style="color:#ccc;">—</span>@endif</td>
+                        <td>{!! $renderName($row['chair']) !!}</td>
+                        <td>{!! $renderName($row['vice']) !!}</td>
+                        <td>{!! $renderName($row['treasurer']) !!}</td>
+                        <td>{!! $renderName($row['media']) !!}</td>
                     </tr>
                     @endforeach
                 </tbody>
