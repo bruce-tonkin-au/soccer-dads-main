@@ -29,6 +29,15 @@ class MembersTable
                         ->where('accountVisible', 1)
                         ->selectRaw('COALESCE(SUM("accountValue"), 0)'),
                     'balance'
+                )
+                // Games played — same definition as the public players list
+                // (PlayersController): distinct active result rows per member.
+                ->selectSub(
+                    DB::table('results')
+                        ->whereColumn('results.resultMemberID', 'members.memberID')
+                        ->where('resultActive', 1)
+                        ->selectRaw('COUNT(DISTINCT "resultGameID")'),
+                    'games'
                 ))
             ->columns([
                 TextColumn::make('memberNameLast')
@@ -40,6 +49,10 @@ class MembersTable
                     ->label('Country')
                     ->formatStateUsing(fn (?string $state): string => self::flagEmoji($state))
                     ->tooltip(fn (?string $state): ?string => filled($state) ? strtoupper($state) : null),
+                TextColumn::make('games')
+                    ->label('Games')
+                    ->alignEnd()
+                    ->sortable(),
                 TextColumn::make('memberCode')
                     ->label('Code')
                     ->badge()
