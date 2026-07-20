@@ -2,14 +2,7 @@
 @section('title', 'Locations — Soccer Dads')
 @section('content')
 
-<div style="background:#262c39; padding:4rem 2rem;">
-    <div class="container">
-        <a href="/about" style="font-size:13px; color:rgba(255,255,255,0.5); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:1.5rem;">
-            <i class="fa-solid fa-chevron-left"></i> About
-        </a>
-        <h1 style="font-family:'GetShow'; font-weight:normal; font-size:72px; color:#fff;">Locations</h1>
-    </div>
-</div>
+<x-page-header title="Locations" />
 
 <div style="padding:4rem 2rem;">
     <div class="container">
