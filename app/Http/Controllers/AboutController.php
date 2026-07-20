@@ -10,6 +10,11 @@ class AboutController extends Controller
         return view('about.index');
     }
 
+    public function howItWorks()
+    {
+        return view('about.how-it-works');
+    }
+
     public function history()
     {
         return view('about.history');

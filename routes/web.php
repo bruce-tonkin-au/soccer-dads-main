@@ -151,6 +151,7 @@ Route::get('/contact', [ContactController::class, 'index']);
 Route::get('/msg/{messageCode}/newsletter', [MessageController::class, 'newsletter']);
 Route::get('/msg/{messageCode}/{memberCode}', [MessageController::class, 'show']);
 Route::get('/contact.html', fn() => redirect('/contact', 301));
+Route::get('/about/how-it-works', [AboutController::class, 'howItWorks']);
 Route::get('/about/history', [AboutController::class, 'history']);
 Route::get('/about/locations', [AboutController::class, 'locations']);
 Route::get('/about/honour-board', [AboutController::class, 'honourBoard']);
