@@ -79,6 +79,44 @@
             background: #f0f0f0;
             color: #262c39;
         }
+        /* About dropdown */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-caret {
+            display: inline-flex;
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+        .nav-dropdown-menu {
+            display: none;
+            list-style: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 190px;
+            background: #262c39;
+            padding: 8px 0;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            z-index: 101;
+        }
+        .nav-dropdown-menu li { width: 100%; }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 10px 20px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        @media (min-width: 992px) {
+            .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+            .nav-dropdown:hover .nav-caret { transform: rotate(180deg); }
+        }
         .nav-cart-icon {
             position: relative;
             display: inline-flex;
@@ -238,6 +276,24 @@
         border-radius: 8px;
     }
     .nav-cart-label { display: inline; margin-left: 6px; }
+
+    /* About dropdown on mobile: inline expand on tap */
+    .nav-dropdown-toggle { justify-content: space-between; }
+    .nav-caret {
+        padding: 12px;
+        margin: -12px -1rem -12px 0;
+    }
+    .nav-dropdown-menu {
+        position: static;
+        min-width: 0;
+        background: rgba(255,255,255,0.04);
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .nav-dropdown.open .nav-dropdown-menu { display: block; }
+    .nav-dropdown.open .nav-caret { transform: rotate(180deg); }
+    .nav-dropdown-menu a { padding-left: 3rem; }
 }
         @media (max-width: 768px) {
     #footer-grid {
@@ -270,7 +326,17 @@
         <li><a href="/">Home</a></li>
         <li><a href="/seasons">Seasons</a></li>
         <li><a href="/players">Players</a></li>
-        <li><a href="/about">About</a></li>
+        <li class="nav-dropdown">
+            <a href="/about" class="nav-dropdown-toggle">
+                About
+                <span class="nav-caret" onclick="toggleDropdown(event, this)"><i class="fa-solid fa-chevron-down"></i></span>
+            </a>
+            <ul class="nav-dropdown-menu">
+                <li><a href="/about/history">History</a></li>
+                <li><a href="/about/locations">Locations</a></li>
+                <li><a href="/about/honour-board">Honour Board</a></li>
+            </ul>
+        </li>
         <li><a href="/store">Store</a></li>
         <li><a href="/contact">Contact</a></li>
         @php $cartCount = array_sum(array_column(session('store_cart', []), 'quantity')); @endphp
@@ -358,6 +424,12 @@
         const icon = document.getElementById('burger-icon');
         nav.classList.toggle('open');
         icon.className = nav.classList.contains('open') ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+    }
+    // Mobile: tap the caret to expand the About sub-menu without following the /about link.
+    function toggleDropdown(event, el) {
+        event.preventDefault();
+        event.stopPropagation();
+        el.closest('.nav-dropdown').classList.toggle('open');
     }
 </script>
 
