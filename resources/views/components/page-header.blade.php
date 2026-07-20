@@ -4,7 +4,7 @@
 @push('styles')
 <style>
     .sd-page-header {
-        background: linear-gradient(to right, #3b82c4, #4aaa6e, #c8a83c);
+        background: linear-gradient(to right, #458bc8, #7bba56, #e68a46);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         padding: 48px 0;
     }
