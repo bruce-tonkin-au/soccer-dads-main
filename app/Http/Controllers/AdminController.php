@@ -858,14 +858,14 @@ class AdminController extends Controller
         $gameID = (int) $gameID;
 
         try {
-            $game      = DB::table('games')->where('gameID', $gameID)->firstOrFail();
-            $pointsMap = [1 => 3, 2 => 2, 3 => 1];
+            $game        = DB::table('games')->where('gameID', $gameID)->firstOrFail();
+            $teamColours = [1, 2, 3]; // 1=Orange, 2=Green, 3=Blue
 
             // Collect valid assignments: memberID => teamColor (1/2/3)
             $assignments = [];
             foreach ($request->input('teams', []) as $memberID => $teamColor) {
                 $teamColor = (int) $teamColor;
-                if (!$teamColor || !isset($pointsMap[$teamColor])) continue;
+                if (!in_array($teamColor, $teamColours, true)) continue;
                 $assignments[(int) $memberID] = $teamColor;
             }
 
@@ -874,7 +874,7 @@ class AdminController extends Controller
                 'assignmentCount' => count($assignments),
             ]);
 
-            DB::transaction(function () use ($gameID, $game, $pointsMap, $assignments) {
+            DB::transaction(function () use ($gameID, $game, $assignments) {
 
                 // ── scoring-teams ─────────────────────────────────────────────
                 // Ensure one row exists per team color (1=Orange, 2=Green, 3=Blue).
@@ -931,6 +931,14 @@ class AdminController extends Controller
                 ]);
 
                 // ── results ───────────────────────────────────────────────────
+                // Records who played for which team. resultPoints is deliberately
+                // NOT set here: the 3/2/1 depends on where each team finishes,
+                // which nobody knows until the games have been played. The
+                // scoring app awards it at the end of the night from the actual
+                // finishing order (NightPointsService).
+                //
+                // Existing points are left alone, so re-saving teams after a
+                // night has been scored can't wipe what was awarded.
                 foreach ($assignments as $memberID => $teamColor) {
                     $existing = DB::table('results')
                         ->where('resultGameID', $game->gameID)
@@ -940,7 +948,6 @@ class AdminController extends Controller
                     if ($existing) {
                         DB::table('results')->where('resultID', $existing->resultID)->update([
                             'resultTeamID' => $teamColor,
-                            'resultPoints' => $pointsMap[$teamColor],
                             'resultEdited' => now(),
                         ]);
                     } else {
@@ -949,7 +956,7 @@ class AdminController extends Controller
                             'resultGameID'   => $game->gameID,
                             'resultMemberID' => $memberID,
                             'resultTeamID'   => $teamColor,
-                            'resultPoints'   => $pointsMap[$teamColor],
+                            'resultPoints'   => null,
                             'resultActive'   => 1,
                             'resultCreated'  => now(),
                             'resultEdited'   => now(),
