@@ -149,7 +149,7 @@ Route::get('/worldcup/cards', WcCards::class)->name('worldcup.cards');
 
 Route::get('/about', [AboutController::class, 'index']);
 Route::get('/news', [NewsController::class, 'index']);
-Route::get('/news/{id}', [NewsController::class, 'show']);
+Route::get('/news/{id}', [NewsController::class, 'show'])->whereNumber('id');
 Route::get('/contact', [ContactController::class, 'index']);
 Route::get('/msg/{messageCode}/newsletter', [MessageController::class, 'newsletter']);
 Route::get('/msg/{messageCode}/{memberCode}', [MessageController::class, 'show']);
