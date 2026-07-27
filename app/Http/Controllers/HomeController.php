@@ -23,73 +23,13 @@ class HomeController extends Controller
             ->select('g.*', 's.seasonName', 's.seasonLink')
             ->first();
 
-        $wcLeaders = $this->worldCupLeaders();
+        $news = DB::table('news')
+            ->where('newsActive', 1)
+            ->orderByDesc('newsDate')
+            ->orderByDesc('newsID')
+            ->limit(6)
+            ->get();
 
-        return view('home', compact('stats', 'nextGame', 'wcLeaders'));
-    }
-
-    /**
-     * Top 2 sweepstake entry names by calculated points (team goals + player
-     * goals from wc_goals), or an empty array if the draw hasn't been made.
-     * Lightweight — a few bulk queries, no model hydration.
-     *
-     * @return array<int, string>
-     */
-    private function worldCupLeaders(): array
-    {
-        // Draw not run yet.
-        if (! DB::table('wc_entry_teams')->exists()) {
-            return [];
-        }
-
-        $settings = DB::table('wc_settings')
-            ->whereIn('key', ['points_team_goal', 'points_player_goal'])
-            ->pluck('value', 'key');
-        $teamGoalPts = (int) ($settings['points_team_goal'] ?? 1);
-        $playerGoalPts = (int) ($settings['points_player_goal'] ?? 1);
-
-        // Team goals include own goals (teamID is the credited/benefiting team);
-        // player goals exclude them (an own goal doesn't reward its scorer).
-        // Both exclude shootout goals — wc_fixtures stores the pre-shootout
-        // (90+ET) score, so the leaders ranking must match.
-        $teamGoals = DB::table('wc_goals')
-            ->where('is_shootout', false)
-            ->groupBy('teamID')
-            ->selectRaw('"teamID", count(*) as goals')
-            ->pluck('goals', 'teamID');
-
-        $goalCounts = DB::table('wc_goals')
-            ->where('is_own_goal', false)
-            ->where('is_shootout', false)
-            ->groupBy('playerID')
-            ->selectRaw('"playerID", count(*) as goals')
-            ->pluck('goals', 'playerID');
-
-        $entries = DB::table('wc_entries')->where('draw_completed', true)->get(['entryID', 'entry_name']);
-        if ($entries->isEmpty()) {
-            return [];
-        }
-
-        $entryIds = $entries->pluck('entryID');
-        $teamsByEntry = DB::table('wc_entry_teams')->whereIn('entryID', $entryIds)->get(['entryID', 'teamID'])->groupBy('entryID');
-        $playersByEntry = DB::table('wc_entry_players')->whereIn('entryID', $entryIds)->get(['entryID', 'playerID'])->groupBy('entryID');
-
-        return $entries
-            ->map(function ($entry) use ($teamsByEntry, $playersByEntry, $teamGoals, $goalCounts, $teamGoalPts, $playerGoalPts) {
-                $points = 0;
-                foreach ($teamsByEntry[$entry->entryID] ?? [] as $t) {
-                    $points += ($teamGoals[$t->teamID] ?? 0) * $teamGoalPts;
-                }
-                foreach ($playersByEntry[$entry->entryID] ?? [] as $p) {
-                    $points += ($goalCounts[$p->playerID] ?? 0) * $playerGoalPts;
-                }
-
-                return ['name' => $entry->entry_name, 'points' => $points];
-            })
-            ->sortByDesc('points')
-            ->take(2)
-            ->pluck('name')
-            ->values()
-            ->all();
+        return view('home', compact('stats', 'nextGame', 'news'));
     }
 }
