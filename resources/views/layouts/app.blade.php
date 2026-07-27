@@ -332,6 +332,7 @@
                 <span class="nav-caret" onclick="toggleDropdown(event, this)"><i class="fa-solid fa-chevron-down"></i></span>
             </a>
             <ul class="nav-dropdown-menu">
+                <li><a href="/news">News</a></li>
                 <li><a href="/about/how-it-works">How it works</a></li>
                 <li><a href="/about/history">History</a></li>
                 <li><a href="/about/locations">Locations</a></li>

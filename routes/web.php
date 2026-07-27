@@ -15,6 +15,7 @@ use App\Http\Controllers\PlayerPortalController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\AdminStoreController;
 use App\Http\Controllers\ClaimController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NewsletterController;
 use App\Livewire\WorldCup\WcLadder;
 use App\Livewire\WorldCup\WcResults;
@@ -147,6 +148,8 @@ Route::get('/worldcup/upcoming', WcUpcoming::class)->name('worldcup.upcoming');
 Route::get('/worldcup/cards', WcCards::class)->name('worldcup.cards');
 
 Route::get('/about', [AboutController::class, 'index']);
+Route::get('/news', [NewsController::class, 'index']);
+Route::get('/news/{id}', [NewsController::class, 'show']);
 Route::get('/contact', [ContactController::class, 'index']);
 Route::get('/msg/{messageCode}/newsletter', [MessageController::class, 'newsletter']);
 Route::get('/msg/{messageCode}/{memberCode}', [MessageController::class, 'show']);

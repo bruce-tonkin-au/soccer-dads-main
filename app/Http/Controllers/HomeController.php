@@ -27,7 +27,7 @@ class HomeController extends Controller
             ->where('newsActive', 1)
             ->orderByDesc('newsDate')
             ->orderByDesc('newsID')
-            ->limit(6)
+            ->limit(3)
             ->get();
 
         return view('home', compact('stats', 'nextGame', 'news'));
