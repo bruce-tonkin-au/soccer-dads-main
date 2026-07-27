@@ -48,17 +48,28 @@
 
 {{-- Latest news --}}
 <div style="padding:5rem 2rem; background:#f6f7f9; border-bottom:1px solid #eceef1;">
-    <div class="container" style="max-width:820px;">
+    <div class="container">
         <h2 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:3rem; text-align:center;">Latest news</h2>
-        @forelse ($news as $item)
-            <article style="background:#fff; border:1px solid #eceef1; border-radius:12px; padding:1.75rem 2rem; margin-bottom:1.5rem;">
-                <div style="font-size:13px; color:#98a2b3; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">{{ \Carbon\Carbon::parse($item->newsDate)->format('j F Y') }}</div>
-                <h3 style="font-size:22px; font-weight:600; color:#262c39; margin-bottom:0.75rem;">{{ $item->newsTitle }}</h3>
-                <div style="font-size:15px; color:#667085; line-height:1.7;">{!! $item->newsBody !!}</div>
-            </article>
-        @empty
-            <p style="text-align:center; color:#98a2b3;">No news just yet — check back soon.</p>
-        @endforelse
+        <div class="news-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;">
+            @forelse ($news as $item)
+                <a href="/news/{{ $item->newsID }}" style="display:block; background:#fff; border:1px solid #eceef1; border-radius:12px; overflow:hidden; text-decoration:none; color:inherit;">
+                    @if ($item->newsImage)
+                        <img src="{{ asset('storage/'.$item->newsImage) }}" alt="{{ $item->newsTitle }}" style="width:100%; height:180px; object-fit:cover; display:block;">
+                    @else
+                        <div style="width:100%; height:180px; background:linear-gradient(135deg,#458bc8,#7bba56,#e68a46);"></div>
+                    @endif
+                    <div style="padding:1.5rem;">
+                        <div style="font-size:13px; color:#98a2b3; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">{{ \Carbon\Carbon::parse($item->newsDate)->format('j F Y') }}</div>
+                        <h3 style="font-size:20px; font-weight:600; color:#262c39; margin:0;">{{ $item->newsTitle }}</h3>
+                    </div>
+                </a>
+            @empty
+                <p style="grid-column:1/-1; text-align:center; color:#98a2b3;">No news just yet — check back soon.</p>
+            @endforelse
+        </div>
+        <div style="text-align:center; margin-top:3rem;">
+            <a href="/news" class="btn btn-primary" style="background:#262c39;">View all news</a>
+        </div>
     </div>
 </div>
 
@@ -73,6 +84,7 @@
         .stats-bar-grid > div:nth-child(5) {
             grid-column: 1 / -1;
         }
+        .news-grid { grid-template-columns: 1fr !important; }
     }
 </style>
 @endpush

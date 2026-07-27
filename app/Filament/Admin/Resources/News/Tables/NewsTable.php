@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\News\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -16,6 +17,11 @@ class NewsTable
         return $table
             ->defaultSort('newsDate', 'desc')
             ->columns([
+                ImageColumn::make('newsImage')
+                    ->label('Image')
+                    ->disk('public')
+                    ->square()
+                    ->size(48),
                 TextColumn::make('newsTitle')
                     ->label('Title')
                     ->searchable()

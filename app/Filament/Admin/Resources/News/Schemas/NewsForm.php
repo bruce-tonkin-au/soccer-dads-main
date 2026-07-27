@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\News\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -18,6 +19,17 @@ class NewsForm
                     ->label('Title')
                     ->required()
                     ->maxLength(255),
+                // Same disk + shape as the product images (ImagesRelationManager):
+                // Filament stores the disk-relative path ('news/{file}'), which
+                // the public views resolve via asset('storage/'.newsImage).
+                FileUpload::make('newsImage')
+                    ->label('Image')
+                    ->image()
+                    ->disk('public')
+                    ->directory('news')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(5120),
                 DatePicker::make('newsDate')
                     ->label('Date')
                     ->required()
