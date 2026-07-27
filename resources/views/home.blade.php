@@ -46,49 +46,19 @@
 </div>
 
 
-{{-- World Cup 2026 Sweepstake CTA --}}
-<div style="background:#f6f7f9; padding:4rem 2rem; text-align:center; border-bottom:1px solid #eceef1;">
-    <div class="container">
-        <h2 style="font-family:'GetShow'; font-weight:normal; font-size:48px; color:#262c39; margin-bottom:0.75rem;">World Cup 2026 Sweepstake</h2>
-        <p style="font-size:18px; color:#667085; margin-bottom:1.75rem;">
-            @if (empty($wcLeaders))
-                Draw happening soon. Follow the live ladder.
-            @else
-                🥇 {{ $wcLeaders[0] }}@if (isset($wcLeaders[1])) · 🥈 {{ $wcLeaders[1] }}@endif
-            @endif
-        </p>
-        <a href="/worldcup" class="btn btn-primary" style="background:#262c39;">View the live ladder</a>
-    </div>
-</div>
-
-
-{{-- How it works --}}
-<div style="padding:5rem 2rem;">
-    <div class="container">
-        <h2 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:3rem; text-align:center;">How it works</h2>
-        <div class="how-it-works-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:2rem;">
-            <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#458bc8; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
-    <i class="fa-solid fa-envelope" style="color:#fff; font-size:24px;"></i>
-</div>
-                <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Register your attendance</h3>
-                <p style="font-size:14px; color:#888; line-height:1.6;">Each week you'll use a personalised link to register your attendance. Tap it to register.</p>
-            </div>
-            <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#7bba56; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
-                    <i class="fa-solid fa-futbol" style="color:#fff; font-size:24px;"></i>
-                </div>
-                <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Show up and play</h3>
-                <p style="font-size:14px; color:#888; line-height:1.6;">Turn up to the session, get assigned to a team and play. Games are five minutes long, two games in a round, seven rounds in a session.</p>
-            </div>
-            <div style="text-align:center; padding:2rem;">
-                <div style="width:64px; height:64px; background:#e68a46; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
-                    <i class="fa-solid fa-chart-line" style="color:#fff; font-size:24px;"></i>
-                </div>
-                <h3 style="font-size:18px; font-weight:600; margin-bottom:0.75rem;">Track your stats</h3>
-                <p style="font-size:14px; color:#888; line-height:1.6;">Goals, assists, saves and more are all tracked in real time and available in your player profile.</p>
-            </div>
-        </div>
+{{-- Latest news --}}
+<div style="padding:5rem 2rem; background:#f6f7f9; border-bottom:1px solid #eceef1;">
+    <div class="container" style="max-width:820px;">
+        <h2 style="font-family:'GetShow'; font-weight:normal; font-size:56px; color:#262c39; margin-bottom:3rem; text-align:center;">Latest news</h2>
+        @forelse ($news as $item)
+            <article style="background:#fff; border:1px solid #eceef1; border-radius:12px; padding:1.75rem 2rem; margin-bottom:1.5rem;">
+                <div style="font-size:13px; color:#98a2b3; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">{{ \Carbon\Carbon::parse($item->newsDate)->format('j F Y') }}</div>
+                <h3 style="font-size:22px; font-weight:600; color:#262c39; margin-bottom:0.75rem;">{{ $item->newsTitle }}</h3>
+                <div style="font-size:15px; color:#667085; line-height:1.7;">{!! $item->newsBody !!}</div>
+            </article>
+        @empty
+            <p style="text-align:center; color:#98a2b3;">No news just yet — check back soon.</p>
+        @endforelse
     </div>
 </div>
 
@@ -102,9 +72,6 @@
         }
         .stats-bar-grid > div:nth-child(5) {
             grid-column: 1 / -1;
-        }
-        .how-it-works-grid {
-            grid-template-columns: 1fr !important;
         }
     }
 </style>
