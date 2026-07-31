@@ -332,7 +332,7 @@ class AdminController extends Controller
             'gameID'               => $gameID,
             'settingsRounds'       => 7,
             'settingsGamesPerRound'=> 3,
-            'settingsGameDuration' => 60,
+            'settingsGameDuration' => 300,
             'settingsTeams'        => 3,
             'teamAID'              => null,
             'teamBID'              => null,
