@@ -111,24 +111,7 @@
                     @php $selectedCountry = old('country', $member->memberCountry ?: 'AU'); @endphp
                     <select name="country" required
                         style="width:100%; border:1px solid #e8e8e8; border-radius:8px; padding:12px 14px; font-size:15px; color:#262c39; outline:none; background:#fff;">
-                        @foreach([
-                            'AU'=>'🇦🇺 Australia','AF'=>'🇦🇫 Afghanistan','AL'=>'🇦🇱 Albania','DZ'=>'🇩🇿 Algeria',
-                            'AR'=>'🇦🇷 Argentina','AT'=>'🇦🇹 Austria','BE'=>'🇧🇪 Belgium','BR'=>'🇧🇷 Brazil',
-                            'BG'=>'🇧🇬 Bulgaria','CA'=>'🇨🇦 Canada','CL'=>'🇨🇱 Chile','CN'=>'🇨🇳 China',
-                            'CO'=>'🇨🇴 Colombia','HR'=>'🇭🇷 Croatia','CZ'=>'🇨🇿 Czech Republic','DK'=>'🇩🇰 Denmark',
-                            'EG'=>'🇪🇬 Egypt','ET'=>'🇪🇹 Ethiopia','FI'=>'🇫🇮 Finland','FR'=>'🇫🇷 France',
-                            'DE'=>'🇩🇪 Germany','GH'=>'🇬🇭 Ghana','GR'=>'🇬🇷 Greece','HU'=>'🇭🇺 Hungary',
-                            'IN'=>'🇮🇳 India','ID'=>'🇮🇩 Indonesia','IR'=>'🇮🇷 Iran','IQ'=>'🇮🇶 Iraq',
-                            'IE'=>'🇮🇪 Ireland','IL'=>'🇮🇱 Israel','IT'=>'🇮🇹 Italy','JP'=>'🇯🇵 Japan',
-                            'JO'=>'🇯🇴 Jordan','KE'=>'🇰🇪 Kenya','KR'=>'🇰🇷 Korea','LB'=>'🇱🇧 Lebanon',
-                            'MY'=>'🇲🇾 Malaysia','MX'=>'🇲🇽 Mexico','NL'=>'🇳🇱 Netherlands','NZ'=>'🇳🇿 New Zealand',
-                            'NG'=>'🇳🇬 Nigeria','NO'=>'🇳🇴 Norway','PK'=>'🇵🇰 Pakistan','PE'=>'🇵🇪 Peru',
-                            'PH'=>'🇵🇭 Philippines','PL'=>'🇵🇱 Poland','PT'=>'🇵🇹 Portugal','RO'=>'🇷🇴 Romania',
-                            'RU'=>'🇷🇺 Russia','SA'=>'🇸🇦 Saudi Arabia','ZA'=>'🇿🇦 South Africa','ES'=>'🇪🇸 Spain',
-                            'LK'=>'🇱🇰 Sri Lanka','SE'=>'🇸🇪 Sweden','CH'=>'🇨🇭 Switzerland','TH'=>'🇹🇭 Thailand',
-                            'TN'=>'🇹🇳 Tunisia','TR'=>'🇹🇷 Turkey','UA'=>'🇺🇦 Ukraine','AE'=>'🇦🇪 United Arab Emirates',
-                            'GB'=>'🇬🇧 United Kingdom','US'=>'🇺🇸 United States','VN'=>'🇻🇳 Vietnam','ZW'=>'🇿🇼 Zimbabwe',
-                        ] as $code => $label)
+                        @foreach (\App\Support\Countries::withFlags() as $code => $label)
                             <option value="{{ $code }}" {{ $selectedCountry === $code ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>

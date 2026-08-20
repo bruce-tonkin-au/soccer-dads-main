@@ -47,26 +47,7 @@ class MemberForm
                     ->maxLength(255),
                 Select::make('memberCountry')
                     ->label('Country')
-                    ->options([
-                        'AU' => 'Australia',
-                        'NZ' => 'New Zealand',
-                        'GB' => 'United Kingdom',
-                        'IE' => 'Ireland',
-                        'US' => 'United States',
-                        'CA' => 'Canada',
-                        'ZA' => 'South Africa',
-                        'IN' => 'India',
-                        'DE' => 'Germany',
-                        'FR' => 'France',
-                        'IT' => 'Italy',
-                        'ES' => 'Spain',
-                        'NL' => 'Netherlands',
-                        'BR' => 'Brazil',
-                        'AR' => 'Argentina',
-                        'JP' => 'Japan',
-                        'CN' => 'China',
-                        'PH' => 'Philippines',
-                    ])
+                    ->options(fn (): array => \App\Support\Countries::names())
                     ->default('AU')
                     ->searchable()
                     ->native(false)
