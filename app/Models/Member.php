@@ -29,6 +29,7 @@ class Member extends Model
         'memberParent',
         'memberBirthday',
         'memberCountry',
+        'memberCommentaryNote',
     ];
 
     protected $casts = [

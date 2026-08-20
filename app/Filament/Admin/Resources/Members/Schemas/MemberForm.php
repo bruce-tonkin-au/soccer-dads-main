@@ -7,6 +7,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -109,6 +110,12 @@ class MemberForm
                     ->label('Birthday')
                     ->native(false)
                     ->displayFormat('j M Y'),
+                Textarea::make('memberCommentaryNote')
+                    ->label('Commentary note')
+                    ->rows(3)
+                    ->maxLength(600)
+                    ->columnSpanFull()
+                    ->helperText('A personal touch for the AI commentary — a nickname or AKA, a running joke, or a Soccer Dads story about them. One short paragraph; the commentary uses it sparingly, only where it lands naturally.'),
             ]);
     }
 
